@@ -11,7 +11,7 @@ composeBom = "2026.02.01"
 appcompat = "1.6.1"
 material = "1.10.0"
 
-hilt = "2.52"
+hilt = "2.60.1"
 room = "2.6.1"
 navigation = "2.8.5"
 retrofit = "2.11.0"
