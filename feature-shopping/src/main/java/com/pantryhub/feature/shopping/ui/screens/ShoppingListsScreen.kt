@@ -23,6 +23,7 @@ import com.pantryhub.feature.shopping.ui.components.ShoppingListCard
 fun ShoppingListsScreen(
     state: ShoppingUiState,
     onListClick: (String) -> Unit,
+    onDeleteList: (String) -> Unit,
     onCreateList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -62,7 +63,8 @@ fun ShoppingListsScreen(
                 items(state.lists, key = { it.id }) { list ->
                     ShoppingListCard(
                         shoppingList = list,
-                        onListClick = onListClick
+                        onListClick = onListClick,
+                        onDelete = onDeleteList
                     )
                 }
             }

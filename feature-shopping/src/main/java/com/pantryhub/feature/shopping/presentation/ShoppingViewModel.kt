@@ -2,29 +2,22 @@ package com.pantryhub.feature.shopping.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pantryhub.core.data.repository.ShoppingListRepository
-import com.pantryhub.core.domain.shopping.CreateShoppingListUseCase
-import com.pantryhub.core.domain.shopping.FinishShoppingUseCase
-import com.pantryhub.core.model.product.Product
-import com.pantryhub.core.model.shopping.ShoppingListItem
+import com.pantryhub.core.domain.shopping.ShoppingUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingViewModel @Inject constructor(
-    private val shoppingListRepository: ShoppingListRepository,
-    private val createShoppingListUseCase: CreateShoppingListUseCase,
-    private val finishShoppingUseCase: FinishShoppingUseCase
+    private val shoppingUseCases: ShoppingUseCases
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShoppingUiState())
@@ -41,6 +34,8 @@ class ShoppingViewModel @Inject constructor(
             ShoppingIntent.LoadLists -> observeLists()
             is ShoppingIntent.CreateList -> createList(intent.name)
             is ShoppingIntent.OpenList -> openList(intent.id)
+            is ShoppingIntent.DeleteList -> deleteList(intent.id)
+            is ShoppingIntent.RenameList -> renameList(intent.newName)
             is ShoppingIntent.AddItem -> addItem(intent.name, intent.quantity)
             is ShoppingIntent.DeleteItem -> deleteItem(intent.itemId)
             is ShoppingIntent.ToggleItem -> toggleItem(intent.itemId)
@@ -49,7 +44,7 @@ class ShoppingViewModel @Inject constructor(
     }
 
     private fun observeLists() {
-        shoppingListRepository.getLists()
+        shoppingUseCases.getShoppingLists()
             .onEach { lists ->
                 _uiState.update { it.copy(lists = lists) }
             }
@@ -58,44 +53,56 @@ class ShoppingViewModel @Inject constructor(
 
     private fun createList(name: String) {
         viewModelScope.launch {
-            createShoppingListUseCase(name)
+            shoppingUseCases.createShoppingList(name)
         }
     }
 
     private fun openList(id: String) {
         itemsObservationJob?.cancel()
         
+        _uiState.update { it.copy(isLoading = true) }
+        
         viewModelScope.launch {
-            val list = shoppingListRepository.getList(id)
-            _uiState.update { it.copy(currentList = list) }
-            
-            // Start observing items for this specific list
-            itemsObservationJob = shoppingListRepository.getItemsForList(id)
+            // Observe items for this specific list reactively
+            itemsObservationJob = shoppingUseCases.getShoppingListItems(id)
                 .onEach { items ->
+                    // Fetch list info if not present or to ensure it's up to date
+                    val list = shoppingUseCases.getShoppingLists().first().find { it.id == id }
                     _uiState.update { state ->
-                        state.copy(currentList = state.currentList?.copy(items = items))
+                        state.copy(
+                            currentList = list?.copy(items = items),
+                            isLoading = false
+                        )
                     }
                 }
                 .launchIn(viewModelScope)
         }
     }
 
+    private fun deleteList(id: String) {
+        viewModelScope.launch {
+            shoppingUseCases.deleteShoppingList(id)
+            if (_uiState.value.currentList?.id == id) {
+                _uiState.update { it.copy(currentList = null) }
+            }
+        }
+    }
+
+    private fun renameList(newName: String) {
+        val currentListId = _uiState.value.currentList?.id ?: return
+        viewModelScope.launch {
+            shoppingUseCases.renameShoppingList(currentListId, newName)
+            // Update current list name in state immediately for better UX
+            _uiState.update { state ->
+                state.copy(currentList = state.currentList?.copy(name = newName))
+            }
+        }
+    }
+
     private fun addItem(name: String, quantity: Double) {
         val currentListId = _uiState.value.currentList?.id ?: return
         viewModelScope.launch {
-            val newItem = ShoppingListItem(
-                id = UUID.randomUUID().toString(),
-                shoppingListId = currentListId,
-                product = Product(
-                    id = UUID.randomUUID().toString(),
-                    name = name,
-                    normalizedName = name.lowercase(),
-                    createdAt = Clock.System.now()
-                ),
-                quantity = quantity,
-                addedAt = Clock.System.now()
-            )
-            shoppingListRepository.saveItem(newItem)
+            shoppingUseCases.addProductToShoppingList(currentListId, name, quantity)
         }
     }
 
@@ -103,7 +110,7 @@ class ShoppingViewModel @Inject constructor(
         val currentList = _uiState.value.currentList ?: return
         val item = currentList.items.find { it.id == itemId } ?: return
         viewModelScope.launch {
-            shoppingListRepository.deleteItem(item)
+            shoppingUseCases.deleteShoppingListItem(item)
         }
     }
 
@@ -111,14 +118,14 @@ class ShoppingViewModel @Inject constructor(
         val currentList = _uiState.value.currentList ?: return
         val item = currentList.items.find { it.id == itemId } ?: return
         viewModelScope.launch {
-            shoppingListRepository.updateItemCompletion(itemId, !item.isCompleted)
+            shoppingUseCases.toggleShoppingListItem(itemId, !item.isCompleted)
         }
     }
 
     private fun finishShopping() {
         val currentListId = _uiState.value.currentList?.id ?: return
         viewModelScope.launch {
-            finishShoppingUseCase.execute(currentListId)
+            shoppingUseCases.finishShopping.execute(currentListId)
         }
     }
 }

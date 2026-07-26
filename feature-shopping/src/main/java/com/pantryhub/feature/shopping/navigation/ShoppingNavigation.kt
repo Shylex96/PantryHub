@@ -1,5 +1,6 @@
 package com.pantryhub.feature.shopping.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,8 +25,10 @@ fun NavGraphBuilder.shoppingGraph(
         ShoppingListsScreen(
             state = state,
             onListClick = { id ->
-                viewModel.handleIntent(ShoppingIntent.OpenList(id))
                 navController.navigate(Destination.ShoppingListDetail(id))
+            },
+            onDeleteList = { id ->
+                viewModel.handleIntent(ShoppingIntent.DeleteList(id))
             },
             onCreateList = {
                 viewModel.handleIntent(ShoppingIntent.CreateList("New List"))
@@ -38,7 +41,9 @@ fun NavGraphBuilder.shoppingGraph(
         val viewModel: ShoppingViewModel = hiltViewModel()
         val state by viewModel.uiState.collectAsState()
 
-        viewModel.handleIntent(ShoppingIntent.OpenList(route.listId))
+        LaunchedEffect(route.listId) {
+            viewModel.handleIntent(ShoppingIntent.OpenList(route.listId))
+        }
 
         ShoppingListDetailScreen(
             state = state,
@@ -47,6 +52,12 @@ fun NavGraphBuilder.shoppingGraph(
             },
             onDeleteItem = { id ->
                 viewModel.handleIntent(ShoppingIntent.DeleteItem(id))
+            },
+            onDeleteList = { id ->
+                viewModel.handleIntent(ShoppingIntent.DeleteList(id))
+            },
+            onRenameList = { newName ->
+                viewModel.handleIntent(ShoppingIntent.RenameList(newName))
             },
             onStartShopping = {
                 navController.navigate(Destination.ShoppingMode(route.listId))
@@ -62,8 +73,9 @@ fun NavGraphBuilder.shoppingGraph(
         val viewModel: ShoppingViewModel = hiltViewModel()
         val state by viewModel.uiState.collectAsState()
 
-        // Ensure the correct list is loaded in the ViewModel for this screen
-        viewModel.handleIntent(ShoppingIntent.OpenList(route.listId))
+        LaunchedEffect(route.listId) {
+            viewModel.handleIntent(ShoppingIntent.OpenList(route.listId))
+        }
 
         ShoppingModeScreen(
             state = state,

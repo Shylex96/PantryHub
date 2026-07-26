@@ -2,6 +2,10 @@ package com.pantryhub.feature.shopping.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,6 +19,7 @@ import com.pantryhub.core.model.shopping.ShoppingList
 fun ShoppingListCard(
     shoppingList: ShoppingList,
     onListClick: (String) -> Unit,
+    onDelete: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = PantryHubTheme.spacing
@@ -27,7 +32,15 @@ fun ShoppingListCard(
         PantryListItem(
             title = shoppingList.name,
             subtitle = stringResource(R.string.item_count_subtitle, shoppingList.items.size),
-            onClick = { onListClick(shoppingList.id) }
+            onClick = { onListClick(shoppingList.id) },
+            trailingContent = {
+                IconButton(onClick = { onDelete(shoppingList.id) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete list"
+                    )
+                }
+            }
         )
     }
 }

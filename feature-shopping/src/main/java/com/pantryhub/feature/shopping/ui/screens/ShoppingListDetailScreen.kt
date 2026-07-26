@@ -10,10 +10,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryButton
 import com.pantryhub.core.designsystem.ui.components.PantryListItem
@@ -36,6 +40,8 @@ fun ShoppingListDetailScreen(
     state: ShoppingUiState,
     onAddItem: (String, Double) -> Unit,
     onDeleteItem: (String) -> Unit,
+    onDeleteList: (String) -> Unit,
+    onRenameList: (String) -> Unit,
     onStartShopping: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -43,6 +49,36 @@ fun ShoppingListDetailScreen(
     val currentList = state.currentList ?: return
     var newItemName by remember { mutableStateOf("") }
     val spacing = PantryHubTheme.spacing
+    
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var listNameBuffer by remember { mutableStateOf(currentList.name) }
+
+    if (showRenameDialog) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = { Text("Rename List") },
+            text = {
+                PantryTextField(
+                    value = listNameBuffer,
+                    onValueChange = { listNameBuffer = it },
+                    label = "New name"
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onRenameList(listNameBuffer)
+                    showRenameDialog = false
+                }) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -54,6 +90,20 @@ fun ShoppingListDetailScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
                             contentDescription = stringResource(R.string.back_description)
                         )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { 
+                        listNameBuffer = currentList.name
+                        showRenameDialog = true 
+                    }) {
+                        Icon(Icons.Default.Edit, contentDescription = "Rename")
+                    }
+                    IconButton(onClick = { 
+                        onDeleteList(currentList.id)
+                        onBack()
+                    }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete list")
                     }
                 }
             )
@@ -108,7 +158,7 @@ fun ShoppingListDetailScreen(
                     items(currentList.items, key = { it.id }) { item ->
                         PantryListItem(
                             title = item.product.name,
-                            subtitle = stringResource(R.string.item_quantity_subtitle, item.quantity),
+                            subtitle = stringResource(R.string.item_quantity_subtitle, item.quantity.toString()),
                             trailingContent = {
                                 IconButton(onClick = { onDeleteItem(item.id) }) {
                                     Icon(Icons.Default.Delete, contentDescription = null)

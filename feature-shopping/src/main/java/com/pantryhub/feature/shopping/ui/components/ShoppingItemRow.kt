@@ -16,7 +16,7 @@ fun ShoppingItemRow(
 ) {
     PantryListItem(
         title = item.product.name,
-        subtitle = stringResource(R.string.item_quantity_subtitle, item.quantity.toString()),
+        subtitle = null,
         leadingContent = {
             Checkbox(
                 checked = item.isCompleted,
