@@ -5,12 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pantryhub.core.database"
+    namespace = "com.pantryhub.core.domain"
     compileSdk = 35
 
     defaultConfig {
         minSdk = 28
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -21,10 +20,10 @@ android {
 
 dependencies {
     implementation(project(":core-model"))
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.kotlinx.datetime)
-    ksp(libs.room.compiler)
+    implementation(project(":core-data"))
+    implementation(project(":core-common"))
     implementation(libs.hilt.android)
+    implementation(libs.kotlinx.datetime)
     ksp(libs.hilt.compiler)
+    implementation(libs.kotlinx.coroutines.android)
 }

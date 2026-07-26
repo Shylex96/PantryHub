@@ -19,4 +19,5 @@ android {
 
 dependencies {
     implementation(libs.serialization.json)
+    implementation(libs.kotlinx.datetime)
 }

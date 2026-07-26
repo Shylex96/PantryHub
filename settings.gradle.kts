@@ -28,6 +28,8 @@ include(":app")
 // Core modules
 include(":core-common")
 include(":core-database")
+include(":core-data")
+include(":core-domain")
 include(":core-designsystem")
 include(":core-model")
 include(":core-navigation")

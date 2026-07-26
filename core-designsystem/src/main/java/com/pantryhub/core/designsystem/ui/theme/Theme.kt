@@ -1,6 +1,5 @@
 package com.pantryhub.core.designsystem.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,25 +11,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Sage80,
+    onPrimary = WarmGrey10,
+    primaryContainer = Sage40,
+    onPrimaryContainer = Sage90,
+    secondary = Earth80,
+    onSecondary = WarmGrey10,
+    tertiary = Terracotta80,
+    onTertiary = WarmGrey10,
+    background = WarmGrey10,
+    onBackground = WarmGrey95,
+    surface = WarmGrey10,
+    onSurface = WarmGrey95,
+    error = Error
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = Sage40,
+    onPrimary = WarmGrey99,
+    primaryContainer = Sage90,
+    onPrimaryContainer = Sage40,
+    secondary = Earth40,
+    onSecondary = WarmGrey99,
+    tertiary = Terracotta40,
+    onTertiary = WarmGrey99,
+    background = WarmGrey99,
+    onBackground = WarmGrey10,
+    surface = WarmGrey99,
+    onSurface = WarmGrey10,
+    error = Error
 )
 
 @Composable
@@ -53,6 +62,7 @@ fun PantryHubTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = PantryShapes,
         content = content
     )
 }

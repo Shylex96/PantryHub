@@ -39,6 +39,8 @@ dependencies {
     // Core modules
     implementation(project(":core-common"))
     implementation(project(":core-database"))
+    implementation(project(":core-data"))
+    implementation(project(":core-domain"))
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-navigation"))
@@ -54,6 +56,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.compose.icons.extended)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)

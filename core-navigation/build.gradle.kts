@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -19,4 +20,5 @@ android {
 dependencies {
     implementation(project(":core-common"))
     implementation(libs.navigation.compose)
+    implementation(libs.serialization.json)
 }
