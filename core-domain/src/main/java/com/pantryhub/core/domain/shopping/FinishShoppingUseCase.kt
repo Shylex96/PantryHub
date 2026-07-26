@@ -35,10 +35,7 @@ class FinishShoppingUseCase @Inject constructor(
 
         purchaseRepository.savePurchase(purchase)
 
-        // For now, we just keep the list as is, or we could delete the completed items.
-        // Usually, users want to clear the list after finishing.
-        completedItems.forEach { item ->
-            shoppingListRepository.deleteItem(item)
-        }
+        // Data preservation: we no longer delete items from the list.
+        // In the future, we might mark the list as "archived" or just clear the completion status.
     }
 }

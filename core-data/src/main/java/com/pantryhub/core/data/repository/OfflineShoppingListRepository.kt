@@ -1,5 +1,6 @@
 package com.pantryhub.core.data.repository
 
+import com.pantryhub.core.database.dao.ProductDao
 import com.pantryhub.core.database.dao.ShoppingListDao
 import com.pantryhub.core.database.mapper.asDomainModel
 import com.pantryhub.core.database.mapper.asEntity
@@ -11,7 +12,8 @@ import kotlinx.datetime.Clock
 import javax.inject.Inject
 
 class OfflineShoppingListRepository @Inject constructor(
-    private val shoppingListDao: ShoppingListDao
+    private val shoppingListDao: ShoppingListDao,
+    private val productDao: ProductDao
 ) : ShoppingListRepository {
     override fun getLists(): Flow<List<ShoppingList>> {
         return shoppingListDao.getAllLists().map { entities ->
@@ -33,15 +35,17 @@ class OfflineShoppingListRepository @Inject constructor(
 
     override fun getItemsForList(listId: String): Flow<List<ShoppingListItem>> {
         return shoppingListDao.getItemsForList(listId).map { entities ->
-            entities.map { 
-                // Placeholder product, real implementation will join in Room or use a helper
-                val dummyProduct = com.pantryhub.core.model.product.Product(
-                    id = it.productId,
+            entities.map { itemEntity ->
+                // This is a simple implementation. In a larger app, we would use a SQL Join in Room
+                // for performance. For now, we fetch the product corresponding to the ID.
+                val productEntity = productDao.getProductById(itemEntity.productId)
+                val product = productEntity?.asDomainModel() ?: com.pantryhub.core.model.product.Product(
+                    id = itemEntity.productId,
                     name = "Unknown",
                     normalizedName = "unknown",
                     createdAt = Clock.System.now()
                 )
-                it.asDomainModel(dummyProduct) 
+                itemEntity.asDomainModel(product) 
             }
         }
     }

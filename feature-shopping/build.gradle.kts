@@ -29,6 +29,8 @@ dependencies {
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-navigation"))
+    implementation(project(":core-data"))
+    implementation(project(":core-domain"))
 
     implementation(libs.kotlinx.datetime)
     implementation(platform(libs.androidx.compose.bom))
