@@ -1,0 +1,41 @@
+# Built artifacts
+bin/
+gen/
+out/
+build/
+.gradle/
+
+# Local configuration
+local.properties
+google-services.json
+
+# Log files
+*.log
+
+# Android Studio / IntelliJ files
+*.iml
+.idea/
+*.ipr
+*.iws
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/deploymentTargetDropDown.xml
+.idea/gradle.xml
+
+# Device/Emulator files
+captures/
+.externalNativeBuild
+.cxx
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Project-specific ignores
+.artifacts/
+*.artifact.md
+/docs/scratch/
