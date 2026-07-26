@@ -37,18 +37,18 @@ android {
 
 dependencies {
     // Core modules
-    implementation(project(":core:common"))
-    implementation(project(":core:database"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:model"))
-    implementation(project(":core:navigation"))
+    implementation(project(":core-common"))
+    implementation(project(":core-database"))
+    implementation(project(":core-designsystem"))
+    implementation(project(":core-model"))
+    implementation(project(":core-navigation"))
 
     // Feature modules
-    implementation(project(":feature:shopping"))
-    implementation(project(":feature:products"))
-    implementation(project(":feature:notes"))
-    implementation(project(":feature:settings"))
-    implementation(project(":feature:importexport"))
+    implementation(project(":feature-shopping"))
+    implementation(project(":feature-products"))
+    implementation(project(":feature-notes"))
+    implementation(project(":feature-settings"))
+    implementation(project(":feature-importexport"))
 
     // Libraries
     implementation(platform(libs.androidx.compose.bom))

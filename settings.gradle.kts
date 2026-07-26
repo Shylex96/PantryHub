@@ -26,15 +26,15 @@ rootProject.name = "PantryHub"
 include(":app")
 
 // Core modules
-include(":core:common")
-include(":core:database")
-include(":core:designsystem")
-include(":core:model")
-include(":core:navigation")
+include(":core-common")
+include(":core-database")
+include(":core-designsystem")
+include(":core-model")
+include(":core-navigation")
 
 // Feature modules
-include(":feature:shopping")
-include(":feature:products")
-include(":feature:notes")
-include(":feature:settings")
-include(":feature:importexport")
+include(":feature-shopping")
+include(":feature-products")
+include(":feature-notes")
+include(":feature-settings")
+include(":feature-importexport")
