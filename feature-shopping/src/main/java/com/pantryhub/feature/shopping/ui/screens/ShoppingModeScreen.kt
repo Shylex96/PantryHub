@@ -1,26 +1,25 @@
 package com.pantryhub.feature.shopping.ui.screens
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.feature.shopping.presentation.ShoppingUiState
 import com.pantryhub.feature.shopping.ui.components.ShoppingItemRow
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingModeScreen(
     state: ShoppingUiState,
@@ -29,31 +28,38 @@ fun ShoppingModeScreen(
     modifier: Modifier = Modifier
 ) {
     val currentList = state.currentList ?: return
+    val spacing = PantryHubTheme.spacing
     
     val pendingItems = currentList.items.filter { !it.isCompleted }
     val completedItems = currentList.items.filter { it.isCompleted }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("${currentList.name} - Shopping Mode") },
+            PantryTopBar(
+                title = stringResource(R.string.shopping_mode_title, currentList.name),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                            contentDescription = stringResource(R.string.back_description)
+                        )
                     }
                 }
             )
         }
     ) { innerPadding ->
         LazyColumn(
-            modifier = modifier.padding(innerPadding)
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(horizontal = spacing.sm)
         ) {
-            item {
-                if (pendingItems.isNotEmpty()) {
+            if (pendingItems.isNotEmpty()) {
+                item {
                     Text(
-                        text = "Pending",
+                        text = stringResource(R.string.pending_section),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(spacing.lg),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -64,11 +70,12 @@ fun ShoppingModeScreen(
 
             if (completedItems.isNotEmpty()) {
                 item {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = spacing.md))
                     Text(
-                        text = "Completed",
+                        text = stringResource(R.string.completed_section),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(spacing.lg),
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 

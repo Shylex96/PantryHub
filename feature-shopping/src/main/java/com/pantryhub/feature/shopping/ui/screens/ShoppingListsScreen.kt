@@ -5,19 +5,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
+import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.feature.shopping.presentation.ShoppingUiState
 import com.pantryhub.feature.shopping.ui.components.ShoppingListCard
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListsScreen(
     state: ShoppingUiState,
@@ -25,26 +26,45 @@ fun ShoppingListsScreen(
     onCreateList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val spacing = PantryHubTheme.spacing
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Shopping Lists") })
+            PantryTopBar(title = stringResource(R.string.shopping_lists_title))
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onCreateList) {
-                Icon(Icons.Default.Add, contentDescription = "Create List")
+            FloatingActionButton(
+                onClick = onCreateList,
+                shape = PantryHubTheme.shapes.medium
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.create_list_description)
+                )
             }
         }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-        ) {
-            items(state.lists) { list ->
-                ShoppingListCard(
-                    shoppingList = list,
-                    onListClick = onListClick
-                )
+        if (state.lists.isEmpty() && !state.isLoading) {
+            PantryEmptyState(
+                title = stringResource(R.string.empty_shopping_lists_title),
+                description = stringResource(R.string.empty_shopping_lists_description),
+                icon = Icons.Default.Info,
+                action = {
+                    // Optional action could be here
+                }
+            )
+        } else {
+            LazyColumn(
+                modifier = modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = spacing.lg)
+            ) {
+                items(state.lists, key = { it.id }) { list ->
+                    ShoppingListCard(
+                        shoppingList = list,
+                        onListClick = onListClick
+                    )
+                }
             }
         }
     }

@@ -3,11 +3,13 @@ package com.pantryhub.core.designsystem.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -23,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = WarmGrey95,
     surface = WarmGrey10,
     onSurface = WarmGrey95,
-    error = Error
+    error = ErrorRedDark
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -39,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = WarmGrey10,
     surface = WarmGrey99,
     onSurface = WarmGrey10,
-    error = Error
+    error = ErrorRed
 )
 
 @Composable
@@ -59,10 +61,24 @@ fun PantryHubTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = PantryShapes,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalPantrySpacing provides PantrySpacing()
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            shapes = PantryShapes,
+            content = content
+        )
+    }
+}
+
+object PantryHubTheme {
+    val spacing: PantrySpacing
+        @Composable
+        get() = LocalPantrySpacing.current
+
+    val shapes: Shapes
+        @Composable
+        get() = MaterialTheme.shapes
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base UI States -->
+    <string name="error_title">Oops!</string>
+    <string name="retry_action">Retry</string>
+    <string name="loading_content">Loading…</string>
+
+    <!-- Navigation Labels -->
+    <string name="nav_lists">Lists</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Shopping Feature -->
+    <string name="shopping_lists_title">Shopping Lists</string>
+    <string name="create_list_description">Create List</string>
+    <string name="shopping_mode_title">%s - Shopping Mode</string>
+    <string name="pending_section">Pending</string>
+    <string name="completed_section">Completed</string>
+    <string name="start_shopping_action">Start Shopping</string>
+    <string name="add_item_label">Add new item</string>
+    <string name="item_quantity_subtitle">Qty: %s</string>
+    <string name="item_count_subtitle">%d items</string>
+    <string name="back_description">Back</string>
+
+    <!-- Empty States -->
+    <string name="empty_shopping_lists_title">No shopping lists yet</string>
+    <string name="empty_shopping_lists_description">Create your first list to start organizing your pantry.</string>
+</resources>

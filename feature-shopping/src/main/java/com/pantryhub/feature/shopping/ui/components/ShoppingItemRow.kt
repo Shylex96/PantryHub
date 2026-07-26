@@ -1,11 +1,10 @@
 package com.pantryhub.feature.shopping.ui.components
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryListItem
 import com.pantryhub.core.model.shopping.ShoppingListItem
 
@@ -17,7 +16,7 @@ fun ShoppingItemRow(
 ) {
     PantryListItem(
         title = item.product.name,
-        subtitle = "Quantity: ${item.quantity}",
+        subtitle = stringResource(R.string.item_quantity_subtitle, item.quantity.toString()),
         leadingContent = {
             Checkbox(
                 checked = item.isCompleted,

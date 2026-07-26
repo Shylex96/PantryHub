@@ -172,15 +172,13 @@ data
 
 ## Purpose
 
-Shared utilities used across modules.
+Shared utilities and UI components used across all feature modules.
 
-Contains:
+### Structure
 
-- Common extensions.
-- Constants.
-- Shared utilities.
-- Result wrappers.
-- Date utilities.
+- `theme`: Centralized Material 3 theme, colors, typography, and dimensions.
+- `components`: Reusable, atomic UI components (Buttons, Cards, States).
+- `util`: Global helper functions (Normalization, Date formatting).
 
 ---
 

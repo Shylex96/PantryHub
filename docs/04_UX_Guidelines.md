@@ -393,7 +393,7 @@ The user is currently buying.
 
 # Empty States
 
-Empty states should guide users.
+Empty states should guide users. Use `PantryEmptyState` for consistency.
 
 Never show:
 
@@ -423,7 +423,7 @@ Create list
 
 # Error Handling
 
-Errors should be understandable.
+Errors should be understandable. Use `PantryErrorState` to provide clear feedback and recovery actions.
 
 Avoid technical messages.
 

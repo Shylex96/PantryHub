@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
 @Composable
 fun PantryListItem(
@@ -22,18 +22,19 @@ fun PantryListItem(
     trailingContent: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) {
+    val spacing = PantryHubTheme.spacing
     val clickableModifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     
     Row(
         modifier = modifier
             .fillMaxWidth()
             .then(clickableModifier)
-            .padding(16.dp),
+            .padding(spacing.lg),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (leadingContent != null) {
             leadingContent()
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(spacing.lg))
         }
         
         Row(modifier = Modifier.weight(1f)) {
@@ -44,7 +45,7 @@ fun PantryListItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 if (subtitle != null) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(spacing.sm))
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodyMedium,
@@ -55,7 +56,7 @@ fun PantryListItem(
         }
         
         if (trailingContent != null) {
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(spacing.lg))
             trailingContent()
         }
     }

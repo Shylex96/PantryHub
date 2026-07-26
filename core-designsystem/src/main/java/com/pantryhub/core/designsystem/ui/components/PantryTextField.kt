@@ -15,6 +15,7 @@ fun PantryTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
 ) {
@@ -23,6 +24,7 @@ fun PantryTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         modifier = modifier,
+        leadingIcon = leadingIcon,
         isError = isError,
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = keyboardOptions,
