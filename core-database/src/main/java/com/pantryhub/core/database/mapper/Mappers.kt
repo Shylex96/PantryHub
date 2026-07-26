@@ -60,10 +60,10 @@ fun ShoppingList.asEntity() = ShoppingListEntity(
     createdAt = createdAt
 )
 
-fun ShoppingItemEntity.asDomainModel() = ShoppingListItem(
+fun ShoppingItemEntity.asDomainModel(product: Product) = ShoppingListItem(
     id = id,
     shoppingListId = shoppingListId,
-    productId = productId,
+    product = product,
     quantity = quantity,
     isCompleted = isCompleted,
     price = price,
@@ -74,7 +74,7 @@ fun ShoppingItemEntity.asDomainModel() = ShoppingListItem(
 fun ShoppingListItem.asEntity() = ShoppingItemEntity(
     id = id,
     shoppingListId = shoppingListId,
-    productId = productId,
+    productId = product.id,
     quantity = quantity,
     isCompleted = isCompleted,
     price = price,
@@ -93,7 +93,7 @@ fun Purchase.asEntity() = PurchaseEntity(
 fun ShoppingListItem.asPurchaseItem(purchaseId: String) = PurchaseItemEntity(
     id = java.util.UUID.randomUUID().toString(),
     purchaseId = purchaseId,
-    productId = productId,
+    productId = product.id,
     quantity = quantity,
     price = price
 )

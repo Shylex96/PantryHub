@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
+import com.pantryhub.feature.shopping.navigation.shoppingGraph
 
 @Composable
 fun PantryHubApp() {
@@ -64,9 +65,8 @@ fun PantryHubApp() {
                 startDestination = Destination.ShoppingLists,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable<Destination.ShoppingLists> {
-                    PlaceholderScreen("Shopping Lists")
-                }
+                shoppingGraph(navController)
+                
                 composable<Destination.Products> {
                     PlaceholderScreen("Products catalog")
                 }
@@ -75,9 +75,6 @@ fun PantryHubApp() {
                 }
                 composable<Destination.Settings> {
                     PlaceholderScreen("Settings")
-                }
-                composable<Destination.ShoppingMode> {
-                    PlaceholderScreen("Shopping Mode")
                 }
             }
         }

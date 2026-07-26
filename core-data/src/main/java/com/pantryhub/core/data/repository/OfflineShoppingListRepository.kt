@@ -33,7 +33,16 @@ class OfflineShoppingListRepository @Inject constructor(
 
     override fun getItemsForList(listId: String): Flow<List<ShoppingListItem>> {
         return shoppingListDao.getItemsForList(listId).map { entities ->
-            entities.map { it.asDomainModel() }
+            entities.map { 
+                // Placeholder product, real implementation will join in Room or use a helper
+                val dummyProduct = com.pantryhub.core.model.product.Product(
+                    id = it.productId,
+                    name = "Unknown",
+                    normalizedName = "unknown",
+                    createdAt = Clock.System.now()
+                )
+                it.asDomainModel(dummyProduct) 
+            }
         }
     }
 

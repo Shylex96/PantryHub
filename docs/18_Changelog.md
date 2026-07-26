@@ -67,18 +67,18 @@ Pending technical changes.
 
 ---
 
-# Version 0.1.0 - Initial Development
+# Version 0.1.0 - Initial Foundation
 
 Date:
 
 ```
-TBD
+2026-07-26
 ```
 
 Status:
 
 ```
-Development
+Released (v0.1.0-foundation)
 ```
 
 ---
@@ -89,11 +89,11 @@ Initial project foundation.
 
 Created:
 
-- Android application.
-- Kotlin configuration.
-- Jetpack Compose setup.
-- Modular architecture foundation.
-- Documentation system.
+- Android application with hierarchical modular architecture.
+- Full Hilt and KSP integration.
+- Centralized Design System in `core-designsystem`.
+- Type-safe navigation using Navigation Compose.
+- Complete documentation system (Vision, Architecture, Roadmap, ADRs).
 
 ---
 
@@ -101,9 +101,10 @@ Created:
 
 Configured:
 
-- Kotlin DSL.
-- Dependency management.
-- Base project structure.
+- Gradle 9.6.1 and AGP 9.3.1.
+- Kotlin 2.0.21 and Compose BOM 2026.02.01.
+- `kotlinx-datetime` integration.
+- String normalization utilities for domain logic.
 
 ---
 

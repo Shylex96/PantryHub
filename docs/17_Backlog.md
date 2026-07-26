@@ -395,21 +395,15 @@ Description:
 
 Users can create shopping lists.
 
-Examples:
-
-```
-Weekly Shopping
-
-Christmas
-
-Trip
-```
+Sprint 1 (feature-shopping):
+- Create `ShoppingListsScreen`.
+- Implement `ShoppingViewModel` with memory data.
+- UI components: `ShoppingListCard`.
 
 Acceptance criteria:
 
 ```
 List is stored.
-
 List appears in main screen.
 ```
 
