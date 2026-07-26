@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.feature.shopping.presentation.ShoppingIntent
 import com.pantryhub.feature.shopping.presentation.ShoppingViewModel
+import com.pantryhub.feature.shopping.ui.screens.ShoppingListDetailScreen
 import com.pantryhub.feature.shopping.ui.screens.ShoppingListsScreen
 import com.pantryhub.feature.shopping.ui.screens.ShoppingModeScreen
 
@@ -24,10 +25,34 @@ fun NavGraphBuilder.shoppingGraph(
             state = state,
             onListClick = { id ->
                 viewModel.handleIntent(ShoppingIntent.OpenList(id))
-                navController.navigate(Destination.ShoppingMode(id))
+                navController.navigate(Destination.ShoppingListDetail(id))
             },
             onCreateList = {
                 viewModel.handleIntent(ShoppingIntent.CreateList("New List"))
+            }
+        )
+    }
+
+    composable<Destination.ShoppingListDetail> { backStackEntry ->
+        val route: Destination.ShoppingListDetail = backStackEntry.toRoute()
+        val viewModel: ShoppingViewModel = hiltViewModel()
+        val state by viewModel.uiState.collectAsState()
+
+        viewModel.handleIntent(ShoppingIntent.OpenList(route.listId))
+
+        ShoppingListDetailScreen(
+            state = state,
+            onAddItem = { name, qty ->
+                viewModel.handleIntent(ShoppingIntent.AddItem(name, qty))
+            },
+            onDeleteItem = { id ->
+                viewModel.handleIntent(ShoppingIntent.DeleteItem(id))
+            },
+            onStartShopping = {
+                navController.navigate(Destination.ShoppingMode(route.listId))
+            },
+            onBack = {
+                navController.popBackStack()
             }
         )
     }

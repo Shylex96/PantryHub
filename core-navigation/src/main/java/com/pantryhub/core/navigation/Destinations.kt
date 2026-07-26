@@ -8,6 +8,9 @@ sealed interface Destination {
     data object ShoppingLists : Destination
 
     @Serializable
+    data class ShoppingListDetail(val listId: String) : Destination
+
+    @Serializable
     data class ShoppingMode(val listId: String) : Destination
 
     @Serializable

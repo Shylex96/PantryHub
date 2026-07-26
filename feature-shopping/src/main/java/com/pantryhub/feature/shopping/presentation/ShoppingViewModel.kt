@@ -30,6 +30,8 @@ class ShoppingViewModel @Inject constructor() : ViewModel() {
             ShoppingIntent.LoadLists -> loadMockData()
             is ShoppingIntent.CreateList -> createList(intent.name)
             is ShoppingIntent.OpenList -> openList(intent.id)
+            is ShoppingIntent.AddItem -> addItem(intent.name, intent.quantity)
+            is ShoppingIntent.DeleteItem -> deleteItem(intent.itemId)
             is ShoppingIntent.ToggleItem -> toggleItem(intent.itemId)
             ShoppingIntent.FinishShopping -> finishShopping()
         }
@@ -84,6 +86,42 @@ class ShoppingViewModel @Inject constructor() : ViewModel() {
     private fun openList(id: String) {
         val list = _uiState.value.lists.find { it.id == id }
         _uiState.update { it.copy(currentList = list) }
+    }
+
+    private fun addItem(name: String, quantity: Double) {
+        _uiState.update { state ->
+            val updatedList = state.currentList?.let { list ->
+                val newItem = ShoppingListItem(
+                    id = UUID.randomUUID().toString(),
+                    shoppingListId = list.id,
+                    product = Product(
+                        id = UUID.randomUUID().toString(),
+                        name = name,
+                        normalizedName = name.lowercase(),
+                        createdAt = Clock.System.now()
+                    ),
+                    quantity = quantity,
+                    addedAt = Clock.System.now()
+                )
+                list.copy(items = list.items + newItem)
+            }
+            state.copy(
+                currentList = updatedList,
+                lists = state.lists.map { if (it.id == updatedList?.id) updatedList else it }
+            )
+        }
+    }
+
+    private fun deleteItem(itemId: String) {
+        _uiState.update { state ->
+            val updatedList = state.currentList?.let { list ->
+                list.copy(items = list.items.filter { it.id != itemId })
+            }
+            state.copy(
+                currentList = updatedList,
+                lists = state.lists.map { if (it.id == updatedList?.id) updatedList else it }
+            )
+        }
     }
 
     private fun toggleItem(itemId: String) {
