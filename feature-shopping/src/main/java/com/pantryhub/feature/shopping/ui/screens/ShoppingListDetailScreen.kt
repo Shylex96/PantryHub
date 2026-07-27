@@ -238,7 +238,7 @@ fun ShoppingListDetailScreen(
                                     Icon(
                                         imageVector = PantryIcons.Delete,
                                         contentDescription = stringResource(R.string.delete_action),
-                                        tint = Color.White.copy(alpha = iconAlpha),
+                                        // tint = Color.White.copy(alpha = iconAlpha),
                                         modifier = Modifier.scale(scale)
                                     )
                                 }
