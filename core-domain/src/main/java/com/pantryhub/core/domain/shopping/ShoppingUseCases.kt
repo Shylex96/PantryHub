@@ -15,6 +15,7 @@ class ShoppingUseCases @Inject constructor(
     val createShoppingList: CreateShoppingListUseCase,
     val renameShoppingList: RenameShoppingListUseCase,
     val deleteShoppingList: DeleteShoppingListUseCase,
+    val getShoppingList: GetShoppingListUseCase,
     val addProductToShoppingList: AddProductToShoppingListUseCase,
     val cloneShoppingList: CloneShoppingListUseCase,
     val finishShopping: FinishShoppingUseCase,
@@ -28,6 +29,12 @@ class GetShoppingListsUseCase @Inject constructor(
     private val repository: ShoppingListRepository
 ) {
     operator fun invoke(): Flow<List<ShoppingList>> = repository.getLists()
+}
+
+class GetShoppingListUseCase @Inject constructor(
+    private val repository: ShoppingListRepository
+) {
+    suspend operator fun invoke(id: String): ShoppingList? = repository.getList(id)
 }
 
 class GetShoppingListItemsUseCase @Inject constructor(

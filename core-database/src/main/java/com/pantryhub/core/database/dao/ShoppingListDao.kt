@@ -9,17 +9,19 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.pantryhub.core.database.entity.ShoppingItemEntity
 import com.pantryhub.core.database.entity.ShoppingListEntity
+import com.pantryhub.core.database.entity.ShoppingListWithItems
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ShoppingListDao {
+    @Transaction
     @Query("SELECT * FROM shopping_lists ORDER BY created_at DESC")
-    fun getAllLists(): Flow<List<ShoppingListEntity>>
+    fun getAllListsWithItems(): Flow<List<ShoppingListWithItems>>
 
     @Query("SELECT * FROM shopping_lists WHERE id = :id")
     suspend fun getListById(id: String): ShoppingListEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertList(list: ShoppingListEntity)
 
     @Update

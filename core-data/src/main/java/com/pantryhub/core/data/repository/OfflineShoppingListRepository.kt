@@ -16,16 +16,30 @@ class OfflineShoppingListRepository @Inject constructor(
     private val productDao: ProductDao
 ) : ShoppingListRepository {
     override fun getLists(): Flow<List<ShoppingList>> {
-        return shoppingListDao.getAllLists().map { entities ->
-            entities.map { it.asDomainModel(items = emptyList()) }
+        return shoppingListDao.getAllListsWithItems().map { wrappers ->
+            wrappers.map { wrapper ->
+                wrapper.list.asDomainModel(
+                    items = wrapper.items.map { 
+                        it.asDomainModel(dummyProduct()) 
+                    }
+                )
+            }
         }
     }
+
+    private fun dummyProduct() = com.pantryhub.core.model.product.Product(
+        id = "",
+        name = "",
+        normalizedName = "",
+        createdAt = Clock.System.now()
+    )
 
     override suspend fun getList(id: String): ShoppingList? {
         return shoppingListDao.getListById(id)?.asDomainModel(items = emptyList())
     }
 
     override suspend fun saveList(list: ShoppingList) {
+        shoppingListDao.updateList(list.asEntity())
         shoppingListDao.insertList(list.asEntity())
     }
 
@@ -36,15 +50,8 @@ class OfflineShoppingListRepository @Inject constructor(
     override fun getItemsForList(listId: String): Flow<List<ShoppingListItem>> {
         return shoppingListDao.getItemsForList(listId).map { entities ->
             entities.map { itemEntity ->
-                // This is a simple implementation. In a larger app, we would use a SQL Join in Room
-                // for performance. For now, we fetch the product corresponding to the ID.
                 val productEntity = productDao.getProductById(itemEntity.productId)
-                val product = productEntity?.asDomainModel() ?: com.pantryhub.core.model.product.Product(
-                    id = itemEntity.productId,
-                    name = "Unknown",
-                    normalizedName = "unknown",
-                    createdAt = Clock.System.now()
-                )
+                val product = productEntity?.asDomainModel() ?: dummyProduct().copy(id = itemEntity.productId)
                 itemEntity.asDomainModel(product) 
             }
         }

@@ -19,11 +19,26 @@
     <string name="completed_section">Completados</string>
     <string name="start_shopping_action">Empezar a Comprar</string>
     <string name="add_item_label">Añadir nuevo ítem</string>
-    <string name="item_quantity_subtitle">Cant: %s</string>
     <string name="item_count_subtitle">%d ítems</string>
     <string name="back_description">Volver</string>
 
     <!-- Empty States -->
     <string name="empty_shopping_lists_title">No hay listas aún</string>
     <string name="empty_shopping_lists_description">Crea tu primera lista para empezar a organizar tu despensa.</string>
+
+    <!-- Dialogs & Actions -->
+    <string name="create_list_dialog_title">Nueva Lista de Compra</string>
+    <string name="rename_list_dialog_title">Renombrar Lista</string>
+    <string name="list_name_placeholder">Nombre de la lista</string>
+    <string name="save_action">Guardar</string>
+    <string name="cancel_action">Cancelar</string>
+    <string name="delete_action">Eliminar</string>
+    <string name="finish_action">Finalizar</string>
+
+    <!-- Finish Shopping -->
+    <string name="finish_shopping_dialog_title">Finalizar Compra</string>
+    <string name="supermarket_label">Supermercado (Opcional)</string>
+    <string name="total_price_label">Precio Total (Opcional)</string>
+    <string name="finish_without_saving">Solo finalizar</string>
+    <string name="save_and_finish">Guardar y Finalizar</string>
 </resources>

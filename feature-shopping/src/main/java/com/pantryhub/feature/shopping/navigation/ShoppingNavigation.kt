@@ -30,8 +30,8 @@ fun NavGraphBuilder.shoppingGraph(
             onDeleteList = { id ->
                 viewModel.handleIntent(ShoppingIntent.DeleteList(id))
             },
-            onCreateList = {
-                viewModel.handleIntent(ShoppingIntent.CreateList("New List"))
+            onCreateList = { name ->
+                viewModel.handleIntent(ShoppingIntent.CreateList(name))
             }
         )
     }
@@ -81,6 +81,9 @@ fun NavGraphBuilder.shoppingGraph(
             state = state,
             onToggleItem = { itemId ->
                 viewModel.handleIntent(ShoppingIntent.ToggleItem(itemId))
+            },
+            onFinishShopping = { supermarket, price ->
+                viewModel.handleIntent(ShoppingIntent.FinishWithData(supermarket, price))
             },
             onBack = {
                 navController.popBackStack()

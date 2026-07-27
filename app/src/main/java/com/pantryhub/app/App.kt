@@ -16,12 +16,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
@@ -38,10 +40,26 @@ fun PantryHubApp() {
         Scaffold(
             bottomBar = {
                 val items = listOf(
-                    NavigationItem("Lists", Icons.AutoMirrored.Filled.List, Destination.ShoppingLists),
-                    NavigationItem("Products", Icons.Default.ShoppingCart, Destination.Products),
-                    NavigationItem("Notes", Icons.Default.Star, Destination.Notes),
-                    NavigationItem("Settings", Icons.Default.Settings, Destination.Settings),
+                    NavigationItem(
+                        label = stringResource(R.string.nav_lists), 
+                        icon = Icons.AutoMirrored.Filled.List, 
+                        destination = Destination.ShoppingLists
+                    ),
+                    NavigationItem(
+                        label = stringResource(R.string.nav_products), 
+                        icon = Icons.Default.ShoppingCart, 
+                        destination = Destination.Products
+                    ),
+                    NavigationItem(
+                        label = stringResource(R.string.nav_notes), 
+                        icon = Icons.Default.Star, 
+                        destination = Destination.Notes
+                    ),
+                    NavigationItem(
+                        label = stringResource(R.string.nav_settings), 
+                        icon = Icons.Default.Settings, 
+                        destination = Destination.Settings
+                    ),
                 )
 
                 NavigationBar {
@@ -68,13 +86,13 @@ fun PantryHubApp() {
                 shoppingGraph(navController)
                 
                 composable<Destination.Products> {
-                    PlaceholderScreen("Products catalog")
+                    PlaceholderScreen(stringResource(R.string.nav_products))
                 }
                 composable<Destination.Notes> {
-                    PlaceholderScreen("Quick notes")
+                    PlaceholderScreen(stringResource(R.string.nav_notes))
                 }
                 composable<Destination.Settings> {
-                    PlaceholderScreen("Settings")
+                    PlaceholderScreen(stringResource(R.string.nav_settings))
                 }
             }
         }

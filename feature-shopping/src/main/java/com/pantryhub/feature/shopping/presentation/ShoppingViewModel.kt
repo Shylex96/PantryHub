@@ -39,7 +39,7 @@ class ShoppingViewModel @Inject constructor(
             is ShoppingIntent.AddItem -> addItem(intent.name, intent.quantity)
             is ShoppingIntent.DeleteItem -> deleteItem(intent.itemId)
             is ShoppingIntent.ToggleItem -> toggleItem(intent.itemId)
-            ShoppingIntent.FinishShopping -> finishShopping()
+            is ShoppingIntent.FinishWithData -> finishShopping(intent.supermarket, intent.price)
         }
     }
 
@@ -63,14 +63,16 @@ class ShoppingViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         
         viewModelScope.launch {
-            // Observe items for this specific list reactively
+            // Fetch list metadata immediately for faster UI feedback
+            val list = shoppingUseCases.getShoppingList(id)
+            _uiState.update { it.copy(currentList = list) }
+            
+            // Start observing items for this specific list reactively
             itemsObservationJob = shoppingUseCases.getShoppingListItems(id)
                 .onEach { items ->
-                    // Fetch list info if not present or to ensure it's up to date
-                    val list = shoppingUseCases.getShoppingLists().first().find { it.id == id }
                     _uiState.update { state ->
                         state.copy(
-                            currentList = list?.copy(items = items),
+                            currentList = state.currentList?.copy(items = items),
                             isLoading = false
                         )
                     }
@@ -122,10 +124,16 @@ class ShoppingViewModel @Inject constructor(
         }
     }
 
-    private fun finishShopping() {
+    private fun finishShopping(supermarket: String?, price: Double?) {
         val currentListId = _uiState.value.currentList?.id ?: return
         viewModelScope.launch {
-            shoppingUseCases.finishShopping.execute(currentListId)
+            shoppingUseCases.finishShopping.execute(
+                listId = currentListId,
+                supermarket = supermarket,
+                totalAmount = price ?: 0.0
+            )
+            // After finishing, we could potentially reset the items completion or archive the list
+            _uiState.update { it.copy(currentList = null) }
         }
     }
 }
