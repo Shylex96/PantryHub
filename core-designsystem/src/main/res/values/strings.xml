@@ -35,10 +35,24 @@
     <string name="delete_action">Delete</string>
     <string name="finish_action">Finish</string>
 
+    <!-- Confirmations -->
+    <string name="delete_list_confirm_title">Delete List?</string>
+    <string name="delete_list_confirm_message">Are you sure you want to delete \"%s\"? All items inside will be permanently removed.</string>
+    <string name="delete_confirm_action">Yes, Delete</string>
+
     <!-- Finish Shopping -->
     <string name="finish_shopping_dialog_title">Finish Shopping</string>
     <string name="supermarket_label">Supermarket (Optional)</string>
     <string name="total_price_label">Total Price (Optional)</string>
     <string name="finish_without_saving">Just Finish</string>
     <string name="save_and_finish">Save and Finish</string>
+    <string name="finish_validation_error">Please fill both Supermarket and Price to save history.</string>
+
+    <!-- Coming Soon Placeholders -->
+    <string name="products_coming_soon_title">Product Catalog</string>
+    <string name="products_coming_soon_desc">The master product list is under construction. You will be able to manage all your items here soon.</string>
+    <string name="notes_coming_soon_title">Quick Notes</string>
+    <string name="notes_coming_soon_desc">Need to remember a price or a recipe? Notes are coming in the next update.</string>
+    <string name="settings_coming_soon_title">App Settings</string>
+    <string name="settings_coming_soon_desc">Configuration for units, themes, and backups will be available here.</string>
 </resources>

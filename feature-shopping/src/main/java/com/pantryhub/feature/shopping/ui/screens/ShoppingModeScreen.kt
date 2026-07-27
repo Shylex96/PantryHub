@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
 import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.feature.shopping.presentation.ShoppingUiState
 import com.pantryhub.feature.shopping.ui.components.ShoppingItemRow
@@ -54,6 +52,12 @@ fun ShoppingModeScreen(
     var totalPrice by remember { mutableStateOf("") }
 
     if (showFinishDialog) {
+        // Validation: "Save and Finish" requires BOTH fields.
+        // If they want to finish without data, they use "Just Finish".
+        val isSupermarketFilled = supermarket.isNotBlank()
+        val isPriceFilled = totalPrice.isNotBlank()
+        val isSaveEnabled = isSupermarketFilled && isPriceFilled
+        
         AlertDialog(
             onDismissRequest = { showFinishDialog = false },
             title = { Text(stringResource(R.string.finish_shopping_dialog_title)) },
@@ -73,15 +77,26 @@ fun ShoppingModeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                     )
+                    if (!isSaveEnabled && (isSupermarketFilled || isPriceFilled)) {
+                        Text(
+                            text = stringResource(R.string.finish_validation_error),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(top = spacing.xs)
+                        )
+                    }
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    val price = totalPrice.toDoubleOrNull()
-                    onFinishShopping(supermarket.ifBlank { null }, price)
-                    showFinishDialog = false
-                    onBack()
-                }) {
+                TextButton(
+                    onClick = {
+                        val price = totalPrice.toDoubleOrNull()
+                        onFinishShopping(supermarket.ifBlank { null }, price)
+                        showFinishDialog = false
+                        onBack()
+                    },
+                    enabled = isSaveEnabled
+                ) {
                     Text(stringResource(R.string.save_and_finish))
                 }
             },
@@ -109,7 +124,7 @@ fun ShoppingModeScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                            imageVector = PantryIcons.Back, 
                             contentDescription = stringResource(R.string.back_description)
                         )
                     }
@@ -117,7 +132,7 @@ fun ShoppingModeScreen(
                 actions = {
                     IconButton(onClick = { showFinishDialog = true }) {
                         Icon(
-                            imageVector = Icons.Default.Check, 
+                            imageVector = PantryIcons.Check, 
                             contentDescription = stringResource(R.string.finish_action)
                         )
                     }

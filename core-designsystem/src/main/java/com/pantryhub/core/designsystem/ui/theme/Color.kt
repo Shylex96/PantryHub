@@ -29,6 +29,9 @@ val WarningOrange = Color(0xFFF57C00)
 val ErrorRed = Color(0xFFD32F2F)
 val InfoBlue = Color(0xFF1976D2)
 
+// Custom Intense Danger (Cross-theme)
+val IntenseDanger = Color(0xFFB00020)
+
 // Dark Mode Overrides for Semantic
 val SuccessGreenDark = Color(0xFF81C784)
 val WarningOrangeDark = Color(0xFFFFB74D)

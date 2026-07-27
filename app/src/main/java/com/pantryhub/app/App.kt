@@ -1,16 +1,11 @@
 package com.pantryhub.app
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,6 +19,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
+import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
@@ -42,27 +39,30 @@ fun PantryHubApp() {
                 val items = listOf(
                     NavigationItem(
                         label = stringResource(R.string.nav_lists), 
-                        icon = Icons.AutoMirrored.Filled.List, 
+                        icon = PantryIcons.Lists, 
                         destination = Destination.ShoppingLists
                     ),
                     NavigationItem(
                         label = stringResource(R.string.nav_products), 
-                        icon = Icons.Default.ShoppingCart, 
+                        icon = PantryIcons.Products, 
                         destination = Destination.Products
                     ),
                     NavigationItem(
                         label = stringResource(R.string.nav_notes), 
-                        icon = Icons.Default.Star, 
+                        icon = PantryIcons.Notes, 
                         destination = Destination.Notes
                     ),
                     NavigationItem(
                         label = stringResource(R.string.nav_settings), 
-                        icon = Icons.Default.Settings, 
+                        icon = PantryIcons.Settings, 
                         destination = Destination.Settings
                     ),
                 )
 
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = PantryHubTheme.elevations.low
+                ) {
                     items.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any {
                             it.hasRoute(item.destination::class)
@@ -70,7 +70,6 @@ fun PantryHubApp() {
 
                         NavigationBarItem(
                             icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) },
                             selected = selected,
                             onClick = { navActions.navigateTo(item.destination) }
                         )
@@ -86,26 +85,29 @@ fun PantryHubApp() {
                 shoppingGraph(navController)
                 
                 composable<Destination.Products> {
-                    PlaceholderScreen(stringResource(R.string.nav_products))
+                    PantryEmptyState(
+                        title = stringResource(R.string.products_coming_soon_title),
+                        description = stringResource(R.string.products_coming_soon_desc),
+                        icon = PantryIcons.Products
+                    )
                 }
                 composable<Destination.Notes> {
-                    PlaceholderScreen(stringResource(R.string.nav_notes))
+                    PantryEmptyState(
+                        title = stringResource(R.string.notes_coming_soon_title),
+                        description = stringResource(R.string.notes_coming_soon_desc),
+                        icon = PantryIcons.Notes
+                    )
                 }
                 composable<Destination.Settings> {
-                    PlaceholderScreen(stringResource(R.string.nav_settings))
+                    PantryEmptyState(
+                        title = stringResource(R.string.settings_coming_soon_title),
+                        description = stringResource(R.string.settings_coming_soon_desc),
+                        icon = PantryIcons.Settings
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun PlaceholderScreen(name: String) {
-    Text(
-        text = name,
-        modifier = Modifier.padding(PantryHubTheme.spacing.lg),
-        style = PantryHubTheme.typography.headlineMedium
-    )
 }
 
 data class NavigationItem(
