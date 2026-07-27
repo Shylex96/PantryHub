@@ -101,7 +101,11 @@ fun PantryHubApp() {
 
 @Composable
 fun PlaceholderScreen(name: String) {
-    Text(text = "Screen: $name")
+    Text(
+        text = name,
+        modifier = Modifier.padding(PantryHubTheme.spacing.lg),
+        style = PantryHubTheme.typography.headlineMedium
+    )
 }
 
 data class NavigationItem(

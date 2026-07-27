@@ -7,6 +7,7 @@ import com.pantryhub.core.data.repository.ShoppingListRepository
 import com.pantryhub.core.domain.product.DetectDuplicateProductUseCase
 import com.pantryhub.core.model.product.Product
 import com.pantryhub.core.model.shopping.ShoppingListItem
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import java.util.UUID
 import javax.inject.Inject
@@ -35,7 +36,14 @@ class AddProductToShoppingListUseCase @Inject constructor(
             newProduct
         }
 
-        // 2. Create and Save Shopping List Item
+        // 2. Check if the product is already in the target list
+        val currentItems = shoppingListRepository.getItemsForList(listId).first()
+        if (currentItems.any { it.product.id == product.id }) {
+            // Already in list, we don't add it again (or could increment qty)
+            return
+        }
+
+        // 3. Create and Save Shopping List Item
         val shoppingListItem = ShoppingListItem(
             id = UUID.randomUUID().toString(),
             shoppingListId = listId,
@@ -46,7 +54,7 @@ class AddProductToShoppingListUseCase @Inject constructor(
         
         shoppingListRepository.saveItem(shoppingListItem)
         
-        // 3. Increment usage frequency
+        // 4. Increment usage frequency
         productRepository.incrementUsage(product.id)
     }
 }

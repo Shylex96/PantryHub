@@ -13,4 +13,5 @@ interface ShoppingListRepository {
     suspend fun saveItem(item: ShoppingListItem)
     suspend fun deleteItem(item: ShoppingListItem)
     suspend fun updateItemCompletion(itemId: String, isCompleted: Boolean)
+    suspend fun resetList(listId: String)
 }

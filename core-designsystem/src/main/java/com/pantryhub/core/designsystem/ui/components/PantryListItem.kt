@@ -6,13 +6,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
+/**
+ * Reusable list item for products, lists, or notes.
+ */
 @Composable
 fun PantryListItem(
     title: String,
@@ -59,5 +66,20 @@ fun PantryListItem(
             Spacer(modifier = Modifier.width(spacing.lg))
             trailingContent()
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PantryListItemPreview() {
+    PantryHubTheme {
+        PantryListItem(
+            title = "Item Title",
+            subtitle = "Subtitle detail",
+            leadingContent = {
+                Icon(Icons.Default.Info, contentDescription = null)
+            },
+            onClick = {}
+        )
     }
 }

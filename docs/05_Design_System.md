@@ -1,99 +1,71 @@
-# PantryHub Design System
+# PantryHub Design System Foundation
 
 ## Overview
-
-This is the central reference for the visual language and reusable design rules of PantryHub. All UI development must adhere to these guidelines to ensure consistency, accessibility, and a modern user experience.
-
-The design system is built upon **Material 3** and **Jetpack Compose**, leveraging the latest Android design principles.
+The PantryHub Design System is the single source of truth for the application's visual language. It provides a set of tokens and reusable components to ensure consistency, accessibility, and high development velocity.
 
 ---
 
-# 1. Visual Identity
+# 1. Visual Tokens
 
-PantryHub aims to feel **organized, trustworthy, and calm**. The interface uses soft tones inspired by home and nature (Sage, Earth, Terracotta) to reduce the mental friction of daily chores.
+Visual tokens are the smallest atoms of our design system. Never use hardcoded values in UI modules.
 
----
+### 1.1 Spacing (PantrySpacing)
+Standardized gaps between elements.
+- `xs`: 4dp (Tight grouping)
+- `sm`: 8dp (Inner component padding)
+- `md`: 12dp (Content grouping)
+- `lg`: 16dp (Screen edges)
+- `xl`: 24dp (Section separation)
 
-# 2. Color System
+### 1.2 Elevations
+Control depth and hierarchy.
+- `low`: 2dp (Default cards)
+- `medium`: 4dp (Elevated items)
+- `high`: 8dp (Dialogs/Modals)
 
-We use a semantic color system that adapts to both Light and Dark modes.
-
-### Brand Palette
-- **Primary (Sage Green)**: Represents growth and organization. Used for main actions.
-- **Secondary (Earthy Neutral)**: Represents home and stability. Used for supporting elements.
-- **Tertiary (Soft Terracotta)**: Adds warmth and human touch.
-
-### Semantic Colors
-- **Success**: Positive actions, completed items.
-- **Warning**: Actions requiring attention.
-- **Error**: Destructive actions, failures.
-- **Info**: Neutral information.
-
----
-
-# 3. Spacing System (PantrySpacing)
-
-Never use arbitrary values. All gaps and paddings must use the `PantrySpacing` tokens:
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `xs`  | 4dp   | Micro-spacing, tight grouping |
-| `sm`  | 8dp   | Internal component padding |
-| `md`  | 12dp  | Content grouping |
-| `lg`  | 16dp  | Screen edges, main item padding |
-| `xl`  | 24dp  | Section separation |
-| `xxl` | 32dp  | Hero areas, very large gaps |
-
-Access via: `PantryHubTheme.spacing.md`
+### 1.3 Iconography (PantryIcons)
+Semantic mapping for common actions.
+- `PantryIcons.Add`, `Delete`, `Edit`, `Search`.
+- Navigation: `Lists`, `Products`, `Notes`, `Settings`.
 
 ---
 
-# 4. Typography
+# 2. Reusable Components
 
-Hierarchy optimized for mobile reading and fast scanning in the supermarket:
+All components are located in the `:core-designsystem` module.
 
-- **Display**: Large numbers or hero headlines.
-- **Headline**: Screen titles.
-- **Title**: Card and list item headers.
-- **Body**: Primary content (product names, notes).
-- **Label**: Secondary details (quantities, dates).
+### 2.1 PantryButton
+The primary interaction element.
+- **Usage**: Use `Primary` for the main action, `Secondary` for alternatives, and `Destructive` for data deletion.
+- **States**: Supports a built-in `isLoading` state which replaces the text with a spinner.
 
----
+### 2.2 PantryListItem
+The foundational block for all lists.
+- **Usage**: Mandatory for Shopping Lists, Product Catalogs, and Notes.
+- **Structure**: Supports leading icons/checks and trailing actions (e.g., Delete/Edit).
 
-# 5. Core Components (`:core-designsystem`)
-
-### PantryButton
-The main interactive element.
-- **Types**: `Primary`, `Secondary`, `Destructive`.
-- **States**: Default, Disabled, Loading (built-in spinner).
-
-### PantryTopBar
-Standardized header. Always includes the title and supports navigation icons and actions.
-
-### PantrySearchBar
-Integrated search functionality with consistent icons and styling.
-
-### PantryListItem
-The building block for all lists (Products, Lists, Notes). Supports leading icons, titles, subtitles, and trailing actions.
+### 2.3 PantryCard
+Standardized container for grouped information.
+- **Usage**: High-level summaries or dashboard-style items.
 
 ---
 
-# 6. Screen State Management
+# 3. Global UI States
 
-Every screen should handle these three states using standardized components:
-1. **PantryLoading**: Centered progress indicator.
-2. **PantryEmptyState**: Descriptive icon + text + optional action.
-3. **PantryErrorState**: Error message + retry action.
+Every screen in PantryHub must handle the following states using the standardized components:
 
----
-
-# 7. Design Rules & Best Practices
-
-1. **Touch Targets**: Minimum **48x48dp** for all interactive elements.
-2. **No Hardcoded Strings**: All text must come from `strings.xml`.
-3. **Reactive UI**: Components must be stateless (receive state, emit events).
-4. **Consistency**: If a component doesn't exist in `core-designsystem`, create it there before using it in a feature.
-5. **Mode Support**: Test every screen in both Light and Dark modes.
+| State | Component | Requirement |
+|-------|-----------|-------------|
+| **Loading** | `PantryLoading` | Use for initial data fetch. |
+| **Empty** | `PantryEmptyState` | Provide a clear icon and a call to action. |
+| **Error** | `PantryErrorState` | Explain what happened and provide a **Retry** button. |
 
 ---
-Last updated: July 26, 2026
+
+# 4. Accessibility Rules
+1. **Minimum Touch Target**: Every interactive element must be at least **48x48dp**.
+2. **Contrast**: Use semantic colors from `MaterialTheme.colorScheme` to ensure M3 contrast standards.
+3. **Screen Readers**: Always provide `contentDescription` for icons or use `null` for decorative elements.
+
+---
+Last updated: July 27, 2026

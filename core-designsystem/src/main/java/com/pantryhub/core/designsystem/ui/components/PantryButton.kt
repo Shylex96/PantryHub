@@ -7,10 +7,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
 enum class PantryButtonType {
     Primary,
@@ -44,7 +46,7 @@ fun PantryButton(
         modifier = modifier,
         enabled = enabled && !isLoading,
         colors = colors,
-        shape = MaterialTheme.shapes.medium
+        shape = PantryHubTheme.shapes.medium
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -70,7 +72,7 @@ fun PantryOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled && !isLoading,
-        shape = MaterialTheme.shapes.medium
+        shape = PantryHubTheme.shapes.medium
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -79,6 +81,46 @@ fun PantryOutlinedButton(
             )
         } else {
             content()
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Primary Button")
+@Composable
+private fun PantryButtonPreview() {
+    PantryHubTheme {
+        PantryButton(onClick = {}) {
+            Text("Primary Button")
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Secondary Button")
+@Composable
+private fun PantrySecondaryButtonPreview() {
+    PantryHubTheme {
+        PantryButton(onClick = {}, type = PantryButtonType.Secondary) {
+            Text("Secondary Button")
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Destructive Button")
+@Composable
+private fun PantryDestructiveButtonPreview() {
+    PantryHubTheme {
+        PantryButton(onClick = {}, type = PantryButtonType.Destructive) {
+            Text("Destructive Button")
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Loading Button")
+@Composable
+private fun PantryLoadingButtonPreview() {
+    PantryHubTheme {
+        PantryButton(onClick = {}, isLoading = true) {
+            Text("Loading...")
         }
     }
 }

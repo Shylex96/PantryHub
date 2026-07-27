@@ -35,7 +35,7 @@ class FinishShoppingUseCase @Inject constructor(
 
         purchaseRepository.savePurchase(purchase)
 
-        // Data preservation: we no longer delete items from the list.
-        // In the future, we might mark the list as "archived" or just clear the completion status.
+        // Reset list state: set all items to pending
+        shoppingListRepository.resetList(listId)
     }
 }

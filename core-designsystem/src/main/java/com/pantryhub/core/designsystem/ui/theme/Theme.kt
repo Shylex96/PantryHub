@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -62,7 +63,10 @@ fun PantryHubTheme(
     }
 
     CompositionLocalProvider(
-        LocalPantrySpacing provides PantrySpacing()
+        LocalPantrySpacing provides PantrySpacing(),
+        LocalPantryIconSize provides PantryIconSize(),
+        LocalPantryElevation provides PantryElevation(),
+        LocalPantryTouchTarget provides PantryTouchTarget()
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -77,6 +81,22 @@ object PantryHubTheme {
     val spacing: PantrySpacing
         @Composable
         get() = LocalPantrySpacing.current
+
+    val icons: PantryIconSize
+        @Composable
+        get() = LocalPantryIconSize.current
+
+    val elevations: PantryElevation
+        @Composable
+        get() = LocalPantryElevation.current
+
+    val touchTargets: PantryTouchTarget
+        @Composable
+        get() = LocalPantryTouchTarget.current
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
 
     val shapes: Shapes
         @Composable

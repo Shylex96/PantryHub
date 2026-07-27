@@ -69,4 +69,8 @@ class OfflineShoppingListRepository @Inject constructor(
         val completedAt = if (isCompleted) Clock.System.now().toEpochMilliseconds() else null
         shoppingListDao.updateItemCompletion(itemId, isCompleted, completedAt)
     }
+
+    override suspend fun resetList(listId: String) {
+        shoppingListDao.resetListCompletion(listId)
+    }
 }

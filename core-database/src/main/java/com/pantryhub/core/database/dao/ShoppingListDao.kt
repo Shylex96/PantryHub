@@ -45,4 +45,7 @@ interface ShoppingListDao {
     @Transaction
     @Query("UPDATE shopping_items SET is_completed = :isCompleted, completed_at = :completedAt WHERE id = :itemId")
     suspend fun updateItemCompletion(itemId: String, isCompleted: Boolean, completedAt: Long?)
+
+    @Query("UPDATE shopping_items SET is_completed = 0, completed_at = NULL WHERE shopping_list_id = :listId")
+    suspend fun resetListCompletion(listId: String)
 }

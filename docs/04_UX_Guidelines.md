@@ -393,39 +393,13 @@ The user is currently buying.
 
 # Empty States
 
-Empty states should guide users. Use `PantryEmptyState` for consistency.
-
-Never show:
-
-```
-No data
-```
-
-without explanation.
-
----
-
-## Good Example
-
-```
-You don't have any shopping lists yet.
-
-Create your first list to start organizing your purchases.
-```
-
-Action:
-
-```
-Create list
-```
+Empty states should guide users. Use `PantryEmptyState` from the Design System to maintain visual consistency and provide helpful next steps.
 
 ---
 
 # Error Handling
 
-Errors should be understandable. Use `PantryErrorState` to provide clear feedback and recovery actions.
-
-Avoid technical messages.
+Errors should be understandable and actionable. Use `PantryErrorState` to provide a "Retry" mechanism and avoid technical jargon.
 
 Bad:
 
