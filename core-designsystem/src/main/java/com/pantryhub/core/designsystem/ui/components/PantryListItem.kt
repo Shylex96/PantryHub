@@ -1,10 +1,13 @@
 package com.pantryhub.core.designsystem.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -15,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
 /**
@@ -36,35 +40,39 @@ fun PantryListItem(
         modifier = modifier
             .fillMaxWidth()
             .then(clickableModifier)
-            .padding(spacing.lg),
+            .padding(horizontal = spacing.lg, vertical = spacing.md),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (leadingContent != null) {
-            leadingContent()
-            Spacer(modifier = Modifier.width(spacing.lg))
+            Box(modifier = Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+                leadingContent()
+            }
+            Spacer(modifier = Modifier.width(spacing.md))
         }
         
-        Row(modifier = Modifier.weight(1f)) {
-            Row {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (subtitle != null) {
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                if (subtitle != null) {
-                    Spacer(modifier = Modifier.width(spacing.sm))
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
         }
         
         if (trailingContent != null) {
-            Spacer(modifier = Modifier.width(spacing.lg))
-            trailingContent()
+            Spacer(modifier = Modifier.width(spacing.md))
+            Box(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                contentAlignment = Alignment.Center
+            ) {
+                trailingContent()
+            }
         }
     }
 }

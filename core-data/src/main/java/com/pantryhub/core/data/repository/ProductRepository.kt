@@ -10,4 +10,5 @@ interface ProductRepository {
     suspend fun saveProduct(product: Product)
     suspend fun deleteProduct(product: Product)
     suspend fun incrementUsage(productId: String)
+    suspend fun toggleFavorite(productId: String, isFavorite: Boolean)
 }

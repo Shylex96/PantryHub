@@ -13,7 +13,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class AddProductToShoppingListUseCase @Inject constructor(
-    private val productRepository: ProductRepository,
+    val productRepository: ProductRepository,
     private val shoppingListRepository: ShoppingListRepository,
     private val detectDuplicateProductUseCase: DetectDuplicateProductUseCase
 ) {

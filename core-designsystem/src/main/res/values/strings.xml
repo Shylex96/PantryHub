@@ -55,4 +55,12 @@
     <string name="notes_coming_soon_desc">Need to remember a price or a recipe? Notes are coming in the next update.</string>
     <string name="settings_coming_soon_title">App Settings</string>
     <string name="settings_coming_soon_desc">Configuration for units, themes, and backups will be available here.</string>
+
+    <!-- Products Feature -->
+    <string name="search_products_placeholder">Search products…</string>
+    <string name="empty_products_title">No products found</string>
+    <string name="empty_products_desc">Add products from your shopping lists to build your catalog.</string>
+
+    <string name="search_no_results_title">No matches found</string>
+    <string name="search_no_results_desc">We couldn’t find anything for \"%s\". Try a different name.</string>
 </resources>

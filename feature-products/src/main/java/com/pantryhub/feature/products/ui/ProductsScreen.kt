@@ -1,5 +1,6 @@
-package com.pantryhub.feature.shopping.ui.screens
+package com.pantryhub.feature.products.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,15 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -40,233 +35,143 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
-import com.pantryhub.core.designsystem.ui.components.PantryButton
+import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
 import com.pantryhub.core.designsystem.ui.components.PantryListItem
 import com.pantryhub.core.designsystem.ui.components.PantryLoading
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
 import com.pantryhub.core.designsystem.ui.components.PantryTopBar
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
-import com.pantryhub.feature.shopping.presentation.ShoppingIntent
-import com.pantryhub.feature.shopping.presentation.ShoppingUiState
+import com.pantryhub.feature.products.presentation.ProductsIntent
+import com.pantryhub.feature.products.presentation.ProductsUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingListDetailScreen(
-    state: ShoppingUiState,
-    onIntent: (ShoppingIntent) -> Unit,
-    onAddItem: (String, Double) -> Unit,
-    onDeleteItem: (String) -> Unit,
-    onDeleteList: (String) -> Unit,
-    onRenameList: (String) -> Unit,
-    onStartShopping: () -> Unit,
-    onBack: () -> Unit,
+fun ProductsScreen(
+    state: ProductsUiState,
+    onIntent: (ProductsIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentList = state.currentList ?: return
     val spacing = PantryHubTheme.spacing
+    val searchFocusRequester = remember { FocusRequester() }
 
-    var showRenameDialog by remember { mutableStateOf(false) }
-    var listNameBuffer by remember { mutableStateOf(currentList.name) }
-    val renameFocusRequester = remember { FocusRequester() }
-
-    var showDeleteConfirm by remember { mutableStateOf(false) }
-
-    if (showRenameDialog) {
-        AlertDialog(
-            onDismissRequest = { showRenameDialog = false },
-            title = { Text(stringResource(R.string.rename_list_dialog_title)) },
-            text = {
-                PantryTextField(
-                    value = listNameBuffer,
-                    onValueChange = { listNameBuffer = it },
-                    label = stringResource(R.string.list_name_placeholder),
-                    modifier = Modifier.focusRequester(renameFocusRequester)
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onRenameList(listNameBuffer)
-                    showRenameDialog = false
-                }) {
-                    Text(stringResource(R.string.save_action))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRenameDialog = false }) {
-                    Text(stringResource(R.string.cancel_action))
-                }
-            }
-        )
-        LaunchedEffect(Unit) {
-            renameFocusRequester.requestFocus()
+    LaunchedEffect(state.isSearchMode) {
+        if (state.isSearchMode) {
+            searchFocusRequester.requestFocus()
         }
-    }
-
-    if (showDeleteConfirm) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirm = false },
-            title = { Text(stringResource(R.string.delete_list_confirm_title)) },
-            text = { Text(stringResource(R.string.delete_list_confirm_message, currentList.name)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteList(currentList.id)
-                        showDeleteConfirm = false
-                        onBack()
-                    }
-                ) {
-                    Text(
-                        text = stringResource(R.string.delete_confirm_action)
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text(stringResource(R.string.cancel_action))
-                }
-            }
-        )
     }
 
     Scaffold(
         topBar = {
-            PantryTopBar(
-                title = currentList.name,
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = PantryIcons.Back,
-                            contentDescription = stringResource(R.string.back_description)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            listNameBuffer = currentList.name
-                            showRenameDialog = true
-                        },
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Icon(
-                            imageVector = PantryIcons.Edit,
-                            contentDescription = stringResource(R.string.rename_list_dialog_title),
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(spacing.sm))
-                    IconButton(
-                        onClick = { showDeleteConfirm = true },
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Icon(
-                            imageVector = PantryIcons.Delete,
-                            contentDescription = stringResource(R.string.delete_action),
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            if (currentList.items.isNotEmpty()) {
-                PantryButton(
-                    onClick = onStartShopping,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(spacing.lg)
-                ) {
-                    Text(stringResource(R.string.start_shopping_action))
-                }
-            }
+            PantryTopBar(title = stringResource(R.string.nav_products))
         }
     ) { innerPadding ->
-        if (state.isLoading) {
-            PantryLoading()
-        } else {
-            Column(
-                modifier = modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = spacing.lg)
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(horizontal = spacing.lg)
+        ) {
+
+            // Symmetrical Dual Bar (Add / Search)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = spacing.md),
+                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
-                // Symmetrical Search/Add Bar
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = spacing.md),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm)
-                ) {
-                    Column(modifier = Modifier.weight(0.9f)) {
-                        PantryTextField(
-                            value = state.productQuery,
-                            onValueChange = { onIntent(ShoppingIntent.UpdateProductQuery(it)) },
-                            label = stringResource(R.string.add_item_label),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        if (state.suggestions.isNotEmpty()) {
-                            androidx.compose.material3.Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                tonalElevation = PantryHubTheme.elevations.medium,
-                                shape = PantryHubTheme.shapes.small
-                            ) {
-                                Column {
-                                    state.suggestions.forEach { suggestion ->
-                                        PantryListItem(
-                                            title = suggestion.name,
-                                            onClick = {
-                                                onAddItem(suggestion.name, 1.0)
-                                                onIntent(ShoppingIntent.UpdateProductQuery(""))
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                Box(modifier = Modifier.weight(0.8f)) {
+                    AnimatedContent(
+                        targetState = state.isSearchMode,
+                        label = "bar_input"
+                    ) { isSearching ->
+                        if (isSearching) {
+                            PantryTextField(
+                                value = state.searchQuery,
+                                onValueChange = { onIntent(ProductsIntent.Search(it)) },
+                                label = stringResource(R.string.search_products_placeholder),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(searchFocusRequester)
+                            )
+                        } else {
+                            PantryTextField(
+                                value = state.createInput,
+                                onValueChange = { onIntent(ProductsIntent.UpdateCreateInput(it)) },
+                                label = stringResource(R.string.add_item_label),
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
-                    }
-
-                    IconButton(
-                        onClick = {
-                            if (state.productQuery.isNotBlank()) {
-                                onAddItem(state.productQuery, 1.0)
-                                onIntent(ShoppingIntent.UpdateProductQuery(""))
-                            }
-                        },
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Icon(
-                            imageVector = PantryIcons.Add,
-                            contentDescription = stringResource(R.string.add_item_label),
-                            modifier = Modifier.size(18.dp)
-                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(spacing.md))
+                // Add Icon (10%)
+                IconButton(
+                    onClick = {
+                        if (state.isSearchMode) {
+                            onIntent(ProductsIntent.ToggleSearchMode)
+                        } else {
+                            onIntent(ProductsIntent.CreateProduct(state.createInput))
+                        }
+                    },
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = PantryIcons.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
 
+                // Search/Cancel Icon (10%)
+                IconButton(
+                    onClick = { onIntent(ProductsIntent.ToggleSearchMode) },
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = if (state.isSearchMode) PantryIcons.Close else PantryIcons.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            if (state.isLoading) {
+                PantryLoading()
+            } else if (state.products.isEmpty()) {
+                val isSearching = state.searchQuery.isNotEmpty()
+                PantryEmptyState(
+                    title = if (isSearching) stringResource(R.string.search_no_results_title) else stringResource(
+                        R.string.empty_products_title
+                    ),
+                    description = if (isSearching) stringResource(
+                        R.string.search_no_results_desc,
+                        state.searchQuery
+                    ) else stringResource(R.string.empty_products_desc),
+                    icon = if (isSearching) PantryIcons.Search else PantryIcons.Products
+                )
+            } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(currentList.items, key = { it.id }) { item ->
+                    items(state.products, key = { it.id }) { product ->
                         val dismissState = rememberSwipeToDismissBoxState(
                             confirmValueChange = {
                                 when (it) {
                                     SwipeToDismissBoxValue.EndToStart -> {
                                         // Swiping to the left deletes the item.
-                                        onDeleteItem(item.id)
+                                        onIntent(ProductsIntent.DeleteProduct(product.id))
                                         true
                                     }
 
                                     SwipeToDismissBoxValue.StartToEnd -> {
                                         // Swiping to the right marks the item as favorite.
                                         onIntent(
-                                            ShoppingIntent.ToggleFavorite(
-                                                item.product.id,
-                                                !item.product.isFavorite
+                                            ProductsIntent.ToggleFavorite(
+                                                product.id,
+                                                !product.isFavorite
                                             )
                                         )
-                                        // I return false because I don't want the item to be dismissed from the list.
-                                        // I only toggle its favorite state and let it return to its original position.
+                                        // I return false because I don't dismiss the item.
+                                        // I only toggle its favorite state, and the swipe returns to its resting position.
                                         false
                                     }
 
@@ -301,6 +206,7 @@ fun ShoppingListDetailScreen(
                                             Icon(
                                                 imageVector = PantryIcons.Delete,
                                                 contentDescription = stringResource(R.string.delete_action),
+                                                // tint = Color.White,
                                                 modifier = Modifier.scale(scale)
                                             )
                                         }
@@ -334,7 +240,7 @@ fun ShoppingListDetailScreen(
                             }
                         ) {
                             PantryListItem(
-                                title = item.product.name,
+                                title = product.name,
                                 subtitle = null,
                                 trailingContent = {
                                     Row(
@@ -343,16 +249,16 @@ fun ShoppingListDetailScreen(
                                         IconButton(
                                             onClick = {
                                                 onIntent(
-                                                    ShoppingIntent.ToggleFavorite(
-                                                        item.product.id,
-                                                        !item.product.isFavorite
+                                                    ProductsIntent.ToggleFavorite(
+                                                        product.id,
+                                                        !product.isFavorite
                                                     )
                                                 )
                                             },
                                             modifier = Modifier.size(28.dp)
                                         ) {
                                             Icon(
-                                                imageVector = if (item.product.isFavorite) {
+                                                imageVector = if (product.isFavorite) {
                                                     PantryIcons.Favorite
                                                 } else {
                                                     PantryIcons.FavoriteBorder
@@ -361,7 +267,7 @@ fun ShoppingListDetailScreen(
                                                 // I previously used Color.Unspecified for the "not favorite" state.
                                                 // On vectors without a base color, this could make the icon invisible.
                                                 // I now use an explicit theme color instead.
-                                                tint = if (item.product.isFavorite) {
+                                                tint = if (product.isFavorite) {
                                                     Color(0xFFFFD700)
                                                 } else {
                                                     MaterialTheme.colorScheme.onSurfaceVariant
@@ -371,7 +277,13 @@ fun ShoppingListDetailScreen(
                                         }
                                         Spacer(modifier = Modifier.width(spacing.sm))
                                         IconButton(
-                                            onClick = { onDeleteItem(item.id) },
+                                            onClick = {
+                                                onIntent(
+                                                    ProductsIntent.DeleteProduct(
+                                                        product.id
+                                                    )
+                                                )
+                                            },
                                             modifier = Modifier.size(28.dp)
                                         ) {
                                             Icon(

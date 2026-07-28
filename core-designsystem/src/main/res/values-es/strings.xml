@@ -55,4 +55,12 @@
     <string name="notes_coming_soon_desc">¿Necesitas recordar un precio o una receta? Las notas llegarán en la próxima actualización.</string>
     <string name="settings_coming_soon_title">Ajustes de la App</string>
     <string name="settings_coming_soon_desc">La configuración de unidades, temas y copias de seguridad estará disponible aquí.</string>
+
+    <!-- Products Feature -->
+    <string name="search_products_placeholder">Buscar productos…</string>
+    <string name="empty_products_title">No se han encontrado productos</string>
+    <string name="empty_products_desc">Añade productos desde tus listas de la compra para crear tu catálogo.</string>
+
+    <string name="search_no_results_title">No hay coincidencias</string>
+    <string name="search_no_results_desc">No hemos encontrado nada para \"%s\". Prueba con otro nombre.</string>
 </resources>

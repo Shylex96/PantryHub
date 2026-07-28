@@ -19,8 +19,8 @@ class OfflineShoppingListRepository @Inject constructor(
         return shoppingListDao.getAllListsWithItems().map { wrappers ->
             wrappers.map { wrapper ->
                 wrapper.list.asDomainModel(
-                    items = wrapper.items.map { 
-                        it.asDomainModel(dummyProduct()) 
+                    items = wrapper.items.map {
+                        it.asDomainModel(dummyProduct())
                     }
                 )
             }
@@ -48,12 +48,22 @@ class OfflineShoppingListRepository @Inject constructor(
     }
 
     override fun getItemsForList(listId: String): Flow<List<ShoppingListItem>> {
-        return shoppingListDao.getItemsForList(listId).map { entities ->
-            entities.map { itemEntity ->
-                val productEntity = productDao.getProductById(itemEntity.productId)
-                val product = productEntity?.asDomainModel() ?: dummyProduct().copy(id = itemEntity.productId)
-                itemEntity.asDomainModel(product) 
-            }
+        // This one-off fetch was outside Room's invalidation mechanism:
+        // the Flow was only re-emitted when "shopping_items" changed, never when
+        // "products" changed (e.g. when marking/unmarking a product as favorite).
+        //
+        // return shoppingListDao.getItemsForList(listId).map { entities ->
+        //    entities.map { itemEntity ->
+        //        val productEntity = productDao.getProductById(itemEntity.productId)
+        //        val product = productEntity?.asDomainModel() ?: dummyProduct().copy(id = itemEntity.productId)
+        //        itemEntity.asDomainModel(product)
+        //    }
+        // }
+
+        // I now use the relational query (@Transaction + @Relation), which causes
+        // Room to invalidate this Flow whenever either "shopping_items" or "products" changes.
+        return shoppingListDao.getItemsWithProductForList(listId).map { rows ->
+            rows.map { it.asDomainModel() }
         }
     }
 

@@ -5,6 +5,7 @@ import com.pantryhub.core.database.entity.ProductEntity
 import com.pantryhub.core.database.entity.PurchaseEntity
 import com.pantryhub.core.database.entity.PurchaseItemEntity
 import com.pantryhub.core.database.entity.ShoppingItemEntity
+import com.pantryhub.core.database.entity.ShoppingItemWithProduct
 import com.pantryhub.core.database.entity.ShoppingListEntity
 import com.pantryhub.core.model.category.Category
 import com.pantryhub.core.model.product.Product
@@ -97,3 +98,5 @@ fun ShoppingListItem.asPurchaseItem(purchaseId: String) = PurchaseItemEntity(
     quantity = quantity,
     price = price
 )
+
+fun ShoppingItemWithProduct.asDomainModel() = item.asDomainModel(product.asDomainModel())

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 
 /**
  * PantryHub Icons.
@@ -21,10 +23,13 @@ object PantryIcons {
     val Add = Icons.Default.Add
     val Back = Icons.AutoMirrored.Filled.ArrowBack
     val Check = Icons.Default.Check
+    val Close = Icons.Default.Close
     val Delete = Icons.Default.Delete
     val Edit = Icons.Default.Edit
     val Info = Icons.Default.Info
     val Search = Icons.Default.Search
+    val Favorite = Icons.Default.Star
+    val FavoriteBorder = Icons.Default.StarBorder
     
     // Navigation
     val Lists = Icons.AutoMirrored.Filled.List

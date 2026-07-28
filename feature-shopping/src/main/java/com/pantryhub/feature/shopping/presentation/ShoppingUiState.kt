@@ -1,10 +1,13 @@
 package com.pantryhub.feature.shopping.presentation
 
+import com.pantryhub.core.model.product.Product
 import com.pantryhub.core.model.shopping.ShoppingList
 
 data class ShoppingUiState(
     val lists: List<ShoppingList> = emptyList(),
     val currentList: ShoppingList? = null,
+    val productQuery: String = "",
+    val suggestions: List<Product> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

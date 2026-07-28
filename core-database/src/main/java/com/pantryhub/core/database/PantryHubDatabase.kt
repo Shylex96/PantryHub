@@ -24,7 +24,7 @@ import com.pantryhub.core.database.util.ShoppingListTypeConverter
         PurchaseEntity::class,
         PurchaseItemEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(InstantConverter::class, ShoppingListTypeConverter::class)

@@ -19,7 +19,7 @@ import kotlinx.datetime.Instant
             entity = ProductEntity::class,
             parentColumns = ["id"],
             childColumns = ["product_id"],
-            onDelete = ForeignKey.RESTRICT
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

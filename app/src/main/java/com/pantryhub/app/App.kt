@@ -24,6 +24,7 @@ import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
+import com.pantryhub.feature.products.navigation.productsGraph
 import com.pantryhub.feature.shopping.navigation.shoppingGraph
 
 @Composable
@@ -83,14 +84,8 @@ fun PantryHubApp() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 shoppingGraph(navController)
+                productsGraph()
                 
-                composable<Destination.Products> {
-                    PantryEmptyState(
-                        title = stringResource(R.string.products_coming_soon_title),
-                        description = stringResource(R.string.products_coming_soon_desc),
-                        icon = PantryIcons.Products
-                    )
-                }
                 composable<Destination.Notes> {
                     PantryEmptyState(
                         title = stringResource(R.string.notes_coming_soon_title),

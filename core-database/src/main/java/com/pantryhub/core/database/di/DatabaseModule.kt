@@ -24,7 +24,9 @@ object DatabaseModule {
             context,
             PantryHubDatabase::class.java,
             "pantryhub-database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

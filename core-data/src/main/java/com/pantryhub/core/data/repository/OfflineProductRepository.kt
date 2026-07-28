@@ -38,4 +38,8 @@ class OfflineProductRepository @Inject constructor(
     override suspend fun incrementUsage(productId: String) {
         productDao.incrementUsageFrequency(productId)
     }
+
+    override suspend fun toggleFavorite(productId: String, isFavorite: Boolean) {
+        productDao.updateFavoriteStatus(productId, isFavorite)
+    }
 }

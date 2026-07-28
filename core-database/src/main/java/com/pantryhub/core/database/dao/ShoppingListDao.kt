@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.pantryhub.core.database.entity.ShoppingItemEntity
+import com.pantryhub.core.database.entity.ShoppingItemWithProduct
 import com.pantryhub.core.database.entity.ShoppingListEntity
 import com.pantryhub.core.database.entity.ShoppingListWithItems
 import kotlinx.coroutines.flow.Flow
@@ -30,8 +31,9 @@ interface ShoppingListDao {
     @Delete
     suspend fun deleteList(list: ShoppingListEntity)
 
+    @Transaction
     @Query("SELECT * FROM shopping_items WHERE shopping_list_id = :listId")
-    fun getItemsForList(listId: String): Flow<List<ShoppingItemEntity>>
+    fun getItemsWithProductForList(listId: String): Flow<List<ShoppingItemWithProduct>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: ShoppingItemEntity)

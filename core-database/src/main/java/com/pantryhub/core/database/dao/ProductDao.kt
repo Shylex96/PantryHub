@@ -31,4 +31,7 @@ interface ProductDao {
 
     @Query("UPDATE products SET usage_frequency = usage_frequency + 1 WHERE id = :productId")
     suspend fun incrementUsageFrequency(productId: String)
+
+    @Query("UPDATE products SET is_favorite = :isFavorite WHERE id = :productId")
+    suspend fun updateFavoriteStatus(productId: String, isFavorite: Boolean)
 }

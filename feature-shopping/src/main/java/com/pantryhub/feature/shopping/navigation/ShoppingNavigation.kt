@@ -47,6 +47,7 @@ fun NavGraphBuilder.shoppingGraph(
 
         ShoppingListDetailScreen(
             state = state,
+            onIntent = viewModel::handleIntent,
             onAddItem = { name, qty ->
                 viewModel.handleIntent(ShoppingIntent.AddItem(name, qty))
             },
