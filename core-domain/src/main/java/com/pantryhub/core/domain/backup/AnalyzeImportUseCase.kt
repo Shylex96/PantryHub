@@ -63,7 +63,8 @@ class AnalyzeImportUseCase @Inject constructor(
             conflicts = conflicts,
             categoryCount = data.categories.size,
             listCount = data.shoppingLists.size,
-            purchaseCount = data.purchases.size
+            purchaseCount = data.purchases.size,
+            noteCount = data.notes.size
         )
     }
 

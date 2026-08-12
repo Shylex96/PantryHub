@@ -2,6 +2,7 @@ package com.pantryhub.core.domain.shopping
 
 import com.pantryhub.core.data.repository.ShoppingListRepository
 import com.pantryhub.core.model.shopping.ShoppingList
+import com.pantryhub.core.model.shopping.ShoppingListType
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import java.util.UUID
@@ -14,7 +15,11 @@ class CloneShoppingListUseCase @Inject constructor(
      * Creates a copy of an existing shopping list including all its items.
      * All items are reset to non-completed status in the new list.
      */
-    suspend fun execute(originalListId: String, newName: String? = null) {
+    suspend fun execute(
+        originalListId: String,
+        newName: String? = null,
+        type: ShoppingListType? = null
+    ) {
         val originalList = shoppingListRepository.getList(originalListId) ?: return
         val originalItems = shoppingListRepository.getItemsForList(originalListId).first()
 
@@ -24,7 +29,7 @@ class CloneShoppingListUseCase @Inject constructor(
         val clonedList = ShoppingList(
             id = newListId,
             name = newName ?: "${originalList.name} (Copy)",
-            type = originalList.type,
+            type = type ?: originalList.type,
             createdAt = now
         )
 

@@ -9,5 +9,8 @@ data class ShoppingUiState(
     val productQuery: String = "",
     val suggestions: List<Product> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    // One-shot flag: set true when a shopping session has finished so the UI can
+    // navigate back to the lists screen. Reset via AcknowledgeFinished.
+    val shoppingFinished: Boolean = false
 )

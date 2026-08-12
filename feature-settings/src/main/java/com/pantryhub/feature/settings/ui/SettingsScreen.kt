@@ -36,6 +36,7 @@ import com.pantryhub.feature.settings.presentation.SettingsViewModel
 @Composable
 fun SettingsScreen(
     onOpenImportExport: () -> Unit,
+    onOpenHelp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -154,6 +155,18 @@ fun SettingsScreen(
                     title = stringResource(R.string.backup_section_title),
                     subtitle = stringResource(R.string.settings_backup_row_desc),
                     onClick = onOpenImportExport
+                )
+            }
+
+            Spacer(modifier = Modifier.size(spacing.lg))
+
+            SectionHeader(stringResource(R.string.settings_help))
+
+            PantryCard(modifier = Modifier.fillMaxWidth()) {
+                PantryListItem(
+                    title = stringResource(R.string.help_row_title),
+                    subtitle = stringResource(R.string.help_row_desc),
+                    onClick = onOpenHelp
                 )
             }
         }

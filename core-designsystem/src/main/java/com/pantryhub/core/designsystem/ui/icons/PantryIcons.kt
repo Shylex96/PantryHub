@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -30,6 +32,8 @@ object PantryIcons {
     val Search = Icons.Default.Search
     val Favorite = Icons.Default.Star
     val FavoriteBorder = Icons.Default.StarBorder
+    val ExpandMore = Icons.Default.KeyboardArrowDown
+    val ExpandLess = Icons.Default.KeyboardArrowUp
     
     // Navigation
     val Lists = Icons.AutoMirrored.Filled.List

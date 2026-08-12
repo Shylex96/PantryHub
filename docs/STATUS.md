@@ -4,18 +4,19 @@
 > `17_Backlog.md` and `18_Changelog.md`. If another doc contradicts this one, this one wins.
 > It is updated when each sprint closes (see `19_Execution_Plan.md`).
 >
-> Last updated: 2026-08-12
+> Last updated: 2026-08-12 (Sprint 6 closed)
 
 ---
 
 ## Summary
 
 - **Current phase:** Phase 1 (offline personal app).
-- **Phase 1 progress:** ~90%.
+- **Phase 1 progress:** ~95%.
 - **Infrastructure (architecture, DI, DB, domain, data, navigation):** ~100%.
-- **Next:** Settings language (Part B), provisional lists/templates (Sprint 6), or the
-  full visual pass. Done: docs, visual identity, categories, aliases, Import/Export,
-  Notes, Settings theme (light/dark/system + dynamic color).
+- **Next:** the full visual pass or tests/QA.
+  Done: docs, visual identity, categories, aliases, Import/Export, Notes, Settings
+  (theme light/dark/system + dynamic color + in-app language), portrait lock,
+  provisional lists/templates (Sprint 6).
 
 ---
 
@@ -37,8 +38,8 @@
 | Categories (management/browse) | ✅ Done | Sprint 2 |
 | Product aliases | ✅ Done | Sprint 2b (Room migration v2→v3) |
 | Feature: Notes | ✅ Done | Sprint 4 (list + create/edit/delete, in backup) |
-| Feature: Settings | ✅ Theme done | Sprint 5A (theme + dynamic color); language = Part B |
-| Templates / provisional lists | ⚠️ Partial | Sprint 6 |
+| Feature: Settings | ✅ Done | Sprint 5 (theme + dynamic color + in-app language) |
+| Templates / provisional lists | ✅ Done | Sprint 6 (list type + clone-from a base list) |
 | i18n (es + en) | ✅ Base done | audit at 1.0 close |
 | Tests | ⚠️ Partial | expand per feature |
 
@@ -62,8 +63,8 @@ Legend: ✅ done · ⚠️ partial · ❌ not started
 | Product aliases | field + migration + search | ✅ Done |
 | v0.8 Import/Export | export/import JSON | ✅ Done (incl. import preview + similarity conflicts) |
 | Notes | create/edit/delete | ✅ Done |
-| Settings | theme via DataStore | ✅ Done (language pending, Part B) |
-| Templates / provisional | clone + similarity | 🔜 Sprint 6 |
+| Settings | theme + language | ✅ Done |
+| Templates / provisional | list type + clone | ✅ Done |
 | v1.0 | close + QA + release | 🔜 |
 
 > Note: the original Roadmap's version numbering did not match the real order of work. The

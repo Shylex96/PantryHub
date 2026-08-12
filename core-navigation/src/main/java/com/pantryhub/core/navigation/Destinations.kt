@@ -24,4 +24,7 @@ sealed interface Destination {
 
     @Serializable
     data object ImportExport : Destination
+
+    @Serializable
+    data object Help : Destination
 }

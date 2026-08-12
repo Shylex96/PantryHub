@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,9 +39,19 @@ fun ShoppingModeScreen(
     state: ShoppingUiState,
     onToggleItem: (String) -> Unit,
     onFinishShopping: (String?, Double?) -> Unit,
+    onFinished: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // When the session finishes (list reset or deleted), leave shopping mode and
+    // return to the shopping lists screen. Registered before the early return below
+    // so it still fires even though currentList becomes null on finish.
+    LaunchedEffect(state.shoppingFinished) {
+        if (state.shoppingFinished) {
+            onFinished()
+        }
+    }
+
     val currentList = state.currentList ?: return
     val spacing = PantryHubTheme.spacing
     
@@ -93,7 +104,8 @@ fun ShoppingModeScreen(
                         val price = totalPrice.toDoubleOrNull()
                         onFinishShopping(supermarket.ifBlank { null }, price)
                         showFinishDialog = false
-                        onBack()
+                        // Navigation happens via the shoppingFinished event once the
+                        // finish work completes (see LaunchedEffect above).
                     },
                     enabled = isSaveEnabled
                 ) {
@@ -105,7 +117,7 @@ fun ShoppingModeScreen(
                     TextButton(onClick = {
                         onFinishShopping(null, null)
                         showFinishDialog = false
-                        onBack()
+                        // Navigation handled by the shoppingFinished event (see above).
                     }) {
                         Text(stringResource(R.string.finish_without_saving))
                     }

@@ -41,7 +41,8 @@ class ShoppingViewModel @Inject constructor(
     fun handleIntent(intent: ShoppingIntent) {
         when (intent) {
             ShoppingIntent.LoadLists -> observeLists()
-            is ShoppingIntent.CreateList -> createList(intent.name)
+            is ShoppingIntent.CreateList -> createList(intent.name, intent.type)
+            is ShoppingIntent.CloneList -> cloneList(intent.sourceId, intent.name, intent.type)
             is ShoppingIntent.OpenList -> openList(intent.id)
             is ShoppingIntent.DeleteList -> deleteList(intent.id)
             is ShoppingIntent.RenameList -> renameList(intent.newName)
@@ -51,6 +52,7 @@ class ShoppingViewModel @Inject constructor(
             is ShoppingIntent.ToggleItem -> toggleItem(intent.itemId)
             is ShoppingIntent.ToggleFavorite -> toggleFavorite(intent.productId, intent.isFavorite)
             is ShoppingIntent.FinishWithData -> finishShopping(intent.supermarket, intent.price)
+            ShoppingIntent.AcknowledgeFinished -> _uiState.update { it.copy(shoppingFinished = false) }
         }
     }
 
@@ -81,9 +83,19 @@ class ShoppingViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun createList(name: String) {
+    private fun createList(name: String, type: com.pantryhub.core.model.shopping.ShoppingListType) {
         viewModelScope.launch {
-            shoppingUseCases.createShoppingList(name)
+            shoppingUseCases.createShoppingList(name, type)
+        }
+    }
+
+    private fun cloneList(
+        sourceId: String,
+        name: String,
+        type: com.pantryhub.core.model.shopping.ShoppingListType
+    ) {
+        viewModelScope.launch {
+            shoppingUseCases.cloneShoppingList.execute(sourceId, name, type)
         }
     }
 
@@ -168,12 +180,14 @@ class ShoppingViewModel @Inject constructor(
     private fun finishShopping(supermarket: String?, price: Double?) {
         val currentListId = _uiState.value.currentList?.id ?: return
         viewModelScope.launch {
+            // Runs to completion here (purchase recorded + list deleted/reset) BEFORE we
+            // signal the UI to navigate away, so popping the screen can't cancel this work.
             shoppingUseCases.finishShopping.execute(
                 listId = currentListId,
                 supermarket = supermarket,
                 totalAmount = price ?: 0.0
             )
-            _uiState.update { it.copy(currentList = null) }
+            _uiState.update { it.copy(currentList = null, shoppingFinished = true) }
         }
     }
 }

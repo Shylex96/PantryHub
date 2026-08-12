@@ -16,6 +16,7 @@ import com.pantryhub.core.designsystem.ui.components.PantryListItem
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.model.shopping.ShoppingList
+import com.pantryhub.core.model.shopping.ShoppingListType
 
 @Composable
 fun ShoppingListCard(
@@ -26,6 +27,16 @@ fun ShoppingListCard(
 ) {
     val spacing = PantryHubTheme.spacing
 
+    // Subtitle shows the item count plus a short type badge for every list
+    // (e.g. "3 items · One-off" / "3 items · Regular") so the user can tell a
+    // provisional list from a regular one at a glance without opening it.
+    val itemCountText = stringResource(R.string.item_count_subtitle, shoppingList.items.size)
+    val typeBadge = when (shoppingList.type) {
+        ShoppingListType.TEMPORARY -> stringResource(R.string.list_badge_temporary)
+        else -> stringResource(R.string.list_badge_regular)
+    }
+    val subtitle = "$itemCountText · $typeBadge"
+
     PantryCard(
         modifier = modifier
             .fillMaxWidth()
@@ -33,7 +44,7 @@ fun ShoppingListCard(
     ) {
         PantryListItem(
             title = shoppingList.name,
-            subtitle = stringResource(R.string.item_count_subtitle, shoppingList.items.size),
+            subtitle = subtitle,
             onClick = { onListClick(shoppingList.id) },
             trailingContent = {
                 IconButton(

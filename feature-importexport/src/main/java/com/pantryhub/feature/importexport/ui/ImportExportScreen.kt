@@ -194,7 +194,8 @@ fun ImportExportScreen(
                                     R.string.import_success,
                                     p.data.products.size,
                                     p.data.categories.size,
-                                    p.data.shoppingLists.size
+                                    p.data.shoppingLists.size,
+                                    p.data.notes.size
                                 )
                             } catch (e: Exception) {
                                 isError = true

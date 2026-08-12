@@ -47,7 +47,8 @@ fun ImportPreviewDialog(
                         preview.newProductCount,
                         preview.autoMergeCount,
                         preview.listCount,
-                        preview.categoryCount
+                        preview.categoryCount,
+                        preview.noteCount
                     ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

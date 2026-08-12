@@ -102,7 +102,9 @@ fun PantryHubApp() {
                 
                 notesGraph()
                 settingsGraph(
-                    onOpenImportExport = { navController.navigate(Destination.ImportExport) }
+                    onOpenImportExport = { navController.navigate(Destination.ImportExport) },
+                    onOpenHelp = { navController.navigate(Destination.Help) },
+                    onBack = { navController.popBackStack() }
                 )
                 importExportGraph(onBack = { navController.popBackStack() })
             }

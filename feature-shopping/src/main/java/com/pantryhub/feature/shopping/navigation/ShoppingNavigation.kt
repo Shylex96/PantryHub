@@ -30,8 +30,11 @@ fun NavGraphBuilder.shoppingGraph(
             onDeleteList = { id ->
                 viewModel.handleIntent(ShoppingIntent.DeleteList(id))
             },
-            onCreateList = { name ->
-                viewModel.handleIntent(ShoppingIntent.CreateList(name))
+            onCreateList = { name, type ->
+                viewModel.handleIntent(ShoppingIntent.CreateList(name, type))
+            },
+            onCloneList = { sourceId, name, type ->
+                viewModel.handleIntent(ShoppingIntent.CloneList(sourceId, name, type))
             }
         )
     }
@@ -85,6 +88,12 @@ fun NavGraphBuilder.shoppingGraph(
             },
             onFinishShopping = { supermarket, price ->
                 viewModel.handleIntent(ShoppingIntent.FinishWithData(supermarket, price))
+            },
+            onFinished = {
+                // Consume the one-shot event, then pop all the way back to the lists
+                // screen (skipping the detail screen, whose list may no longer exist).
+                viewModel.handleIntent(ShoppingIntent.AcknowledgeFinished)
+                navController.popBackStack(Destination.ShoppingLists, inclusive = false)
             },
             onBack = {
                 navController.popBackStack()

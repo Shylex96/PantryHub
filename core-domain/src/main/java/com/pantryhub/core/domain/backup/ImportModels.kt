@@ -26,5 +26,6 @@ data class ImportPreview(
     val conflicts: List<ProductConflict>,
     val categoryCount: Int,
     val listCount: Int,
-    val purchaseCount: Int
+    val purchaseCount: Int,
+    val noteCount: Int
 )

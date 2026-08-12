@@ -69,9 +69,19 @@ Technical
 
 - **Notes (Sprint 4):** a full Notes feature — list, create/edit/delete via a dialog, empty
   state — backed by its own Room table (migration v3→v4). Notes are included in export/import.
-- **Settings (Sprint 5A):** a real Settings screen — theme mode (system/light/dark) and a
-  dynamic-color toggle, persisted with DataStore and applied app-wide. Import/Export moved
-  into a Settings section. (In-app language switching is planned as Part B.)
+- **Settings (Sprint 5):** a real Settings screen — theme mode (system/light/dark) and a
+  dynamic-color toggle, persisted with DataStore and applied app-wide; Import/Export moved
+  into a Settings section; and **in-app language** (system/Español/English) via AppCompat
+  per-app locales (MainActivity is now AppCompatActivity; auto-persisted). The app is locked
+  to portrait orientation.
+- **Provisional lists & templates (Sprint 6):** the New List dialog now lets you pick a
+  **type** — Regular or One-off (provisional) — and optionally **base the new list on** an
+  existing one (a "clone from" picker), copying its items reset to unchecked. One-off
+  (provisional) lists are **deleted automatically when you finish shopping**, while Regular
+  lists are reset for reuse. Every list card shows a type badge ("Regular" / "One-off").
+- **Help & guide (Settings):** a new in-app Help screen with an expandable guide covering
+  every feature — lists, list types, templates, shopping mode, products, categories, aliases,
+  notes, backup/restore and appearance/language.
 
 ## Changed
 

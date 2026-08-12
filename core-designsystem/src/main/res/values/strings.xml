@@ -22,6 +22,15 @@
     <string name="item_count_subtitle">%d items</string>
     <string name="back_description">Back</string>
 
+    <!-- Shopping List Types -->
+    <string name="list_type_label">Type</string>
+    <string name="list_type_regular">Regular</string>
+    <string name="list_type_temporary">One-off</string>
+    <string name="list_badge_temporary">One-off</string>
+    <string name="list_badge_regular">Regular</string>
+    <string name="clone_from_label">Base it on</string>
+    <string name="clone_none">Blank list</string>
+
     <!-- Empty States -->
     <string name="empty_shopping_lists_title">No shopping lists yet</string>
     <string name="empty_shopping_lists_description">Create your first list to start organizing your pantry.</string>
@@ -84,10 +93,10 @@
     <string name="export_action">Export data</string>
     <string name="import_action">Import data</string>
     <string name="export_success">Data exported successfully.</string>
-    <string name="import_success">Imported: %1$d products, %2$d categories, %3$d lists.</string>
+    <string name="import_success">Imported: %1$d products, %2$d categories, %3$d lists, %4$d notes.</string>
     <string name="io_error">Something went wrong. Please try again.</string>
     <string name="import_preview_title">Import preview</string>
-    <string name="import_preview_summary">%1$d new, %2$d already exist, %3$d lists, %4$d categories.</string>
+    <string name="import_preview_summary">%1$d new, %2$d already exist, %3$d lists, %4$d categories, %5$d notes.</string>
     <string name="import_conflicts_title">Possible duplicates</string>
     <string name="import_conflict_desc">«%1$s» looks like «%2$s» (%3$d%%)</string>
     <string name="conflict_new">New</string>
@@ -116,4 +125,41 @@
     <string name="language_system">System default</string>
     <string name="language_es">Español</string>
     <string name="language_en">English</string>
+
+    <!-- Help / Guide -->
+    <string name="settings_help">Help</string>
+    <string name="help_row_title">Help &amp; guide</string>
+    <string name="help_row_desc">What PantryHub can do and how to use it</string>
+    <string name="help_screen_title">Help &amp; guide</string>
+    <string name="help_intro">A quick tour of everything PantryHub can do. Tap any topic to learn more.</string>
+
+    <string name="help_lists_title">Shopping lists</string>
+    <string name="help_lists_body">Create as many lists as you like from the Lists tab with the + button. Open a list to add items — start typing and PantryHub suggests products you already use, or add a brand-new one with a quantity. Tap an item to mark it, swipe or use the delete icon to remove it, and rename or delete the whole list from its screen. Favorite products float to the top.</string>
+
+    <string name="help_list_types_title">Regular vs. one-off lists</string>
+    <string name="help_list_types_body">When you create a list you choose its type. A Regular list stays around and is reset (all items unchecked) after you finish shopping, so you can reuse it every week. A One-off (provisional) list is meant to be used once: as soon as you finish shopping it is deleted automatically. Each card shows a small badge so you always know which is which.</string>
+
+    <string name="help_templates_title">Reuse a list as a template</string>
+    <string name="help_templates_body">In the New List dialog you can \"Base it on\" an existing list. PantryHub copies all of its items into the new list (unchecked and ready), so a list you shop often can act as a template. Leave it on \"Blank list\" to start empty.</string>
+
+    <string name="help_shopping_mode_title">Shopping mode</string>
+    <string name="help_shopping_mode_body">Open a list and tap Start shopping for a focused view while you are in the store. Check items off as you go — completed items move below the pending ones. When you finish you can optionally record the supermarket and the total spent, which is saved to your purchase history.</string>
+
+    <string name="help_products_title">Product catalog</string>
+    <string name="help_products_body">The Products tab is your personal catalog, built automatically from everything you add to lists. Search it instantly, mark products as favorites, edit their details, and assign a category. Favorites are prioritized in suggestions and lists.</string>
+
+    <string name="help_categories_title">Categories</string>
+    <string name="help_categories_body">Group products into categories (for example Dairy, Cleaning, Fruit). Manage them from the Products tab: create, rename, delete, and give each one a color. Filter the catalog by category with the chips at the top, and assign a category when creating or editing a product.</string>
+
+    <string name="help_aliases_title">Product aliases</string>
+    <string name="help_aliases_body">A product can have alternative names — for example \"papa\" as an alias for \"Patata\". Aliases feed the search and suggestions, so you find the right product no matter which name you type. Edit them from a product\'s edit dialog.</string>
+
+    <string name="help_notes_title">Notes</string>
+    <string name="help_notes_body">Use the Notes tab to jot down anything that does not belong on a list — a recipe, a price to remember, a reminder. Create, edit, and delete notes freely. They are included in your backups.</string>
+
+    <string name="help_backup_title">Backup &amp; restore</string>
+    <string name="help_backup_body">From Settings you can export all your data (products, categories, lists, notes and purchase history) to a single JSON file to keep as a backup or move to another device. Importing merges the file back in: it shows a preview and flags likely duplicate products so you can decide whether each one is the same item or a new one.</string>
+
+    <string name="help_settings_title">Appearance &amp; language</string>
+    <string name="help_settings_body">In Settings you can switch the theme between System, Light and Dark, and on Android 12+ enable dynamic color to match your wallpaper. You can also set the app language independently from your phone — System, Español or English.</string>
 </resources>

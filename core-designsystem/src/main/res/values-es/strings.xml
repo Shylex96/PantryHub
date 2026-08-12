@@ -22,6 +22,15 @@
     <string name="item_count_subtitle">%d ítems</string>
     <string name="back_description">Volver</string>
 
+    <!-- Tipos de Lista -->
+    <string name="list_type_label">Tipo</string>
+    <string name="list_type_regular">Normal</string>
+    <string name="list_type_temporary">Provisional</string>
+    <string name="list_badge_temporary">Provisional</string>
+    <string name="list_badge_regular">Normal</string>
+    <string name="clone_from_label">Basarla en</string>
+    <string name="clone_none">Lista en blanco</string>
+
     <!-- Empty States -->
     <string name="empty_shopping_lists_title">No hay listas aún</string>
     <string name="empty_shopping_lists_description">Crea tu primera lista para empezar a organizar tu despensa.</string>
@@ -84,10 +93,10 @@
     <string name="export_action">Exportar datos</string>
     <string name="import_action">Importar datos</string>
     <string name="export_success">Datos exportados correctamente.</string>
-    <string name="import_success">Importado: %1$d productos, %2$d categorías, %3$d listas.</string>
+    <string name="import_success">Importado: %1$d productos, %2$d categorías, %3$d listas, %4$d notas.</string>
     <string name="io_error">Algo salió mal. Inténtalo de nuevo.</string>
     <string name="import_preview_title">Vista previa</string>
-    <string name="import_preview_summary">%1$d nuevos, %2$d ya existen, %3$d listas, %4$d categorías.</string>
+    <string name="import_preview_summary">%1$d nuevos, %2$d ya existen, %3$d listas, %4$d categorías, %5$d notas.</string>
     <string name="import_conflicts_title">Posibles duplicados</string>
     <string name="import_conflict_desc">«%1$s» se parece a «%2$s» (%3$d%%)</string>
     <string name="conflict_new">Nuevo</string>
@@ -116,4 +125,41 @@
     <string name="language_system">Predeterminado del sistema</string>
     <string name="language_es">Español</string>
     <string name="language_en">English</string>
+
+    <!-- Ayuda / Guía -->
+    <string name="settings_help">Ayuda</string>
+    <string name="help_row_title">Ayuda y guía</string>
+    <string name="help_row_desc">Qué puede hacer PantryHub y cómo usarlo</string>
+    <string name="help_screen_title">Ayuda y guía</string>
+    <string name="help_intro">Un recorrido rápido por todo lo que puede hacer PantryHub. Toca cualquier tema para saber más.</string>
+
+    <string name="help_lists_title">Listas de la compra</string>
+    <string name="help_lists_body">Crea todas las listas que quieras desde la pestaña Listas con el botón +. Abre una lista para añadir productos — empieza a escribir y PantryHub te sugiere productos que ya usas, o añade uno nuevo con su cantidad. Toca un producto para marcarlo, usa el icono de eliminar para quitarlo, y renombra o borra la lista entera desde su pantalla. Los productos favoritos aparecen arriba.</string>
+
+    <string name="help_list_types_title">Listas normales vs. provisionales</string>
+    <string name="help_list_types_body">Al crear una lista eliges su tipo. Una lista Normal se conserva y se reinicia (todos los productos sin marcar) al terminar la compra, para que puedas reutilizarla cada semana. Una lista Provisional está pensada para un solo uso: en cuanto terminas la compra se elimina automáticamente. Cada tarjeta muestra una etiqueta para que sepas siempre cuál es cuál.</string>
+
+    <string name="help_templates_title">Reutilizar una lista como plantilla</string>
+    <string name="help_templates_body">En el diálogo de Nueva lista puedes \"Basarla en\" una lista existente. PantryHub copia todos sus productos a la nueva lista (sin marcar y listos), así una lista que compras a menudo puede servir de plantilla. Déjalo en \"Lista en blanco\" para empezar vacía.</string>
+
+    <string name="help_shopping_mode_title">Modo compra</string>
+    <string name="help_shopping_mode_body">Abre una lista y toca Empezar a comprar para tener una vista centrada mientras estás en la tienda. Ve marcando los productos según los coges — los completados bajan por debajo de los pendientes. Al terminar puedes registrar opcionalmente el supermercado y el total gastado, que se guarda en tu historial de compras.</string>
+
+    <string name="help_products_title">Catálogo de productos</string>
+    <string name="help_products_body">La pestaña Productos es tu catálogo personal, construido automáticamente con todo lo que añades a las listas. Búscalo al instante, marca productos como favoritos, edita sus detalles y asígnales una categoría. Los favoritos tienen prioridad en las sugerencias y las listas.</string>
+
+    <string name="help_categories_title">Categorías</string>
+    <string name="help_categories_body">Agrupa productos en categorías (por ejemplo Lácteos, Limpieza, Fruta). Gestiónalas desde la pestaña Productos: crea, renombra, elimina y dale un color a cada una. Filtra el catálogo por categoría con los chips de arriba, y asigna una categoría al crear o editar un producto.</string>
+
+    <string name="help_aliases_title">Alias de productos</string>
+    <string name="help_aliases_body">Un producto puede tener nombres alternativos — por ejemplo \"papa\" como alias de \"Patata\". Los alias alimentan la búsqueda y las sugerencias, así encuentras el producto correcto escribas el nombre que escribas. Edítalos desde el diálogo de edición de un producto.</string>
+
+    <string name="help_notes_title">Notas</string>
+    <string name="help_notes_body">Usa la pestaña Notas para apuntar cualquier cosa que no encaje en una lista — una receta, un precio que recordar, un recordatorio. Crea, edita y elimina notas libremente. Se incluyen en tus copias de seguridad.</string>
+
+    <string name="help_backup_title">Copia de seguridad</string>
+    <string name="help_backup_body">Desde Ajustes puedes exportar todos tus datos (productos, categorías, listas, notas e historial de compras) a un único archivo JSON para guardarlo como copia o llevarlo a otro dispositivo. Al importar se fusiona el archivo: muestra una vista previa y señala los productos que parecen duplicados para que decidas si cada uno es el mismo producto o uno nuevo.</string>
+
+    <string name="help_settings_title">Apariencia e idioma</string>
+    <string name="help_settings_body">En Ajustes puedes cambiar el tema entre Sistema, Claro y Oscuro, y en Android 12+ activar el color dinámico para que combine con tu fondo de pantalla. También puedes fijar el idioma de la app independientemente del móvil — Sistema, Español o English.</string>
 </resources>
