@@ -27,6 +27,12 @@ class OfflineProductRepository @Inject constructor(
         }
     }
 
+    override fun getProductsByCategory(categoryId: String): Flow<List<Product>> {
+        return productDao.getProductsByCategory(categoryId).map { entities ->
+            entities.map { it.asDomainModel() }
+        }
+    }
+
     override suspend fun saveProduct(product: Product) {
         productDao.insertProduct(product.asEntity())
     }
@@ -41,5 +47,9 @@ class OfflineProductRepository @Inject constructor(
 
     override suspend fun toggleFavorite(productId: String, isFavorite: Boolean) {
         productDao.updateFavoriteStatus(productId, isFavorite)
+    }
+
+    override suspend fun clearCategoryFromProducts(categoryId: String) {
+        productDao.clearCategory(categoryId)
     }
 }

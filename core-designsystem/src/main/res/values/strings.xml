@@ -63,4 +63,34 @@
 
     <string name="search_no_results_title">No matches found</string>
     <string name="search_no_results_desc">We couldn’t find anything for \"%s\". Try a different name.</string>
+
+    <!-- Categories -->
+    <string name="category_filter_all">All</string>
+    <string name="manage_categories">Manage</string>
+    <string name="category_manager_title">Categories</string>
+    <string name="category_name_placeholder">Category name</string>
+    <string name="category_empty">No categories yet</string>
+    <string name="new_product_category_label">Category</string>
+    <string name="category_none">None</string>
+    <string name="rename_action">Rename</string>
+    <string name="done_action">Done</string>
+    <string name="product_category_title">Category of %s</string>
+    <string name="edit_product_title">Edit %s</string>
+    <string name="aliases_label">Aliases (comma separated)</string>
+
+    <!-- Import / Export -->
+    <string name="backup_section_title">Backup &amp; restore</string>
+    <string name="backup_section_desc">Export all your data to a JSON file to share or keep as a backup, then import it on another device.</string>
+    <string name="export_action">Export data</string>
+    <string name="import_action">Import data</string>
+    <string name="export_success">Data exported successfully.</string>
+    <string name="import_success">Imported: %1$d products, %2$d categories, %3$d lists.</string>
+    <string name="io_error">Something went wrong. Please try again.</string>
+    <string name="import_preview_title">Import preview</string>
+    <string name="import_preview_summary">%1$d new, %2$d already exist, %3$d lists, %4$d categories.</string>
+    <string name="import_conflicts_title">Possible duplicates</string>
+    <string name="import_conflict_desc">«%1$s» looks like «%2$s» (%3$d%%)</string>
+    <string name="conflict_new">New</string>
+    <string name="conflict_same">Same</string>
+    <string name="import_confirm_action">Import</string>
 </resources>

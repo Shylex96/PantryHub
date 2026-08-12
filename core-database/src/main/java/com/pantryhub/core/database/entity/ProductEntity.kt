@@ -13,5 +13,8 @@ data class ProductEntity(
     @ColumnInfo(name = "category_id") val categoryId: String?,
     @ColumnInfo(name = "is_favorite") val isFavorite: Boolean,
     @ColumnInfo(name = "usage_frequency") val usageFrequency: Int,
-    @ColumnInfo(name = "created_at") val createdAt: Instant
+    @ColumnInfo(name = "created_at") val createdAt: Instant,
+    // Display aliases joined by newline; normalized aliases (space-joined) for search.
+    @ColumnInfo(name = "aliases", defaultValue = "''") val aliases: String = "",
+    @ColumnInfo(name = "normalized_aliases", defaultValue = "''") val normalizedAliases: String = ""
 )

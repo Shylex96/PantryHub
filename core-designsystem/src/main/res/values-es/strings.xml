@@ -63,4 +63,34 @@
 
     <string name="search_no_results_title">No hay coincidencias</string>
     <string name="search_no_results_desc">No hemos encontrado nada para \"%s\". Prueba con otro nombre.</string>
+
+    <!-- Categorías -->
+    <string name="category_filter_all">Todos</string>
+    <string name="manage_categories">Gestionar</string>
+    <string name="category_manager_title">Categorías</string>
+    <string name="category_name_placeholder">Nombre de categoría</string>
+    <string name="category_empty">Aún no hay categorías</string>
+    <string name="new_product_category_label">Categoría</string>
+    <string name="category_none">Ninguna</string>
+    <string name="rename_action">Renombrar</string>
+    <string name="done_action">Hecho</string>
+    <string name="product_category_title">Categoría de %s</string>
+    <string name="edit_product_title">Editar %s</string>
+    <string name="aliases_label">Alias (separados por comas)</string>
+
+    <!-- Importar / Exportar -->
+    <string name="backup_section_title">Copia de seguridad</string>
+    <string name="backup_section_desc">Exporta todos tus datos a un archivo JSON para compartir o guardar como copia, y luego impórtalo en otro dispositivo.</string>
+    <string name="export_action">Exportar datos</string>
+    <string name="import_action">Importar datos</string>
+    <string name="export_success">Datos exportados correctamente.</string>
+    <string name="import_success">Importado: %1$d productos, %2$d categorías, %3$d listas.</string>
+    <string name="io_error">Algo salió mal. Inténtalo de nuevo.</string>
+    <string name="import_preview_title">Vista previa</string>
+    <string name="import_preview_summary">%1$d nuevos, %2$d ya existen, %3$d listas, %4$d categorías.</string>
+    <string name="import_conflicts_title">Posibles duplicados</string>
+    <string name="import_conflict_desc">«%1$s» se parece a «%2$s» (%3$d%%)</string>
+    <string name="conflict_new">Nuevo</string>
+    <string name="conflict_same">El mismo</string>
+    <string name="import_confirm_action">Importar</string>
 </resources>

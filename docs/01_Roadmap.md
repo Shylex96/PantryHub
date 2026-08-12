@@ -1,5 +1,12 @@
 # PantryHub Roadmap
 
+> ⚠️ **Stale states and order.** The version numbering below does not match the real order
+> of work, and some states are false (e.g. "v0.6 UI Refresh: Completed" — the visual
+> identity is exactly what is MISSING). The **single source of truth for progress is
+> `STATUS.md`** and the execution order is set by `19_Execution_Plan.md`. This roadmap is
+> kept as a long-term vision (which versions will exist and their scope), not as a status
+> record.
+
 ## Overview
 
 This document defines the long-term evolution plan of PantryHub.
@@ -384,14 +391,19 @@ Potential future milestones include:
 | v0.3.0 | Storage | Completed |
 | v0.4.0 | Shopping Flow | Completed |
 | v0.5.0 | Persistence | Completed |
-| v0.5.1 | Design System Foundation | Completed |
-| v0.6.0 | UI Refresh | Completed |
+| v0.5.1 | Design System (structure) | Completed |
 | v0.7.0 | Products | Completed |
-| v0.8.0 | Import & Export | Working   |
-| v0.9.0 | Notes & History | Planned   |
-| v1.0.0 | Community | Planned   |
-| v1.1.0 | Analytics | Planned   |
-| v1.2.0 | Polish | Planned   |
+| v0.6.0 | Visual identity (UI Refresh) | **Next (Sprint 1)** |
+| — | Categories (management + browsing) | Sprint 2 |
+| — | Product aliases | Sprint 2b |
+| v0.8.0 | Import & Export (UI) | Sprint 3 |
+| v0.9.0 | Notes | Sprint 4 |
+| — | Settings | Sprint 5 |
+| — | Templates / provisional lists | Sprint 6 |
+| v1.0.0 | Close + QA + release | Planned |
+| v1.1.0+ | Community / Analytics (post-1.0) | Planned |
+
+> Table corrected. Live detail in `STATUS.md`.
 
 ---
 

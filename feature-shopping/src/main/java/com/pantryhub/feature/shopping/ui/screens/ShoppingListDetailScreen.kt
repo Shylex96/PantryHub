@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
@@ -51,6 +50,9 @@ import com.pantryhub.feature.shopping.presentation.ShoppingIntent
 import com.pantryhub.feature.shopping.presentation.ShoppingUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
+// SwipeToDismiss confirmValueChange is deprecated without a drop-in replacement;
+// migration to dynamic anchors is tracked for the polish sprint.
+@Suppress("DEPRECATION")
 @Composable
 fun ShoppingListDetailScreen(
     state: ShoppingUiState,
@@ -65,6 +67,9 @@ fun ShoppingListDetailScreen(
 ) {
     val currentList = state.currentList ?: return
     val spacing = PantryHubTheme.spacing
+    val favoriteColor = PantryHubTheme.extendedColors.favorite
+    val onFavoriteColor = PantryHubTheme.extendedColors.onFavorite
+    val deleteColor = MaterialTheme.colorScheme.error
 
     var showRenameDialog by remember { mutableStateOf(false) }
     var listNameBuffer by remember { mutableStateOf(currentList.name) }
@@ -292,7 +297,7 @@ fun ShoppingListDetailScreen(
                                             modifier = Modifier
                                                 .fillMaxSize()
                                                 .background(
-                                                    Color(0xFFB00020).copy(alpha = colorAlpha),
+                                                    deleteColor.copy(alpha = colorAlpha),
                                                     PantryHubTheme.shapes.medium
                                                 )
                                                 .padding(horizontal = spacing.xl),
@@ -312,7 +317,7 @@ fun ShoppingListDetailScreen(
                                             modifier = Modifier
                                                 .fillMaxSize()
                                                 .background(
-                                                    Color(0xFFFFD700).copy(alpha = colorAlpha),
+                                                    favoriteColor.copy(alpha = colorAlpha),
                                                     PantryHubTheme.shapes.medium
                                                 )
                                                 .padding(horizontal = spacing.xl),
@@ -321,7 +326,7 @@ fun ShoppingListDetailScreen(
                                             Icon(
                                                 imageVector = PantryIcons.Favorite,
                                                 contentDescription = null,
-                                                tint = Color(0xFF7A5B00),
+                                                tint = onFavoriteColor,
                                                 modifier = Modifier.scale(scale)
                                             )
                                         }
@@ -362,7 +367,7 @@ fun ShoppingListDetailScreen(
                                                 // On vectors without a base color, this could make the icon invisible.
                                                 // I now use an explicit theme color instead.
                                                 tint = if (item.product.isFavorite) {
-                                                    Color(0xFFFFD700)
+                                                    favoriteColor
                                                 } else {
                                                     MaterialTheme.colorScheme.onSurfaceVariant
                                                 },

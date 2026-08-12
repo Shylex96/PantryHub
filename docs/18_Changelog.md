@@ -1,5 +1,11 @@
 # PantryHub Changelog
 
+> ⚠️ **Stale content.** The entries below are mostly fictional ("TBD" dates,
+> "Development"/"Release Candidate" states for already-finished modules). They are not a
+> reliable record. The **single source of truth for progress is `STATUS.md`**. From now on,
+> each sprint closed in `19_Execution_Plan.md` produces a real entry here (with a real date
+> and user-visible changes), and the previous noise is removed.
+
 ## Overview
 
 This document contains the history of changes made to PantryHub.
@@ -45,7 +51,33 @@ Technical
 
 ## Added
 
-Pending features currently under development.
+- **Visual identity (Sprint 1):** dual-mode theme — dark "Nocturne" (Night Owl) and light
+  "Warm Pantry" — with a full Material 3 color role set, custom bundled fonts (Space Grotesk
+  + Inter), and per-category colors. `dynamicColor` disabled by default.
+- **Categories (Sprint 2):** full data + domain layer (DAO, repository, use cases with
+  duplicate detection) and UI inside Products — filter chips, a manager dialog
+  (create/rename/delete), category color dots, category assignment on create, and editing an
+  existing product's category by tapping it.
+- **Product aliases (Sprint 2b):** products can have alternative names ("papa" → "Patata")
+  that feed search; editable from the product edit dialog.
+- **Import / Export (Sprint 3):** export the whole database (products, categories, lists +
+  items, purchase headers) to a JSON file via the system file picker, and import/merge a
+  JSON backup with id remapping so foreign keys always hold. Lives in the Settings tab.
+  Import shows a **preview** (counts) and flags **near-duplicate products** by Jaro-Winkler
+  similarity (threshold 0.8, e.g. "Lentejas" vs "Lenteja") for the user to resolve as the
+  same item or a new one. Exports are written truncated ("wt") to avoid stale trailing bytes.
+
+## Changed
+
+- Replaced hardcoded favorite/delete colors in the product and list screens with theme
+  tokens (`extendedColors.favorite`, `colorScheme.error`).
+
+## Technical
+
+- **Room migration v2 → v3:** adds `aliases` and `normalized_aliases` columns to `products`
+  (additive, existing data preserved).
+- Reconciled documentation (Sprint 0): `STATUS.md` is the single source of truth; roadmap,
+  backlog and this changelog were corrected.
 
 ---
 

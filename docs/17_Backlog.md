@@ -1,5 +1,11 @@
 # PantryHub Backlog
 
+> ⚠️ **Stale status.** The states below (many as `PLANNED`) do NOT reflect reality: much of
+> it is already `DONE` (foundation, theme, navigation, product, search, duplicates, lists,
+> shopping mode, finish purchase). The **single source of truth for progress is `STATUS.md`**,
+> and the order of work is set by `19_Execution_Plan.md`. This backlog is kept only as a
+> catalog of stories/acceptance criteria.
+
 ## Overview
 
 This document contains the product backlog of PantryHub.

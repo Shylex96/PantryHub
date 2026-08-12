@@ -17,8 +17,17 @@ interface ProductDao {
     @Query("SELECT * FROM products WHERE id = :id")
     suspend fun getProductById(id: String): ProductEntity?
 
-    @Query("SELECT * FROM products WHERE normalized_name LIKE '%' || :query || '%'")
+    @Query(
+        "SELECT * FROM products WHERE normalized_name LIKE '%' || :query || '%' " +
+            "OR normalized_aliases LIKE '%' || :query || '%'"
+    )
     fun searchProducts(query: String): Flow<List<ProductEntity>>
+
+    @Query("SELECT * FROM products WHERE category_id = :categoryId")
+    fun getProductsByCategory(categoryId: String): Flow<List<ProductEntity>>
+
+    @Query("UPDATE products SET category_id = NULL WHERE category_id = :categoryId")
+    suspend fun clearCategory(categoryId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(product: ProductEntity)

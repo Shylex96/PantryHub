@@ -1,5 +1,9 @@
 package com.pantryhub.core.data.di
 
+import com.pantryhub.core.data.repository.BackupRepository
+import com.pantryhub.core.data.repository.CategoryRepository
+import com.pantryhub.core.data.repository.OfflineBackupRepository
+import com.pantryhub.core.data.repository.OfflineCategoryRepository
 import com.pantryhub.core.data.repository.OfflineProductRepository
 import com.pantryhub.core.data.repository.OfflinePurchaseRepository
 import com.pantryhub.core.data.repository.OfflineShoppingListRepository
@@ -21,6 +25,18 @@ abstract class DataModule {
     abstract fun bindProductRepository(
         offlineProductRepository: OfflineProductRepository
     ): ProductRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryRepository(
+        offlineCategoryRepository: OfflineCategoryRepository
+    ): CategoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBackupRepository(
+        offlineBackupRepository: OfflineBackupRepository
+    ): BackupRepository
 
     @Binds
     @Singleton

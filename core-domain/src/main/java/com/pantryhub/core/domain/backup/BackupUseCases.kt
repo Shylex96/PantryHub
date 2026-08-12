@@ -4,5 +4,8 @@ import javax.inject.Inject
 
 class BackupUseCases @Inject constructor(
     val exportData: ExportDataUseCase,
-    val importData: ImportDataUseCase
+    val importData: ImportDataUseCase,
+    val exportBackup: ExportBackupUseCase,
+    val importBackup: ImportBackupUseCase,
+    val analyzeImport: AnalyzeImportUseCase
 )

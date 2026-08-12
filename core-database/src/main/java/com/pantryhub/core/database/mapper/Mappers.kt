@@ -10,8 +10,11 @@ import com.pantryhub.core.database.entity.ShoppingListEntity
 import com.pantryhub.core.model.category.Category
 import com.pantryhub.core.model.product.Product
 import com.pantryhub.core.model.purchase.Purchase
+import com.pantryhub.core.common.util.toComparisonKey
 import com.pantryhub.core.model.shopping.ShoppingList
 import com.pantryhub.core.model.shopping.ShoppingListItem
+
+private const val ALIAS_SEPARATOR = "\n"
 
 fun ProductEntity.asDomainModel() = Product(
     id = id,
@@ -20,7 +23,8 @@ fun ProductEntity.asDomainModel() = Product(
     categoryId = categoryId,
     isFavorite = isFavorite,
     usageFrequency = usageFrequency,
-    createdAt = createdAt
+    createdAt = createdAt,
+    aliases = aliases.split(ALIAS_SEPARATOR).filter { it.isNotBlank() }
 )
 
 fun Product.asEntity() = ProductEntity(
@@ -30,7 +34,12 @@ fun Product.asEntity() = ProductEntity(
     categoryId = categoryId,
     isFavorite = isFavorite,
     usageFrequency = usageFrequency,
-    createdAt = createdAt
+    createdAt = createdAt,
+    aliases = aliases.joinToString(ALIAS_SEPARATOR),
+    normalizedAliases = aliases
+        .map { it.toComparisonKey() }
+        .filter { it.isNotEmpty() }
+        .joinToString(" ")
 )
 
 fun CategoryEntity.asDomainModel() = Category(

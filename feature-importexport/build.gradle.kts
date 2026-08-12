@@ -26,13 +26,18 @@ android {
 
 dependencies {
     implementation(project(":core-common"))
-    implementation(project(":core-database"))
+    implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
+    implementation(project(":core-navigation"))
+    implementation(project(":core-domain"))
 
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.androidx.work.runtime)
 }

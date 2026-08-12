@@ -24,6 +24,7 @@ import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
+import com.pantryhub.feature.importexport.navigation.importExportGraph
 import com.pantryhub.feature.products.navigation.productsGraph
 import com.pantryhub.feature.shopping.navigation.shoppingGraph
 
@@ -93,13 +94,7 @@ fun PantryHubApp() {
                         icon = PantryIcons.Notes
                     )
                 }
-                composable<Destination.Settings> {
-                    PantryEmptyState(
-                        title = stringResource(R.string.settings_coming_soon_title),
-                        description = stringResource(R.string.settings_coming_soon_desc),
-                        icon = PantryIcons.Settings
-                    )
-                }
+                importExportGraph()
             }
         }
     }

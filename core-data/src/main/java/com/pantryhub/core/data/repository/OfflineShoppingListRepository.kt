@@ -19,8 +19,13 @@ class OfflineShoppingListRepository @Inject constructor(
         return shoppingListDao.getAllListsWithItems().map { wrappers ->
             wrappers.map { wrapper ->
                 wrapper.list.asDomainModel(
-                    items = wrapper.items.map {
-                        it.asDomainModel(dummyProduct())
+                    items = wrapper.items.map { itemEntity ->
+                        // Attach the real product so list items carry a valid product id
+                        // (needed for a complete, re-importable export). Falls back to a
+                        // placeholder that still preserves the product id.
+                        val product = productDao.getProductById(itemEntity.productId)?.asDomainModel()
+                            ?: dummyProduct().copy(id = itemEntity.productId)
+                        itemEntity.asDomainModel(product)
                     }
                 )
             }
