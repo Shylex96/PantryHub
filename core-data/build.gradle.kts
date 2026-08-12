@@ -24,5 +24,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.datetime)
     implementation(libs.serialization.json)
+    implementation(libs.datastore)
     ksp(libs.hilt.compiler)
 }

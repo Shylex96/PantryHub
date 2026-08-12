@@ -29,11 +29,14 @@ dependencies {
     implementation(project(":core-designsystem"))
     implementation(project(":core-model"))
     implementation(project(":core-navigation"))
+    implementation(project(":core-domain"))
 
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.appcompat)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.datastore)
 }

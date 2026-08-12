@@ -1,5 +1,6 @@
 package com.pantryhub.app
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -7,6 +8,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -18,24 +20,35 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.pantryhub.core.designsystem.R
-import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
 import com.pantryhub.core.navigation.NavigationActions
+import com.pantryhub.core.model.settings.ThemeMode
 import com.pantryhub.feature.importexport.navigation.importExportGraph
+import com.pantryhub.feature.notes.navigation.notesGraph
 import com.pantryhub.feature.products.navigation.productsGraph
+import com.pantryhub.feature.settings.navigation.settingsGraph
 import com.pantryhub.feature.shopping.navigation.shoppingGraph
 
 @Composable
 fun PantryHubApp() {
+    val appViewModel: AppViewModel = hiltViewModel()
+    val settings by appViewModel.settings.collectAsState()
+    val darkTheme = when (settings.themeMode) {
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+
     val navController = rememberNavController()
     val navActions = remember(navController) { NavigationActions(navController) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    PantryHubTheme {
+    PantryHubTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColor) {
         Scaffold(
             bottomBar = {
                 val items = listOf(
@@ -87,14 +100,11 @@ fun PantryHubApp() {
                 shoppingGraph(navController)
                 productsGraph()
                 
-                composable<Destination.Notes> {
-                    PantryEmptyState(
-                        title = stringResource(R.string.notes_coming_soon_title),
-                        description = stringResource(R.string.notes_coming_soon_desc),
-                        icon = PantryIcons.Notes
-                    )
-                }
-                importExportGraph()
+                notesGraph()
+                settingsGraph(
+                    onOpenImportExport = { navController.navigate(Destination.ImportExport) }
+                )
+                importExportGraph(onBack = { navController.popBackStack() })
             }
         }
     }

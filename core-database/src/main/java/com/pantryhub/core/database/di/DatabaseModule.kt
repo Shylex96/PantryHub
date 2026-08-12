@@ -6,6 +6,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pantryhub.core.database.PantryHubDatabase
 import com.pantryhub.core.database.dao.CategoryDao
+import com.pantryhub.core.database.dao.NoteDao
 import com.pantryhub.core.database.dao.ProductDao
 import com.pantryhub.core.database.dao.PurchaseDao
 import com.pantryhub.core.database.dao.ShoppingListDao
@@ -27,6 +28,21 @@ private val MIGRATION_2_3 = object : Migration(2, 3) {
     }
 }
 
+/** v3 -> v4: adds the notes table. */
+private val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `notes` (" +
+                "`id` TEXT NOT NULL, " +
+                "`title` TEXT NOT NULL, " +
+                "`content` TEXT NOT NULL, " +
+                "`created_at` INTEGER NOT NULL, " +
+                "`updated_at` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`id`))"
+        )
+    }
+}
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
@@ -39,7 +55,7 @@ object DatabaseModule {
             PantryHubDatabase::class.java,
             "pantryhub-database"
         )
-            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -52,6 +68,11 @@ object DatabaseModule {
     @Provides
     fun provideCategoryDao(database: PantryHubDatabase): CategoryDao {
         return database.categoryDao()
+    }
+
+    @Provides
+    fun provideNoteDao(database: PantryHubDatabase): NoteDao {
+        return database.noteDao()
     }
 
     @Provides

@@ -11,10 +11,11 @@
 ## Summary
 
 - **Current phase:** Phase 1 (offline personal app).
-- **Phase 1 progress:** ~82%.
+- **Phase 1 progress:** ~90%.
 - **Infrastructure (architecture, DI, DB, domain, data, navigation):** ~100%.
-- **Next milestone:** Notes (Sprint 4). Done so far: docs (Sprint 0), visual identity
-  (Sprint 1), categories (Sprint 2), product aliases (Sprint 2b), Import/Export (Sprint 3).
+- **Next:** Settings language (Part B), provisional lists/templates (Sprint 6), or the
+  full visual pass. Done: docs, visual identity, categories, aliases, Import/Export,
+  Notes, Settings theme (light/dark/system + dynamic color).
 
 ---
 
@@ -35,8 +36,8 @@
 | Feature: Import/Export | ✅ Done | Sprint 3 (export/import JSON, incl. categories) |
 | Categories (management/browse) | ✅ Done | Sprint 2 |
 | Product aliases | ✅ Done | Sprint 2b (Room migration v2→v3) |
-| Feature: Notes | ❌ Empty | Sprint 4 |
-| Feature: Settings | ❌ Empty | Sprint 5 |
+| Feature: Notes | ✅ Done | Sprint 4 (list + create/edit/delete, in backup) |
+| Feature: Settings | ✅ Theme done | Sprint 5A (theme + dynamic color); language = Part B |
 | Templates / provisional lists | ⚠️ Partial | Sprint 6 |
 | i18n (es + en) | ✅ Base done | audit at 1.0 close |
 | Tests | ⚠️ Partial | expand per feature |
@@ -60,8 +61,8 @@ Legend: ✅ done · ⚠️ partial · ❌ not started
 | Categories | management + browsing | ✅ Done |
 | Product aliases | field + migration + search | ✅ Done |
 | v0.8 Import/Export | export/import JSON | ✅ Done (incl. import preview + similarity conflicts) |
-| Notes | create/edit/delete | ⏳ **Next (Sprint 4)** |
-| Settings | theme/language via DataStore | 🔜 Sprint 5 |
+| Notes | create/edit/delete | ✅ Done |
+| Settings | theme via DataStore | ✅ Done (language pending, Part B) |
 | Templates / provisional | clone + similarity | 🔜 Sprint 6 |
 | v1.0 | close + QA + release | 🔜 |
 

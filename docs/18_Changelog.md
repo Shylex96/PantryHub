@@ -67,6 +67,12 @@ Technical
   similarity (threshold 0.8, e.g. "Lentejas" vs "Lenteja") for the user to resolve as the
   same item or a new one. Exports are written truncated ("wt") to avoid stale trailing bytes.
 
+- **Notes (Sprint 4):** a full Notes feature — list, create/edit/delete via a dialog, empty
+  state — backed by its own Room table (migration v3→v4). Notes are included in export/import.
+- **Settings (Sprint 5A):** a real Settings screen — theme mode (system/light/dark) and a
+  dynamic-color toggle, persisted with DataStore and applied app-wide. Import/Export moved
+  into a Settings section. (In-app language switching is planned as Part B.)
+
 ## Changed
 
 - Replaced hardcoded favorite/delete colors in the product and list screens with theme

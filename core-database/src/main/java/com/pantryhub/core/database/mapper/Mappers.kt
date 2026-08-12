@@ -1,6 +1,7 @@
 package com.pantryhub.core.database.mapper
 
 import com.pantryhub.core.database.entity.CategoryEntity
+import com.pantryhub.core.database.entity.NoteEntity
 import com.pantryhub.core.database.entity.ProductEntity
 import com.pantryhub.core.database.entity.PurchaseEntity
 import com.pantryhub.core.database.entity.PurchaseItemEntity
@@ -8,6 +9,7 @@ import com.pantryhub.core.database.entity.ShoppingItemEntity
 import com.pantryhub.core.database.entity.ShoppingItemWithProduct
 import com.pantryhub.core.database.entity.ShoppingListEntity
 import com.pantryhub.core.model.category.Category
+import com.pantryhub.core.model.note.Note
 import com.pantryhub.core.model.product.Product
 import com.pantryhub.core.model.purchase.Purchase
 import com.pantryhub.core.common.util.toComparisonKey
@@ -46,6 +48,22 @@ fun CategoryEntity.asDomainModel() = Category(
     id = id,
     name = name,
     icon = icon
+)
+
+fun NoteEntity.asDomainModel() = Note(
+    id = id,
+    title = title,
+    content = content,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+fun Note.asEntity() = NoteEntity(
+    id = id,
+    title = title,
+    content = content,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun Category.asEntity(normalizedName: String) = CategoryEntity(

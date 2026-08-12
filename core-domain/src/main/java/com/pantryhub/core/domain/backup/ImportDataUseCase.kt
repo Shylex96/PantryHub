@@ -2,6 +2,7 @@ package com.pantryhub.core.domain.backup
 
 import com.pantryhub.core.common.util.toComparisonKey
 import com.pantryhub.core.data.repository.CategoryRepository
+import com.pantryhub.core.data.repository.NoteRepository
 import com.pantryhub.core.data.repository.ProductRepository
 import com.pantryhub.core.data.repository.PurchaseRepository
 import com.pantryhub.core.data.repository.ShoppingListRepository
@@ -13,7 +14,8 @@ class ImportDataUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val categoryRepository: CategoryRepository,
     private val shoppingListRepository: ShoppingListRepository,
-    private val purchaseRepository: PurchaseRepository
+    private val purchaseRepository: PurchaseRepository,
+    private val noteRepository: NoteRepository
 ) {
     /**
      * Merges a backup into the local database. Categories and products are merged by
@@ -82,6 +84,11 @@ class ImportDataUseCase @Inject constructor(
         // 4. Purchases (totals; line items are not part of the export yet).
         data.purchases.forEach { purchase ->
             purchaseRepository.savePurchase(purchase)
+        }
+
+        // 5. Notes (merge by id; re-importing the same backup is idempotent).
+        data.notes.forEach { note ->
+            noteRepository.saveNote(note)
         }
     }
 }

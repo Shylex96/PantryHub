@@ -93,4 +93,27 @@
     <string name="conflict_new">New</string>
     <string name="conflict_same">Same</string>
     <string name="import_confirm_action">Import</string>
+
+    <!-- Notes -->
+    <string name="note_new_title">New note</string>
+    <string name="note_edit_title">Edit note</string>
+    <string name="note_title_label">Title</string>
+    <string name="note_content_label">Content</string>
+    <string name="note_untitled">Untitled</string>
+    <string name="empty_notes_title">No notes yet</string>
+    <string name="empty_notes_desc">Jot down reminders or useful info — tap + to add your first note.</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="dynamic_color_label">Dynamic color</string>
+    <string name="dynamic_color_desc">Use colors from your wallpaper (Android 12+)</string>
+    <string name="settings_data">Data</string>
+    <string name="settings_backup_row_desc">Export or import your data</string>
+    <string name="settings_language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_es">Español</string>
+    <string name="language_en">English</string>
 </resources>

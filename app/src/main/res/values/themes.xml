@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PantryHub" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- AppCompat base theme is required by AppCompatActivity (used for per-app language).
+         Compose (PantryHubTheme) drives the actual colors; this only styles the window. -->
+    <style name="Theme.PantryHub" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,6 +25,7 @@ import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryButton
 import com.pantryhub.core.designsystem.ui.components.PantryOutlinedButton
 import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.domain.backup.ImportPreview
 import com.pantryhub.feature.importexport.presentation.ImportExportViewModel
@@ -32,7 +35,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun ImportExportScreen(modifier: Modifier = Modifier) {
+fun ImportExportScreen(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: ImportExportViewModel = hiltViewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -110,7 +116,19 @@ fun ImportExportScreen(modifier: Modifier = Modifier) {
     }
 
     Scaffold(
-        topBar = { PantryTopBar(title = stringResource(R.string.nav_settings)) }
+        topBar = {
+            PantryTopBar(
+                title = stringResource(R.string.backup_section_title),
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = PantryIcons.Back,
+                            contentDescription = stringResource(R.string.back_description)
+                        )
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = modifier
@@ -118,11 +136,6 @@ fun ImportExportScreen(modifier: Modifier = Modifier) {
                 .padding(horizontal = spacing.lg, vertical = spacing.md),
             verticalArrangement = Arrangement.spacedBy(spacing.md)
         ) {
-            Text(
-                text = stringResource(R.string.backup_section_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
             Text(
                 text = stringResource(R.string.backup_section_desc),
                 style = MaterialTheme.typography.bodyMedium,
