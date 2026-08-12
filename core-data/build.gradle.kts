@@ -23,5 +23,6 @@ dependencies {
     implementation(project(":core-database"))
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.serialization.json)
     ksp(libs.hilt.compiler)
 }

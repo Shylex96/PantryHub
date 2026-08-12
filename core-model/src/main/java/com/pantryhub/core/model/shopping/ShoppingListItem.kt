@@ -1,8 +1,10 @@
 package com.pantryhub.core.model.shopping
 
+import kotlinx.serialization.Serializable
 import com.pantryhub.core.model.product.Product
 import kotlinx.datetime.Instant
 
+@Serializable
 data class ShoppingListItem(
     val id: String,
     val shoppingListId: String,

@@ -377,21 +377,21 @@ Potential future milestones include:
 
 # Milestones Summary
 
-| Version | Description | Status |
-|----------|-------------|--------|
+| Version | Description | Status    |
+|----------|-------------|-----------|
 | v0.1.0 | Foundation | Completed |
 | v0.2.0 | Domain | Completed |
 | v0.3.0 | Storage | Completed |
 | v0.4.0 | Shopping Flow | Completed |
 | v0.5.0 | Persistence | Completed |
-| v0.5.1 | Design System Foundation | Planned |
-| v0.6.0 | UI Refresh | Planned |
-| v0.7.0 | Products | Planned |
-| v0.8.0 | Import & Export | Planned |
-| v0.9.0 | Notes & History | Planned |
-| v1.0.0 | Community | Planned |
-| v1.1.0 | Analytics | Planned |
-| v1.2.0 | Polish | Planned |
+| v0.5.1 | Design System Foundation | Completed |
+| v0.6.0 | UI Refresh | Completed |
+| v0.7.0 | Products | Completed |
+| v0.8.0 | Import & Export | Working   |
+| v0.9.0 | Notes & History | Planned   |
+| v1.0.0 | Community | Planned   |
+| v1.1.0 | Analytics | Planned   |
+| v1.2.0 | Polish | Planned   |
 
 ---
 

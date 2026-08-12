@@ -1,7 +1,9 @@
 package com.pantryhub.core.model.product
 
+import kotlinx.serialization.Serializable
 import kotlinx.datetime.Instant
 
+@Serializable
 data class Product(
     val id: String,
     val name: String,
