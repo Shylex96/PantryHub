@@ -2,6 +2,7 @@ package com.pantryhub.feature.shopping.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pantryhub.core.domain.category.CategoryUseCases
 import com.pantryhub.core.domain.product.ProductUseCases
 import com.pantryhub.core.domain.shopping.ShoppingUseCases
 import com.pantryhub.core.model.shopping.ShoppingListItem
@@ -25,7 +26,8 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class ShoppingViewModel @Inject constructor(
     private val shoppingUseCases: ShoppingUseCases,
-    private val productUseCases: ProductUseCases
+    private val productUseCases: ProductUseCases,
+    private val categoryUseCases: CategoryUseCases
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShoppingUiState())
@@ -36,6 +38,13 @@ class ShoppingViewModel @Inject constructor(
     init {
         observeLists()
         observeProductQuery()
+        observeCategories()
+    }
+
+    private fun observeCategories() {
+        categoryUseCases.getCategories()
+            .onEach { categories -> _uiState.update { it.copy(categories = categories) } }
+            .launchIn(viewModelScope)
     }
 
     fun handleIntent(intent: ShoppingIntent) {

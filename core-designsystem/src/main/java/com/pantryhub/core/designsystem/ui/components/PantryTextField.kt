@@ -13,19 +13,25 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 fun PantryTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String? = null,
     modifier: Modifier = Modifier,
+    placeholder: String? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
+    singleLine: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        // A floating label pushes the text up; use `placeholder` instead when the
+        // field must stay a fixed, vertically-centered height (e.g. inline add bars).
+        label = label?.let { text -> { Text(text) } },
+        placeholder = placeholder?.let { text -> { Text(text) } },
         modifier = modifier,
         leadingIcon = leadingIcon,
         isError = isError,
+        singleLine = singleLine,
         shape = MaterialTheme.shapes.medium,
         keyboardOptions = keyboardOptions,
         colors = TextFieldDefaults.colors(

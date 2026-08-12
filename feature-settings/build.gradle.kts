@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":core-model"))
     implementation(project(":core-navigation"))
     implementation(project(":core-domain"))
+    implementation(libs.androidx.ui.tooling.preview)
 
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)
@@ -38,5 +39,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
     implementation(libs.hilt.android)
+    debugImplementation(libs.androidx.ui.tooling)
     ksp(libs.hilt.compiler)
 }

@@ -15,10 +15,12 @@
     <string name="shopping_lists_title">Shopping Lists</string>
     <string name="create_list_description">Create List</string>
     <string name="shopping_mode_title">%s - Shopping Mode</string>
+    <string name="shopping_mode_subtitle">Shopping mode</string>
     <string name="pending_section">Pending</string>
     <string name="completed_section">Completed</string>
     <string name="start_shopping_action">Start Shopping</string>
     <string name="add_item_label">Add new item</string>
+    <string name="add_product_placeholder">Add product…</string>
     <string name="item_count_subtitle">%d items</string>
     <string name="back_description">Back</string>
 
@@ -81,6 +83,7 @@
     <string name="category_empty">No categories yet</string>
     <string name="new_product_category_label">Category</string>
     <string name="category_none">None</string>
+    <string name="product_no_category">No category</string>
     <string name="rename_action">Rename</string>
     <string name="done_action">Done</string>
     <string name="product_category_title">Category of %s</string>

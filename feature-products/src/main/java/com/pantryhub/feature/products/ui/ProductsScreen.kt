@@ -374,20 +374,23 @@ fun ProductsScreen(
                             }
                         ) {
                             val productCategoryId = product.categoryId
+                            // Fall back to a neutral grey dot + "No category" label so
+                            // uncategorized products still align with categorized ones.
+                            val productCategoryName = productCategoryId?.let { id ->
+                                state.categories.find { it.id == id }?.name
+                            } ?: stringResource(R.string.product_no_category)
+                            val productDotColor = productCategoryId?.let { colorForCategory(it) }
+                                ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                             PantryListItem(
                                 title = product.name,
-                                subtitle = null,
+                                subtitle = productCategoryName,
                                 onClick = { categorizingProduct = product },
-                                leadingContent = if (productCategoryId != null) {
-                                    {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(12.dp)
-                                                .background(colorForCategory(productCategoryId), CircleShape)
-                                        )
-                                    }
-                                } else {
-                                    null
+                                leadingContent = {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .background(productDotColor, CircleShape)
+                                    )
                                 },
                                 trailingContent = {
                                     Row(

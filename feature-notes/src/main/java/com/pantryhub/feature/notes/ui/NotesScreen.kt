@@ -1,6 +1,7 @@
 package com.pantryhub.feature.notes.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -124,7 +125,8 @@ fun NotesScreen(modifier: Modifier = Modifier) {
             LazyColumn(
                 modifier = modifier
                     .padding(innerPadding)
-                    .padding(horizontal = spacing.lg)
+                    .padding(horizontal = spacing.lg),
+                contentPadding = PaddingValues(top = spacing.sm, bottom = spacing.xxl)
             ) {
                 items(notes, key = { it.id }) { note ->
                     val untitled = stringResource(R.string.note_untitled)

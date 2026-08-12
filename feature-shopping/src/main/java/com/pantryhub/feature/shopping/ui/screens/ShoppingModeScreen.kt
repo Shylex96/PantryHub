@@ -1,6 +1,7 @@
 package com.pantryhub.feature.shopping.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.pantryhub.core.designsystem.R
@@ -54,7 +56,25 @@ fun ShoppingModeScreen(
 
     val currentList = state.currentList ?: return
     val spacing = PantryHubTheme.spacing
-    
+
+    // Deterministic color per category, based on its position (same as Products).
+    val extended = PantryHubTheme.extendedColors
+    val categoryPalette = listOf(
+        extended.categoryVegetables,
+        extended.categoryFruit,
+        extended.categoryDairy,
+        extended.categoryMeat,
+        extended.categoryBakery,
+        extended.categoryDrinks,
+        extended.categoryFrozen,
+        extended.categoryHousehold,
+        extended.categoryOther
+    )
+    val colorForCategory: (String) -> Color = { id ->
+        val index = state.categories.indexOfFirst { it.id == id }
+        if (index >= 0) categoryPalette[index % categoryPalette.size] else extended.categoryOther
+    }
+
     val pendingItems = currentList.items.filter { !it.isCompleted }
     val completedItems = currentList.items.filter { it.isCompleted }
 
@@ -132,7 +152,8 @@ fun ShoppingModeScreen(
     Scaffold(
         topBar = {
             PantryTopBar(
-                title = stringResource(R.string.shopping_mode_title, currentList.name),
+                title = currentList.name,
+                subtitle = stringResource(R.string.shopping_mode_subtitle),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -155,36 +176,47 @@ fun ShoppingModeScreen(
         LazyColumn(
             modifier = modifier
                 .padding(innerPadding)
-                .padding(horizontal = spacing.sm)
+                .padding(horizontal = spacing.lg),
+            contentPadding = PaddingValues(bottom = spacing.xxl)
         ) {
             if (pendingItems.isNotEmpty()) {
                 item {
                     Text(
-                        text = stringResource(R.string.pending_section),
+                        text = stringResource(R.string.pending_section).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(spacing.lg),
+                        modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.md),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
             
             items(pendingItems, key = { it.id }) { item ->
-                ShoppingItemRow(item = item, onToggle = onToggleItem)
+                ShoppingItemRow(
+                    item = item,
+                    onToggle = onToggleItem,
+                    dotColor = item.product.categoryId?.let { colorForCategory(it) }
+                        ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                )
             }
 
             if (completedItems.isNotEmpty()) {
                 item {
                     HorizontalDivider(modifier = Modifier.padding(vertical = spacing.md))
                     Text(
-                        text = stringResource(R.string.completed_section),
+                        text = stringResource(R.string.completed_section).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(spacing.lg),
+                        modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.md),
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }
                 
                 items(completedItems, key = { it.id }) { item ->
-                    ShoppingItemRow(item = item, onToggle = onToggleItem)
+                    ShoppingItemRow(
+                    item = item,
+                    onToggle = onToggleItem,
+                    dotColor = item.product.categoryId?.let { colorForCategory(it) }
+                        ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                )
                 }
             }
         }

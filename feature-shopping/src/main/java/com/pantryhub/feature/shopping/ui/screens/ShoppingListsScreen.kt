@@ -1,8 +1,8 @@
 package com.pantryhub.feature.shopping.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,11 +15,13 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -80,17 +82,21 @@ fun ShoppingListsScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(spacing.xs))
-                    Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                        FilterChip(
+                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                        SegmentedButton(
                             selected = newListType == ShoppingListType.REGULAR,
                             onClick = { newListType = ShoppingListType.REGULAR },
-                            label = { Text(stringResource(R.string.list_type_regular)) }
-                        )
-                        FilterChip(
+                            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                        ) {
+                            Text(stringResource(R.string.list_type_regular))
+                        }
+                        SegmentedButton(
                             selected = newListType == ShoppingListType.TEMPORARY,
                             onClick = { newListType = ShoppingListType.TEMPORARY },
-                            label = { Text(stringResource(R.string.list_type_temporary)) }
-                        )
+                            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                        ) {
+                            Text(stringResource(R.string.list_type_temporary))
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(spacing.lg))
@@ -209,7 +215,8 @@ fun ShoppingListsScreen(
             LazyColumn(
                 modifier = modifier
                     .padding(innerPadding)
-                    .padding(horizontal = spacing.lg)
+                    .padding(horizontal = spacing.lg),
+                contentPadding = PaddingValues(top = spacing.sm, bottom = spacing.xxl)
             ) {
                 items(state.lists, key = { it.id }) { list ->
                     ShoppingListCard(

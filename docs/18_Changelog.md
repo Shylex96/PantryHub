@@ -87,6 +87,14 @@ Technical
 
 - Replaced hardcoded favorite/delete colors in the product and list screens with theme
   tokens (`extendedColors.favorite`, `colorScheme.error`).
+- **Visual pass (in progress):** a system-wide polish sweep. New reusable `PantryBadge`
+  pill. Shopping list cards now have a tinted leading icon and a type pill (one-off pops in
+  the tertiary accent, regular stays subtle). The create-list dialog uses a segmented
+  Regular/One-off selector. In shopping mode, completed items are struck through and dimmed,
+  and section headers show counts. Product rows show their category name as a subtitle.
+  Empty states show the icon inside a soft tinted circle. `PantryListItem` now caps its
+  title to one line and subtitle to two, both with ellipsis. Lists gained consistent
+  vertical breathing room.
 
 ## Technical
 
