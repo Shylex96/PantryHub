@@ -114,7 +114,7 @@ Business logic should be testable without:
 
         ------------------------
 
-        Local       Remote
+        Local       Remote (future, 1.1+)
 
         Room        Retrofit
 ```
@@ -123,18 +123,28 @@ Business logic should be testable without:
 
 # Module Structure
 
-PantryHub uses a modular architecture.
+PantryHub uses a modular architecture: `app`, seven `core-*` modules and five `feature-*` modules (the authoritative list is `settings.gradle.kts`).
 
 ```
 PantryHub
 
 ├── app
-├── core
-├── domain
-├── data
-├── feature
+├── core-model
+├── core-common
+├── core-database
+├── core-data
+├── core-domain
+├── core-designsystem
+├── core-navigation
+├── feature-shopping
+├── feature-products
+├── feature-notes
+├── feature-settings
+├── feature-importexport
 └── docs
 ```
+
+There are no modules named `core`, `data`, `domain`, `feature-lists` or `feature-qr`. The Clean Architecture *layers* (presentation / domain / data) are realized by these modules as described below.
 
 ---
 
@@ -148,49 +158,41 @@ Application entry point.
 
 Contains:
 
-- Application class.
+- Application class (Hilt root).
 - MainActivity.
-- Navigation setup.
+- Navigation host and bottom navigation (Lists / Products / Notes / Settings).
 - Global configuration.
 
 ---
 
 ## Dependencies
 
-Can depend on:
-
-```
-core
-domain
-feature
-data
-```
+`app` depends on everything: all `core-*` modules and all `feature-*` modules.
 
 ---
 
-# Core Module
+# Core Modules
 
-## Purpose
+The `core-*` modules hold everything shared by more than one feature. Each has a single responsibility:
 
-Shared utilities and UI components used across all feature modules.
-
-### Structure
-
-- `theme`: Centralized Material 3 theme, colors, typography, and dimensions.
-- `components`: Reusable, atomic UI components (Buttons, Cards, States).
-- `util`: Global helper functions (Normalization, Date formatting).
-
----
+| Module | Responsibility |
+|---|---|
+| `core-model` | Domain models as pure Kotlin data classes (Product, Category, ShoppingList, ShoppingListItem, Purchase, Note, AppSettings). No Android dependencies. |
+| `core-common` | Shared utilities: result / error types, dispatchers, normalization and date helpers, extensions. |
+| `core-database` | Room database (`PantryHubDatabase`, version 4), entities, DAOs, migrations and the database Hilt module. |
+| `core-data` | Repository implementations (`Offline*`), entity ↔ model mappers, DataStore preferences and the data Hilt bindings. |
+| `core-domain` | Repository interfaces and use cases (product, shopping, notes, backup). Depends only on `core-model` and `core-common`. |
+| `core-designsystem` | Material 3 theme (colors, typography, shapes, motion) and reusable `Pantry*` Compose components. |
+| `core-navigation` | Type-safe route definitions shared by the features and the app navigation host. |
 
 ## Rules
 
-Core must remain lightweight.
-
-Avoid placing business logic here.
+- Core modules must remain lightweight and focused; business logic lives in `core-domain`, not in `core-common` or `core-designsystem`.
+- `core-*` modules may depend only on lower-level `core-*` modules (e.g. `core-data` → `core-database`, `core-domain`, `core-model`; `core-designsystem` → `core-model` at most). They never depend on features or `app`.
 
 ---
 
-# Domain Module
+# Domain Layer (`core-domain` + `core-model`)
 
 ## Purpose
 
@@ -202,22 +204,21 @@ This is the most stable layer.
 
 ## Contains
 
-### Entities
-
-Examples:
+### Entities (`core-model`)
 
 ```
 Product
 Category
 ShoppingList
-ShoppingItem
+ShoppingListItem
 Purchase
 Note
+AppSettings
 ```
 
 ---
 
-### Use Cases
+### Use Cases (`core-domain`)
 
 Examples:
 
@@ -228,6 +229,8 @@ AddProductToList
 
 CompleteShoppingItem
 
+CloneShoppingList
+
 ExportData
 
 ImportData
@@ -235,33 +238,41 @@ ImportData
 
 ---
 
-### Repository Interfaces
+### Repository Interfaces (`core-domain`)
 
 Example:
 
 ```
 ProductRepository
 
+CategoryRepository
+
 ShoppingListRepository
 
 PurchaseRepository
+
+NoteRepository
+
+BackupRepository
+
+SettingsRepository
 ```
 
 ---
 
 ## Dependencies
 
-Domain should depend on:
+The domain layer depends on:
 
 ```
-Nothing
+core-model, core-common
 ```
 
-or only pure Kotlin libraries.
+and pure Kotlin libraries only (coroutines, kotlinx-datetime). No Android framework, Room or Compose.
 
 ---
 
-# Data Module
+# Data Layer (`core-data` + `core-database`)
 
 ## Purpose
 
@@ -271,11 +282,12 @@ Provides data access implementations.
 
 ## Contains
 
-- Room database.
-- DAO interfaces.
-- Retrofit services.
-- Repository implementations.
-- Data mappers.
+- Room database, entities and DAOs (`core-database`).
+- Repository implementations bound to the `core-domain` interfaces via Hilt (`core-data`).
+- Entity ↔ model mappers (`core-data`).
+- DataStore-backed preferences (`core-data`).
+
+A remote data source (Retrofit) is **not** present; it is planned for the connected phases (1.1+, see `12_Synchronization.md`). The repository interfaces are the seam where synced implementations will be plugged in.
 
 ---
 
@@ -288,7 +300,7 @@ Database entity
 
 ↓
 
-Domain entity
+Domain model
 ```
 
 Conversion happens here.
@@ -299,31 +311,33 @@ Conversion happens here.
 
 ## Purpose
 
-Contains user-facing functionality.
-
-Example:
+Contains user-facing functionality. Current feature modules:
 
 ```
-feature-shopping
+feature-shopping       — shopping lists, list detail, shopping mode
 
-feature-products
+feature-products       — product catalog and categories
 
-feature-lists
+feature-notes          — notes
 
-feature-settings
+feature-settings       — settings and help
+
+feature-importexport   — JSON import / export
 ```
 
 ---
 
-Each feature contains:
+Each feature contains presentation code only (screens, ViewModels, UI state, intents and feature-local components):
 
 ```
 feature-name
 
-├── presentation
-├── domain
+├── ui / screens
+├── viewmodel
 └── components
 ```
+
+Business rules stay in `core-domain`; features call use cases and never touch DAOs directly.
 
 ---
 
@@ -686,8 +700,8 @@ feature-shopping
 
 Communication should happen through:
 
-- Domain layer.
-- Shared contracts.
+- Domain layer (`core-domain` use cases and repositories).
+- Shared contracts (`core-model`, `core-navigation` routes).
 
 ---
 
@@ -698,14 +712,16 @@ Allowed:
 ```
 app
  |
- feature
+ feature-*          (features depend on core-* only; never on each other)
  |
- domain
+ core-domain  core-designsystem  core-navigation
  |
- data
+ core-data → core-database
  |
- core
+ core-model  core-common
 ```
+
+In words: features depend on `core-*`; features never depend on each other; `app` depends on everything.
 
 ---
 
@@ -833,4 +849,4 @@ A scalable household shopping ecosystem
 while keeping the codebase understandable and maintainable.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

@@ -1,225 +1,98 @@
 # PantryHub
 
-PantryHub is a modern Android application designed to simplify household shopping management.
+PantryHub is an offline-first Android shopping-list and pantry app. It keeps a reusable product catalog (with categories and search aliases), lets you build shopping lists from it, and guides you through the shop with a dedicated shopping mode. All data lives on the device; import/export gives you a portable JSON backup.
 
-The objective is to evolve from a simple shopping list into a complete household purchasing management platform, allowing users to organize products, create reusable lists, track purchases, collaborate with other household members and analyze purchasing habits.
-
----
-
-## Project Status
-
-Current phase:
-
-Documentation and architecture definition.
-
-The application is currently in the planning and foundation stage.
-
-No production features have been implemented yet.
+Version **1.0 is a personal, offline app**. Accounts and multi-device sync (1.1) and household sharing / QR invitations (1.2) are planned but deferred until shared server infrastructure exists. Progress is tracked in [`docs/STATUS.md`](docs/STATUS.md) (single source of truth) and the plan in [`docs/20_Rework_Plan.md`](docs/20_Rework_Plan.md).
 
 ---
 
-## Main Goals
+## Features (1.0, implemented)
 
-PantryHub aims to solve common problems related to household shopping:
+- Product catalog: create, edit, delete, search, favorites, duplicate detection.
+- Categories with color, plus browsing/filtering by category.
+- Product aliases (alternative names used by search and import matching).
+- Shopping lists, including one-off / provisional lists and cloning from a base list.
+- Shopping mode: check items off as you shop, then finish the list.
+- Notes (create, edit, delete; included in backups).
+- Import / export of the full dataset as JSON, with import preview and conflict handling.
+- Settings: light/dark/system theme, dynamic color, in-app language (English, Spanish).
+- In-app help.
 
-- Forgetting frequently purchased products.
-- Recreating the same shopping lists repeatedly.
-- Losing useful purchase information.
-- Lack of organization between household members.
-- Difficulty maintaining shared shopping knowledge.
-
-The application focuses on making shopping faster, simpler and more intelligent over time.
-
----
-
-## Core Features
-
-Initial version:
-
-- Product catalog management.
-- Categories.
-- Shopping lists.
-- Reusable list templates.
-- Quick product search.
-- Favorites.
-- Purchase mode.
-- Import and export.
-- Notes.
-- Dark and light themes.
-- Multi-language support.
-
-Future versions:
-
-- Household synchronization.
-- Shared workspaces.
-- QR invitations.
-- Purchase analytics.
-- Spending reports.
-- Supermarket tracking.
+Bottom navigation: **Lists / Products / Notes / Settings**.
 
 ---
 
-## Technical Stack
+## Tech stack
 
-PantryHub is built using modern Android development practices.
-
-Main technologies:
-
-- Kotlin
-- Jetpack Compose
-- Material 3
-- MVVM
-- Clean Architecture
-- Hilt
-- Room
-- Retrofit
-- Kotlin Coroutines
-- Flow
-- DataStore
-- Navigation Compose
-
-Build system:
-
-- Gradle Kotlin DSL
-- Version Catalogs
+- Kotlin 2.0.21, Java 21 toolchain
+- Jetpack Compose + Material 3
+- MVVM + Clean Architecture (single `UiState` per screen, sealed intents)
+- Hilt (dependency injection)
+- Room (local database, version 4, explicit migrations)
+- DataStore (preferences)
+- Navigation Compose with type-safe routes
+- kotlinx.serialization (JSON) and kotlinx-datetime
+- Kotlin Coroutines / Flow
+- minSdk 28, targetSdk / compileSdk 35
+- Gradle Kotlin DSL with a version catalog (`gradle/libs.versions.toml`)
 
 ---
 
-## Project Structure
+## Module layout
 
 ```text
 PantryHub
-
-├── app
-├── core
-├── data
-├── domain
-├── feature
-├── docs
-└── gradle
+├── app                    # Application entry point, navigation host, Hilt root
+├── core-model             # Domain models (pure Kotlin)
+├── core-common            # Shared utilities, result/error types, dispatchers
+├── core-database          # Room database, entities, DAOs, migrations
+├── core-data              # Repository implementations (offline), mappers, DI bindings
+├── core-domain            # Repository interfaces and use cases
+├── core-designsystem      # Theme, typography, colors and reusable Compose components
+├── core-navigation        # Type-safe route definitions shared by features
+├── feature-shopping       # Shopping lists, list detail, shopping mode
+├── feature-products       # Product catalog and categories
+├── feature-notes          # Notes
+├── feature-settings       # Settings and help
+├── feature-importexport   # JSON import / export
+├── docs                   # Project documentation
+└── gradle                 # Wrapper and version catalog
 ```
+
+Dependency direction: feature modules depend on `core-*` modules; features never depend on each other; `app` depends on everything.
+
+---
+
+## Building
+
+1. Open the project in Android Studio (a recent stable release with AGP 9.x support) using JDK 21.
+2. Let Gradle sync (the version catalog resolves all dependencies).
+3. Select the `app` run configuration and run on a device or emulator with API 28 or higher.
+
+From the command line: `./gradlew assembleDebug` (or `gradlew.bat assembleDebug` on Windows).
 
 ---
 
 ## Documentation
 
-All project decisions and specifications are documented inside:
+- [`docs/README.md`](docs/README.md) — index of all documents (00–20) and ADRs.
+- [`docs/STATUS.md`](docs/STATUS.md) — **single source of truth** for what is done, in progress and pending.
+- [`docs/20_Rework_Plan.md`](docs/20_Rework_Plan.md) — the approved plan from the current state to 1.0 and beyond.
+- [`docs/18_Changelog.md`](docs/18_Changelog.md) — version history.
 
-```text
-/docs
-```
-
-Important documents:
-
-- Product vision.
-- Architecture decisions.
-- Domain model.
-- Database design.
-- UX guidelines.
-- Roadmap.
+Development is documentation-first: product and technical decisions are recorded in `docs/` (and `docs/decisions/` as ADRs) before or alongside implementation. If a document contradicts `STATUS.md`, `STATUS.md` wins.
 
 ---
 
-## Development Principles
+## Language rule
 
-The project follows these principles:
-
-- Scalability first.
-- Clean separation of responsibilities.
-- Maintainable code over quick implementation.
-- Documentation before major decisions.
-- User experience as a priority.
-- Offline-first approach.
-- Future synchronization compatibility.
-
----
-
-## Development Workflow
-
-Development follows a documentation-first approach.
-
-Before implementing major features:
-
-1. Define the product requirement.
-2. Document the technical approach.
-3. Create the necessary architecture decisions.
-4. Implement the feature.
-5. Update documentation if required.
-
----
-
-## Branch Strategy
-
-The project should follow a structured Git workflow.
-
-Recommended branches:
-
-```text
-main
-develop
-feature/*
-bugfix/*
-release/*
-```
-
-### main
-
-Production-ready code.
-
-### develop
-
-Integration branch for completed features.
-
-### feature/*
-
-New functionality development.
-
-Examples:
-
-```text
-feature/shopping-mode
-feature/product-search
-feature/import-export
-```
-
----
-
-## Code Quality
-
-The project prioritizes:
-
-- Readable code.
-- Consistent naming.
-- Clear architecture boundaries.
-- Automated testing.
-- Static analysis.
-
-Tools:
-
-- Kotlin official conventions.
-- Detekt.
-- KtLint.
-- Unit testing.
-- UI testing.
-
----
-
-## Support and Maintenance
-
-PantryHub is designed as a long-term project.
-
-Future changes should preserve:
-
-- Existing user data.
-- Import/export compatibility.
-- Database migration safety.
-- Architectural consistency.
+All repository content — code, comments, commit messages and documentation — is written in **English**. User-facing strings are localized (English and Spanish) through Android resources.
 
 ---
 
 ## License
 
-License information will be defined before the first public release.
+License information will be defined before the first public release. Bundled fonts are licensed under the SIL Open Font License (see `docs/licenses/`).
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

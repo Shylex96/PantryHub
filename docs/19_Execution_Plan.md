@@ -1,5 +1,10 @@
 # PantryHub — Execution Plan (Master Plan)
 
+> **Note (2026-09-11): checkbox state below is historical and may be stale — `docs/STATUS.md`
+> is the single source of truth.** Sprints 0–6 are completed; the remaining work to 1.0 is
+> planned as rework phases R1–R3 in `20_Rework_Plan.md`. This document is kept as the sprint
+> history and "done" criteria; it is no longer edited sprint by sprint.
+
 > **What this document is.** The *single* operational roadmap for the project: what gets
 > done, in what order, with what "done" criteria. It supersedes the scattered (and stale)
 > status information in the Roadmap, Changelog and Backlog. Whenever you are unsure "what's
@@ -30,7 +35,7 @@ reality of the repo**. The project is far more advanced than it seems:
 - Structural Design System: theme (Color/Type/Shape/Dimensions), 9 `Pantry*` components,
   bilingual strings (es + en).
 
-**Realistic estimate: ~65-70% of Phase 1 done.**
+**Overall progress:** see `STATUS.md` (this figure is no longer maintained here).
 
 **Why it feels "basic and styleless":** the design system exists but is **visually generic**
 — it uses the Material 3 default color (the purple every tutorial ships with). There is no
@@ -71,7 +76,7 @@ comparison and duplicate detection.
 
 ---
 
-## 2. Code state by module (snapshot)
+## 2. Code state by module (snapshot as of 2026-08-12 — stale, see `STATUS.md`)
 
 | Module | State | Note |
 |---|---|---|

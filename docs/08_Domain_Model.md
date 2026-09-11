@@ -677,11 +677,11 @@ expiresAt
 
 ---
 
-# Synchronization Record (Future)
+# Synchronization Record (Future — not implemented)
 
 ## Purpose
 
-Tracks changes between devices.
+Tracks changes between devices. Deferred to the sync phase (R4, see `20_Rework_Plan.md`); there is no sync queue / outbox in the current code.
 
 ---
 
@@ -800,27 +800,23 @@ Possible strategies:
 
 ---
 
-# Soft Delete Strategy
+# Soft Delete Strategy (decided, not yet implemented)
 
-Recommended.
-
-Instead of removing:
+Convention decided for all synced entities:
 
 ```
-Product
+deleted_at: nullable timestamp
 ```
 
-store:
+Instead of removing a row, `deleted_at` is set to the deletion time; `null` means the row is live. Queries filter `deleted_at IS NULL` by default.
 
-```
-deleted = true
-```
+**Current state:** soft delete is **not** implemented. No entity has `deleted_at` today and only `notes` carries `updated_at`; deletes are hard deletes. Soft delete, `updated_at` on every entity and the sync queue are deferred together to the sync phase (R4, Room v5) — see `20_Rework_Plan.md` and `12_Synchronization.md`.
 
 ---
 
 ## Reason
 
-Historical purchases should remain valid.
+Historical purchases should remain valid, and synchronization needs tombstones to propagate deletions between devices.
 
 ---
 
@@ -844,12 +840,15 @@ HouseholdJoined
 
 # Future Scalability Considerations
 
-Entities should support:
+Entities should eventually support:
 
 - UUID identifiers.
-- Creation timestamps.
-- Modification timestamps.
+- Creation timestamps (`created_at`).
+- Modification timestamps (`updated_at`) on every entity — today only `notes` has one.
+- Soft delete (`deleted_at`, nullable).
 - Synchronization metadata.
+
+The `updated_at` / `deleted_at` columns are added in the sync phase (R4), not in 1.0.
 
 ---
 
@@ -880,4 +879,4 @@ Household Knowledge
 The application should preserve and grow this knowledge over time.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

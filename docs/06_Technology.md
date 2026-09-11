@@ -39,19 +39,19 @@ Future possibilities:
 
 ## Minimum SDK
 
-Recommended:
+Current value:
 
 ```
-minSdk = 26
+minSdk = 28
 ```
 
-(Android 8.0 Oreo)
+(Android 9.0 Pie)
 
 ---
 
 ## Reason
 
-Android 8.0 provides:
+Android 9.0 provides:
 
 - Strong modern API support.
 - Better background execution behavior.
@@ -64,12 +64,14 @@ Android 8.0 provides:
 
 The application should always target the latest stable Android SDK available.
 
-Example:
+Current values:
 
 ```
-targetSdk = latest stable
-compileSdk = latest stable
+targetSdk = 35
+compileSdk = 35
 ```
+
+Toolchain: Kotlin 2.0.21, Java 21 (`sourceCompatibility` / `targetCompatibility` = 21).
 
 ---
 
@@ -608,7 +610,7 @@ Purpose:
 
 # Modular Architecture
 
-The project uses multiple Gradle modules.
+The project uses multiple Gradle modules: `app`, seven `core-*` modules and five `feature-*` modules (see `settings.gradle.kts`).
 
 Structure:
 
@@ -616,12 +618,29 @@ Structure:
 PantryHub
 
 ├── app
-├── core
-├── domain
-├── data
-├── feature
+├── core-model
+├── core-common
+├── core-database
+├── core-data
+├── core-domain
+├── core-designsystem
+├── core-navigation
+├── feature-shopping
+├── feature-products
+├── feature-notes
+├── feature-settings
+├── feature-importexport
 └── docs
 ```
+
+Dependency direction:
+
+- Feature modules depend on `core-*` modules only.
+- Feature modules never depend on each other.
+- `core-*` modules depend only on lower-level `core-*` modules (e.g. `core-data` → `core-database`, `core-domain`, `core-model`).
+- `app` depends on everything and wires the navigation graph and Hilt root.
+
+There are no modules named `core`, `data`, `domain`, `feature-lists` or `feature-qr`. A QR / sharing feature module may be added in 1.2 (see `01_Roadmap.md`).
 
 ---
 
@@ -634,59 +653,80 @@ Application entry point.
 Contains:
 
 - MainActivity.
-- Application class.
-- Navigation setup.
+- Application class (Hilt root).
+- Navigation host and bottom navigation (Lists / Products / Notes / Settings).
 
 ---
 
-## core
+## core-model
 
-Shared Kotlin utilities.
-
-Contains:
-
-- Common extensions.
-- Constants.
-- Shared utilities.
+Domain models as pure Kotlin data classes (products, categories, shopping lists and items, notes). No Android dependencies.
 
 ---
 
-## domain
+## core-common
 
-Business logic.
-
-Contains:
-
-- Entities.
-- Use cases.
-- Repository contracts.
+Shared Kotlin utilities: result / error types, dispatchers, extensions and constants.
 
 ---
 
-## data
+## core-database
 
-Data management.
-
-Contains:
-
-- Room.
-- Retrofit.
-- Repository implementations.
+Room database (`PantryHubDatabase`, version 4), entities, DAOs, migrations and the database Hilt module.
 
 ---
 
-## feature
+## core-data
 
-Application features.
+Repository implementations (offline), entity ↔ model mappers, DataStore-backed preferences and the data Hilt bindings.
 
-Examples:
+---
 
-```
-feature-shopping
-feature-products
-feature-lists
-feature-settings
-```
+## core-domain
+
+Repository interfaces and use cases (product, shopping, notes, backup). Depends only on `core-model` and `core-common`.
+
+---
+
+## core-designsystem
+
+Theme (colors, typography, shapes, motion) and reusable Compose components (`Pantry*`).
+
+---
+
+## core-navigation
+
+Type-safe route definitions shared by the features and the app navigation host.
+
+---
+
+## feature-shopping
+
+Shopping lists, list detail and shopping mode.
+
+---
+
+## feature-products
+
+Product catalog (CRUD, search, favorites, duplicates) and categories.
+
+---
+
+## feature-notes
+
+Notes list and editor.
+
+---
+
+## feature-settings
+
+Settings (theme, dynamic color, language) and help.
+
+---
+
+## feature-importexport
+
+JSON export and import with preview and conflict handling.
 
 ---
 
@@ -720,4 +760,4 @@ A scalable household purchasing platform
 without requiring a complete rewrite.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

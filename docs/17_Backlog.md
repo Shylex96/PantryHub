@@ -5,6 +5,12 @@
 > shopping mode, finish purchase). The **single source of truth for progress is `STATUS.md`**,
 > and the order of work is set by `19_Execution_Plan.md`. This backlog is kept only as a
 > catalog of stories/acceptance criteria.
+>
+> **Scheduling note (2026-09-11, per `20_Rework_Plan.md`):** the household / QR / cloud items
+> (**PB-100, PB-101, PB-102**) are **deferred to rework phases R4 (accounts + personal
+> multi-device sync, 1.1) and R5 (households / sharing / QR, 1.2)** — they are not part of
+> 1.0. Automated testing (**PB-110**) is **scheduled for R3** (1.0 closing: unit tests, Room
+> migration tests, Compose smoke tests).
 
 ## Overview
 
@@ -776,7 +782,7 @@ Low
 Status:
 
 ```
-BACKLOG
+DEFERRED — R5 (1.2), see 20_Rework_Plan.md
 ```
 
 Description:
@@ -798,7 +804,7 @@ Low
 Status:
 
 ```
-BACKLOG
+DEFERRED — R5 (1.2), see 20_Rework_Plan.md
 ```
 
 Description:
@@ -820,7 +826,7 @@ Low
 Status:
 
 ```
-BACKLOG
+DEFERRED — R4 (1.1: accounts + personal multi-device sync), see 20_Rework_Plan.md
 ```
 
 Description:
@@ -848,7 +854,7 @@ High
 Status:
 
 ```
-PLANNED
+SCHEDULED — R3 (1.0 closing), see 20_Rework_Plan.md
 ```
 
 Includes:
@@ -927,4 +933,4 @@ The backlog should be updated when:
 The PantryHub backlog exists to transform ideas into controlled implementation steps while keeping the product vision aligned.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

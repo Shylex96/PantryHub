@@ -1,5 +1,11 @@
 # PantryHub Synchronization
 
+> **Status (2026-09-11): design only — nothing here is implemented.** There is no network
+> layer, no sync queue / outbox, no change tracking, no `deleted_at` and no `updated_at`
+> on entities other than `notes`. The sync-ready data model (Room v5) and personal
+> multi-device sync are deferred to rework phase **R4 / version 1.1**; household sharing to
+> **R5 / version 1.2**. See `20_Rework_Plan.md` and `STATUS.md`. Version 1.0 ships offline only.
+
 ## Overview
 
 This document defines the future synchronization architecture of PantryHub.
@@ -325,9 +331,9 @@ Responsibilities:
 
 ---
 
-# Synchronization Queue
+# Synchronization Queue (not implemented)
 
-Local database should maintain pending operations.
+Local database should maintain pending operations. This table does not exist yet; it is added in R4.
 
 Example:
 
@@ -587,29 +593,35 @@ to avoid losing text.
 
 # Synchronization Metadata
 
-Entities should support:
+Sync-ready entities will support:
 
 ```
 created_at
 
 updated_at
 
-deleted_at
+deleted_at   (nullable timestamp)
 
 owner_id
 
 version
 ```
 
+Current schema (Room v4): every entity has `created_at`; only `notes` has `updated_at`; no entity has `deleted_at`, `owner_id` or `version`. These are added together in R4 (Room v5).
+
 ---
 
-# Soft Delete
+# Soft Delete (decided convention, not yet implemented)
 
 Deletion should be synchronized.
 
 Never immediately remove shared entities.
 
-Example:
+Convention (consistent with `08_Domain_Model.md` and `09_Database.md`):
+
+```
+deleted_at: nullable timestamp
+```
 
 Instead of:
 
@@ -620,8 +632,10 @@ DELETE Product
 use:
 
 ```
-deleted_at = timestamp
+deleted_at = timestamp   (null = live row)
 ```
+
+Default queries filter `deleted_at IS NULL`. Today deletes are physical; soft delete arrives with Room v5 in R4.
 
 ---
 
@@ -845,15 +859,23 @@ No broken references
 
 # Version 1.0 Scope
 
-Synchronization is NOT required.
+Synchronization is NOT part of 1.0 (decision 2026-09-11: 1.0 is the offline personal app).
 
-Version 1.0 should only prepare:
+What 1.0 already provides that sync will build on:
 
-- UUID identifiers.
-- Timestamps.
-- Soft delete support.
-- Repository abstraction.
+- UUID identifiers (string ids on all entities).
+- `created_at` timestamps.
+- Repository abstraction (interfaces in `core-domain`, `Offline*` implementations bound in `core-data`) — the seam for synced implementations.
 - Import/export compatibility.
+
+What 1.0 does **not** include (deferred to R4 / 1.1, see `20_Rework_Plan.md`):
+
+- `updated_at` on all entities (only `notes` has it).
+- Soft delete (`deleted_at`).
+- Sync queue / outbox and change tracking.
+- Network layer, accounts and sync manager.
+
+Version 1.1 = accounts + personal multi-device sync. Version 1.2 = households / sharing / QR.
 
 ---
 
@@ -880,4 +902,4 @@ while preserving:
 - Data ownership.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

@@ -63,14 +63,18 @@ The polish sweep, split into sub-sections (tracked like the sprint sub-parts, e.
 
 ---
 
-## Toward 1.0 (after the visual pass)
+## Road to 1.0 — rework phases (see `20_Rework_Plan.md`)
 
-| Block | Scope | State |
+Decision 2026-09-11: **ship 1.0 offline first**; server / multi-device sync is deferred
+until the owner builds shared infrastructure for all their projects.
+
+| Phase | Scope | State |
 |---|---|---|
-| Tests & QA | unit tests (use cases, Jaro-Winkler similarity, import/export round-trip, mappers) + key UI tests + edge cases | 🔜 Pending |
-| Accessibility | contrast, touch targets, `contentDescription` audit | 🔜 Pending |
-| Migrations audit | verify Room migrations v2→v3→v4 and the destructive-fallback safety net | 🔜 Pending |
-| Release prep | app icon + splash, versioning, Play Store listing & signing | 🔜 Pending |
+| **R1 · Organize + secure** | reconcile docs (README, Roadmap, 06/07 modules, 08/09/12 soft-delete convention, 16 ref, 19 checkboxes); remove `fallbackToDestructiveMigration()` from release builds | ⚠️ In progress |
+| **R2 · Visual complete** | VP-3 Products + Categories · VP-4 Notes · VP-5 Settings + Help · cross-cutting (dialog system, list animations, empty/error states, light-theme pass) · accessibility | 🔜 Next |
+| **R3 · Ship 1.0** | unit tests (use cases, similarity, import/export round-trip, mappers, ViewModels) · Room migration tests · Compose smoke tests · icon/splash · versioning · signing · Play listing → Internal/Beta | 🔜 Pending |
+| R4 · Sync foundation + Connected 1.1 | Room v5 (`updated_at`/`deleted_at`, soft delete, outbox, data-source seams) + accounts + personal multi-device sync | ⏸ Deferred |
+| R5 · Household 1.2 | sharing, roles, QR invitations | ⏸ Deferred |
 
 ---
 

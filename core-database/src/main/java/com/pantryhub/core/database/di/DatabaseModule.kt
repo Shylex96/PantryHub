@@ -1,6 +1,7 @@
 package com.pantryhub.core.database.di
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -50,14 +51,23 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): PantryHubDatabase {
-        return Room.databaseBuilder(
+        val builder = Room.databaseBuilder(
             context,
             PantryHubDatabase::class.java,
             "pantryhub-database"
-        )
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
-            .fallbackToDestructiveMigration()
-            .build()
+        ).addMigrations(MIGRATION_2_3, MIGRATION_3_4)
+
+        // Data-safety policy (see docs/09_Database.md, docs/16_Release_Process.md):
+        // release builds must NEVER wipe the user's data on a schema change — every
+        // schema bump ships with an explicit, tested Migration. The destructive
+        // fallback is kept only for debuggable builds as a development convenience.
+        val isDebuggable =
+            (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        if (isDebuggable) {
+            builder.fallbackToDestructiveMigration()
+        }
+
+        return builder.build()
     }
 
     @Provides

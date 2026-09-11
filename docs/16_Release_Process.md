@@ -394,8 +394,10 @@ Verify:
 
 Check:
 
-- Migrations tested.
-- No data loss.
+- All Room migrations covered by a migration test (`MigrationTestHelper`, every `MIGRATION_X_Y` up to the current version).
+- No `fallbackToDestructiveMigration()` in release builds (debug-only at most).
+- Room schema JSON exported for the current version.
+- No data loss on upgrade from the previous released version.
 - Import/export compatibility.
 
 ---
@@ -516,12 +518,15 @@ Fixed:
 Every release updates:
 
 ```
-docs/17_Changelog.md
+docs/18_Changelog.md
 ```
 
 ---
 
 # Database Migration Policy
+
+- No destructive fallback in release builds: `fallbackToDestructiveMigration()` must never be present in the release database builder.
+- Every schema change ships with an explicit, tested `Migration` (see `09_Database.md`).
 
 Every database change requires:
 
@@ -534,7 +539,7 @@ Purpose
 
 Data impact
 
-Testing
+Testing (migration test name)
 ```
 
 ---
@@ -655,4 +660,4 @@ Predictable evolution
 as PantryHub grows over time.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

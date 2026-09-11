@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,10 +25,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.PantryDialog
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
@@ -53,43 +55,9 @@ fun EditProductDialog(
     var selectedCategoryId by remember { mutableStateOf(initialCategoryId) }
     var aliasesInput by remember { mutableStateOf(initialAliases.joinToString(", ")) }
 
-    AlertDialog(
+    PantryDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.edit_product_title, productName)) },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                PantryTextField(
-                    value = aliasesInput,
-                    onValueChange = { aliasesInput = it },
-                    label = stringResource(R.string.aliases_label),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(spacing.lg))
-
-                Text(
-                    text = stringResource(R.string.new_product_category_label),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(spacing.sm))
-
-                CategoryOption(
-                    label = stringResource(R.string.category_none),
-                    dotColor = null,
-                    selected = selectedCategoryId == null,
-                    onClick = { selectedCategoryId = null }
-                )
-                categories.forEach { category ->
-                    CategoryOption(
-                        label = category.name,
-                        dotColor = categoryColor(category.id),
-                        selected = selectedCategoryId == category.id,
-                        onClick = { selectedCategoryId = category.id }
-                    )
-                }
-            }
-        },
+        title = stringResource(R.string.edit_product_title, productName),
         confirmButton = {
             TextButton(onClick = {
                 val aliases = aliasesInput
@@ -106,13 +74,47 @@ fun EditProductDialog(
                 Text(stringResource(R.string.cancel_action))
             }
         }
-    )
+    ) {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            PantryTextField(
+                value = aliasesInput,
+                onValueChange = { aliasesInput = it },
+                label = stringResource(R.string.aliases_label),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(spacing.lg))
+
+            Text(
+                text = stringResource(R.string.new_product_category_label),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(spacing.sm))
+
+            CategoryOption(
+                label = stringResource(R.string.category_none),
+                dotColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                selected = selectedCategoryId == null,
+                onClick = { selectedCategoryId = null }
+            )
+            categories.forEach { category ->
+                CategoryOption(
+                    label = category.name,
+                    dotColor = categoryColor(category.id),
+                    selected = selectedCategoryId == category.id,
+                    onClick = { selectedCategoryId = category.id }
+                )
+            }
+        }
+    }
 }
 
+/** One selectable category row: color dot · name · check when selected. */
 @Composable
 private fun CategoryOption(
     label: String,
-    dotColor: Color?,
+    dotColor: Color,
     selected: Boolean,
     onClick: () -> Unit
 ) {
@@ -121,21 +123,34 @@ private fun CategoryOption(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = spacing.xs)
+            .clip(PantryHubTheme.shapes.medium)
+            .background(
+                if (selected) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                }
+            )
             .clickable(onClick = onClick)
-            .padding(vertical = spacing.sm)
+            .padding(horizontal = spacing.md, vertical = spacing.md)
     ) {
         Box(
             modifier = Modifier
                 .size(12.dp)
-                .then(
-                    if (dotColor != null) Modifier.background(dotColor, CircleShape) else Modifier
-                )
+                .background(dotColor, CircleShape)
         )
         Spacer(modifier = Modifier.width(spacing.md))
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
+            color = if (selected) {
+                MaterialTheme.colorScheme.onPrimaryContainer
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
         if (selected) {

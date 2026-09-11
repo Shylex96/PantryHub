@@ -144,15 +144,15 @@ updated_at
 
 # Common Fields
 
-All main entities should include:
+All main entities include:
 
 ```
 id
 
 created_at
-
-updated_at
 ```
+
+`updated_at` exists today only on `notes`. Adding `updated_at` and `deleted_at` (nullable timestamp, soft delete) to every entity is deferred to the sync phase (R4, Room v5) — see `20_Rework_Plan.md`.
 
 ---
 
@@ -215,16 +215,16 @@ category_id
 
 is_favorite
 
-usage_count
+usage_frequency
 
-last_used_at
+aliases
 
-is_deleted
+normalized_aliases
 
 created_at
-
-updated_at
 ```
+
+`aliases` (display, newline-joined) and `normalized_aliases` (search, space-joined) were added in `MIGRATION_2_3`. `deleted_at` / `updated_at` are not present yet (see Soft Delete below).
 
 ---
 
@@ -762,15 +762,29 @@ duplicateList()
 
 # Database Migrations
 
+## Current State
+
+```
+PantryHubDatabase — Room version 4
+```
+
+Existing migrations (defined in `core-database` `DatabaseModule`):
+
+| Migration | Change |
+|---|---|
+| `MIGRATION_2_3` | `ALTER TABLE products ADD COLUMN aliases` and `normalized_aliases` (TEXT NOT NULL DEFAULT ''). |
+| `MIGRATION_3_4` | `CREATE TABLE notes` (`id`, `title`, `content`, `created_at`, `updated_at`). |
+
+There is no 1→2 migration: version 1 predates any shipped build and was never migrated.
+
+---
+
+## Release Policy
+
 Room migrations must always be explicit.
 
-Never use:
-
-```
-fallbackToDestructiveMigration
-```
-
-for production.
+- **No destructive fallback in release builds.** `fallbackToDestructiveMigration()` must not be present in the release database builder (it may remain in debug builds only). Removing it from release is part of rework phase R1.
+- **Every schema change ships with a tested `Migration`.** Each `MIGRATION_X_Y` is covered by a Room migration test (`MigrationTestHelper`) before the version bump is merged (see `15_Testing.md` and `16_Release_Process.md`).
 
 ---
 
@@ -779,14 +793,20 @@ for production.
 Every schema change requires:
 
 ```
-Migration_X_Y
+MIGRATION_X_Y
 ```
 
 Example:
 
 ```
-Migration_1_2
+MIGRATION_4_5   (planned for the sync phase: updated_at / deleted_at on all entities, outbox table)
 ```
+
+Rules:
+
+- Bump `version` in `@Database` and register the migration in `addMigrations(...)`.
+- Prefer additive changes (`ADD COLUMN` with a default) so existing rows stay intact.
+- Export the Room schema JSON and add a migration test for the new step.
 
 ---
 
@@ -812,29 +832,31 @@ Example:
 
 ---
 
-# Future Synchronization Preparation
+# Future Synchronization Preparation (not implemented)
 
-Entities should contain:
+Sync-ready entities will contain:
 
 ```
 created_at
 
 updated_at
 
-deleted_at
+deleted_at   (nullable timestamp)
 ```
+
+**Current state:** only `created_at` is present on all entities; `updated_at` exists only on `notes`; no entity has `deleted_at`. These columns, together with the change outbox, are added in the sync phase (R4, Room v5) — see `12_Synchronization.md` and `20_Rework_Plan.md`. Nothing about this is "already prepared" in the current schema.
 
 ---
 
 ## Soft Delete
 
-Recommended instead of physical deletion.
-
-Example:
+Decided convention (same as `08_Domain_Model.md` and `12_Synchronization.md`):
 
 ```
-is_deleted = true
+deleted_at: nullable timestamp
 ```
+
+`null` means the row is live; a timestamp marks it as deleted (tombstone). Default queries filter `deleted_at IS NULL`. Not implemented yet — current deletes are physical.
 
 ---
 
@@ -925,9 +947,9 @@ SQLCipher
 
 ---
 
-# Database Version 1 Goal
+# Database 1.0 Goal
 
-The first database version should support:
+The 1.0 database (Room version 4) supports:
 
 - Products.
 - Categories.
@@ -963,4 +985,4 @@ How their habits evolve
 while remaining ready for future collaboration and intelligence.
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026
