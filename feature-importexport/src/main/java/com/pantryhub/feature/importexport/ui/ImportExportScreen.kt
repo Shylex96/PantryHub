@@ -4,10 +4,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,8 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryButton
+import com.pantryhub.core.designsystem.ui.components.PantryHeaderIconButton
 import com.pantryhub.core.designsystem.ui.components.PantryOutlinedButton
-import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.components.PantryScreenHeader
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.domain.backup.ImportPreview
@@ -116,106 +122,114 @@ fun ImportExportScreen(
     }
 
     Scaffold(
-        topBar = {
-            PantryTopBar(
-                title = stringResource(R.string.backup_section_title),
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = PantryIcons.Back,
-                            contentDescription = stringResource(R.string.back_description)
-                        )
-                    }
-                }
-            )
-        }
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = spacing.lg, vertical = spacing.md),
-            verticalArrangement = Arrangement.spacedBy(spacing.md)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = spacing.xxl)
         ) {
-            Text(
-                text = stringResource(R.string.backup_section_desc),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            // Compact top bar (docs/05 §6.6): back only; the title lives in the header.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = spacing.lg, vertical = spacing.sm)
+            ) {
+                PantryHeaderIconButton(
+                    icon = PantryIcons.Back,
+                    contentDescription = stringResource(R.string.back_description),
+                    onClick = onBack
+                )
+            }
+            PantryScreenHeader(
+                title = stringResource(R.string.backup_section_title),
+                subtitle = stringResource(R.string.backup_section_desc)
             )
+            Spacer(modifier = Modifier.height(spacing.xl))
 
-            PantryButton(
-                onClick = { exportLauncher.launch("pantryhub-backup.json") },
-                enabled = !busy,
-                isLoading = busy,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier.padding(horizontal = spacing.screen),
+                verticalArrangement = Arrangement.spacedBy(spacing.md)
             ) {
-                Text(stringResource(R.string.export_action))
-            }
+                PantryButton(
+                    onClick = { exportLauncher.launch("pantryhub-backup.json") },
+                    enabled = !busy,
+                    isLoading = busy,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.export_action))
+                }
 
-            PantryOutlinedButton(
-                // Accept any file type: some file managers (e.g. MIUI) report .json
-                // as octet-stream / text, which a strict json filter would grey out.
-                onClick = { importLauncher.launch(arrayOf("*/*")) },
-                enabled = !busy,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.import_action))
-            }
+                PantryOutlinedButton(
+                    // Accept any file type: some file managers (e.g. MIUI) report .json
+                    // as octet-stream / text, which a strict json filter would grey out.
+                    onClick = { importLauncher.launch(arrayOf("*/*")) },
+                    enabled = !busy,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.import_action))
+                }
 
-            statusMessage?.let { message ->
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isError) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.primary
-                    }
-                )
-            }
-
-            preview?.let { p ->
-                ImportPreviewDialog(
-                    preview = p,
-                    decisions = conflictDecisions,
-                    onDecisionChange = { id, same ->
-                        conflictDecisions = conflictDecisions + (id to same)
-                    },
-                    onConfirm = {
-                        scope.launch {
-                            busy = true
-                            isError = false
-                            statusMessage = null
-                            try {
-                                val merge = p.conflicts
-                                    .filter { conflictDecisions[it.importedProductId] == true }
-                                    .associate { it.importedProductId to it.existingProductId }
-                                viewModel.confirmImport(p.data, merge)
-                                statusMessage = context.getString(
-                                    R.string.import_success,
-                                    p.data.products.size,
-                                    p.data.categories.size,
-                                    p.data.shoppingLists.size,
-                                    p.data.notes.size
-                                )
-                            } catch (e: Exception) {
-                                isError = true
-                                statusMessage = errorMessage
-                                // Debug: uncomment these two lines to surface the real cause
-                                // (exception + message) on screen and in logcat.
-                                // android.util.Log.e("PantryHubImport", "Import confirm failed", e)
-                                // statusMessage = "$errorMessage\n${e.javaClass.simpleName}: ${e.message}"
-                            } finally {
-                                busy = false
-                                preview = null
-                                conflictDecisions = emptyMap()
-                            }
+                statusMessage?.let { message ->
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (isError) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.primary
                         }
-                    },
-                    onDismiss = {
-                        preview = null
-                        conflictDecisions = emptyMap()
-                    }
-                )
+                    )
+                }
+
+                preview?.let { p ->
+                    ImportPreviewDialog(
+                        preview = p,
+                        decisions = conflictDecisions,
+                        onDecisionChange = { id, same ->
+                            conflictDecisions = conflictDecisions + (id to same)
+                        },
+                        onConfirm = {
+                            scope.launch {
+                                busy = true
+                                isError = false
+                                statusMessage = null
+                                try {
+                                    val merge = p.conflicts
+                                        .filter { conflictDecisions[it.importedProductId] == true }
+                                        .associate { it.importedProductId to it.existingProductId }
+                                    viewModel.confirmImport(p.data, merge)
+                                    statusMessage = context.getString(
+                                        R.string.import_success,
+                                        p.data.products.size,
+                                        p.data.categories.size,
+                                        p.data.shoppingLists.size,
+                                        p.data.notes.size
+                                    )
+                                } catch (e: Exception) {
+                                    isError = true
+                                    statusMessage = errorMessage
+                                    // Debug: uncomment these two lines to surface the real cause
+                                    // (exception + message) on screen and in logcat.
+                                    // android.util.Log.e("PantryHubImport", "Import confirm failed", e)
+                                    // statusMessage = "$errorMessage\n${e.javaClass.simpleName}: ${e.message}"
+                                } finally {
+                                    busy = false
+                                    preview = null
+                                    conflictDecisions = emptyMap()
+                                }
+                            }
+                        },
+                        onDismiss = {
+                            preview = null
+                            conflictDecisions = emptyMap()
+                        }
+                    )
+                }
             }
         }
     }

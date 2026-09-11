@@ -181,11 +181,18 @@ targets stay ≥ `48dp` even when the glyph is 18–24dp.
 `PantrySearchBar`, `PantryTopBar` (raised, bold title, optional subtitle), `PantryLoading`,
 `PantryEmptyState`, `PantryErrorState`. All consume tokens only — never hardcoded colors.
 
-The redesign (§6) adds the composition components to build next: `PantryScreenHeader`
-(title + action + subtitle), `PantrySectionLabel`, `PantryListCard` (icon tile + meta +
-progress), `PantryGroupHeader` (dot + label + count), `PantryExtendedFab`,
-`PantryBottomCta`, `PantrySheet` (bottom sheet container) and `PantryChoiceCard`.
-`PantryDialog` is kept only for destructive confirmations.
+The redesign (§6) adds the composition components, all in place since R2:
+`PantryScreenHeader` (title + action + subtitle) and `PantryHeaderIconButton`,
+`PantrySectionLabel` (uppercase label, optional dot or icon, count), `PantryListCard` (icon
+tile + meta + optional progress) and `PantryProgressBar`, `PantryExtendedFab`,
+`PantryBottomCta` (gradient fade + count pill), `PantrySheet` (bottom sheet container with
+title action slot, subtitle and scrollable content) with `PantryFieldLabel`,
+`PantryChoiceCard` (2-column choice), `PantryOptionRow` (single/multi select row with dot
+and count) and `PantrySegmentedRow` (equal pills, one selected), `PantrySearchField`
+(48dp pill), `PantrySwipeRow` (the app-wide swipe-left-delete / swipe-right-favorite
+treatment, with `dismissOnDelete = false` when a confirmation follows). `PantryTopBar` is
+no longer used by any screen and is scheduled for removal. `PantryDialog` is kept only for
+destructive confirmations.
 
 Every screen must handle the three global states with the shared components: loading
 (`PantryLoading`), empty (`PantryEmptyState`, with icon + call to action), error
@@ -235,8 +242,10 @@ have not started shopping is simply a list. The rule drives three things:
   otherwise → "8 products". The 4dp progress bar (track `surfaceContainerHighest`, fill
   `primary`) renders **only** while in progress; never on an untouched list.
 - **List detail.** Same meta line; the "3 / 8" counter and progress bar appear only while
-  in progress. The header subtitle of the Lists tab counts lists and products, never
-  "pending".
+  in progress. The bottom call-to-action reads **"Start shopping"** (count = all items) on
+  an untouched list and **"Continue shopping"** (count = items still to pick) while in
+  progress — leaving shopping mode never loses the ticks. The header subtitle of the Lists
+  tab counts lists and products, never "pending".
 
 ### 6.3 Item row (detail, shopping mode, Products)
 
@@ -262,8 +271,9 @@ Checkbox (`PantryCheckbox`): 26×26 · radius 8 · unchecked 2dp `outline` borde
 
 ### 6.5 Bottom sheets replace dialogs
 
-All creation/editing flows are bottom sheets, never `AlertDialog`: new/edit list, new/edit
-product, category manager, product filter, finish shopping.
+All creation/editing flows are bottom sheets, never `AlertDialog`: new/rename list, new/edit
+product, category manager, product filter, finish shopping, note editor, theme, language
+and Settings › Manage data.
 Container `surfaceContainer` · top radius 28 · grabber 40×4 `outline` centred · padding
 12 20 36 · section gap 20–22 · scrim `surfaceContainerLowest` at 55%.
 Title Space Grotesk 700 24/30 + Inter 14 subtitle. Field labels Inter 600 12 UPPERCASE
@@ -318,8 +328,10 @@ Durations: micro 100ms, standard 250ms, entrance 300ms. Avoid anything slower th
 Minimum touch target `48×48dp`. Contrast follows M3 on the semantic roles above; status and
 category colors always pair with an icon or label (never color alone). Provide
 `contentDescription` for meaningful icons and `null` for decorative ones. All text comes from
-`strings.xml` (English + Spanish); layouts must tolerate longer translations. Support dynamic
-font scaling and clear focus states.
+`strings.xml` (English is the source; Spanish today, more languages planned — see
+`04_UX_Guidelines.md` "Localization" for the default-to-system rule and the add-a-language
+checklist); layouts must tolerate longer translations. Support dynamic font scaling and clear
+focus states.
 
 ---
 

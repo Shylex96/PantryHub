@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,11 +25,8 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +52,7 @@ import com.pantryhub.core.designsystem.ui.components.PantryLoading
 import com.pantryhub.core.designsystem.ui.components.PantryProgressBar
 import com.pantryhub.core.designsystem.ui.components.PantrySectionLabel
 import com.pantryhub.core.designsystem.ui.components.PantrySheet
+import com.pantryhub.core.designsystem.ui.components.PantrySwipeRow
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
@@ -71,9 +68,6 @@ import com.pantryhub.feature.shopping.ui.components.isShoppingInProgress
  * category, and a bottom "Start shopping" call-to-action. Delete = swipe left,
  * favorite = swipe right; rows only show the favorite star.
  */
-@OptIn(ExperimentalMaterial3Api::class)
-// SwipeToDismiss confirmValueChange is deprecated without a drop-in replacement.
-@Suppress("DEPRECATION")
 @Composable
 fun ShoppingListDetailScreen(
     state: ShoppingUiState,
@@ -90,8 +84,6 @@ fun ShoppingListDetailScreen(
     val spacing = PantryHubTheme.spacing
     val radius = PantryHubTheme.radius
     val favoriteColor = PantryHubTheme.extendedColors.favorite
-    val onFavoriteColor = PantryHubTheme.extendedColors.onFavorite
-    val deleteColor = MaterialTheme.colorScheme.error
 
     val total = currentList.items.size
     val completed = currentList.items.count { it.isCompleted }
@@ -138,11 +130,14 @@ fun ShoppingListDetailScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (total > 0) {
+                // A shop already under way (some items checked) is resumed, not restarted.
                 PantryBottomCta(
-                    text = stringResource(R.string.start_shopping_action),
+                    text = stringResource(
+                        if (inProgress) R.string.continue_shopping_action else R.string.start_shopping_action
+                    ),
                     onClick = onStartShopping,
                     icon = PantryIcons.Cart,
-                    count = total
+                    count = if (inProgress) total - completed else total
                 )
             }
         }
@@ -315,8 +310,6 @@ fun ShoppingListDetailScreen(
                         item = item,
                         dotColor = group.color,
                         favoriteColor = favoriteColor,
-                        onFavoriteColor = onFavoriteColor,
-                        deleteColor = deleteColor,
                         onToggleFavorite = {
                             onIntent(
                                 ShoppingIntent.ToggleFavorite(item.product.id, !item.product.isFavorite)
@@ -330,77 +323,19 @@ fun ShoppingListDetailScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Suppress("DEPRECATION")
 @Composable
 private fun SwipeableItemRow(
     item: ShoppingListItem,
-    dotColor: androidx.compose.ui.graphics.Color,
-    favoriteColor: androidx.compose.ui.graphics.Color,
-    onFavoriteColor: androidx.compose.ui.graphics.Color,
-    deleteColor: androidx.compose.ui.graphics.Color,
+    dotColor: Color,
+    favoriteColor: Color,
     onToggleFavorite: () -> Unit,
     onDelete: () -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
-    val shape = RoundedCornerShape(PantryHubTheme.radius.row)
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.EndToStart -> {
-                    onDelete()
-                    true
-                }
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    onToggleFavorite()
-                    false
-                }
-                else -> false
-            }
-        }
-    )
-
-    SwipeToDismissBox(
-        state = dismissState,
-        enableDismissFromStartToEnd = true,
-        enableDismissFromEndToStart = true,
-        modifier = Modifier.padding(horizontal = spacing.screen, vertical = spacing.xs),
-        backgroundContent = {
-            val progress = dismissState.progress
-            val alpha = (progress * 2f).coerceAtMost(1f)
-            val scale = 0.6f + (progress * 0.4f).coerceAtMost(0.4f)
-            when (dismissState.dismissDirection) {
-                SwipeToDismissBoxValue.EndToStart -> Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(deleteColor.copy(alpha = alpha), shape)
-                        .padding(horizontal = spacing.xl),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Icon(
-                        imageVector = PantryIcons.Delete,
-                        contentDescription = stringResource(R.string.delete_action),
-                        tint = MaterialTheme.colorScheme.onError,
-                        modifier = Modifier.scale(scale)
-                    )
-                }
-                SwipeToDismissBoxValue.StartToEnd -> Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(favoriteColor.copy(alpha = alpha), shape)
-                        .padding(horizontal = spacing.xl),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Icon(
-                        imageVector = PantryIcons.Favorite,
-                        contentDescription = null,
-                        tint = onFavoriteColor,
-                        modifier = Modifier.scale(scale)
-                    )
-                }
-                SwipeToDismissBoxValue.Settled -> Unit
-            }
-        }
+    PantrySwipeRow(
+        onDelete = onDelete,
+        onFavorite = onToggleFavorite,
+        modifier = Modifier.padding(horizontal = spacing.screen, vertical = spacing.xs)
     ) {
         PantryItemCard {
             Box(
@@ -421,7 +356,9 @@ private fun SwipeableItemRow(
             IconButton(onClick = onToggleFavorite, modifier = Modifier.size(40.dp)) {
                 Icon(
                     imageVector = if (item.product.isFavorite) PantryIcons.Favorite else PantryIcons.FavoriteBorder,
-                    contentDescription = null,
+                    contentDescription = stringResource(
+                        if (item.product.isFavorite) R.string.unfavorite_action else R.string.favorite_action
+                    ),
                     tint = if (item.product.isFavorite) favoriteColor else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )

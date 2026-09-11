@@ -1,69 +1,69 @@
 package com.pantryhub.feature.products.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
+import com.pantryhub.core.designsystem.ui.components.PantryExtendedFab
 import com.pantryhub.core.designsystem.ui.components.PantryItemCard
 import com.pantryhub.core.designsystem.ui.components.PantryLoading
-import com.pantryhub.core.designsystem.ui.components.PantryTextField
-import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.components.PantryScreenHeader
+import com.pantryhub.core.designsystem.ui.components.PantrySearchField
+import com.pantryhub.core.designsystem.ui.components.PantrySectionLabel
+import com.pantryhub.core.designsystem.ui.components.PantrySwipeRow
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
+import com.pantryhub.core.designsystem.ui.theme.uncategorizedDotColor
 import com.pantryhub.core.model.product.Product
+import com.pantryhub.feature.products.presentation.ProductFilter
 import com.pantryhub.feature.products.presentation.ProductsIntent
 import com.pantryhub.feature.products.presentation.ProductsUiState
-import com.pantryhub.feature.products.ui.components.CategoryFilterRow
-import com.pantryhub.feature.products.ui.components.CategoryManagerDialog
-import com.pantryhub.feature.products.ui.components.EditProductDialog
+import com.pantryhub.feature.products.ui.components.CategoryManagerSheet
+import com.pantryhub.feature.products.ui.components.EditProductSheet
+import com.pantryhub.feature.products.ui.components.NewProductSheet
+import com.pantryhub.feature.products.ui.components.ProductFilterSheet
+import com.pantryhub.feature.products.ui.components.ProductGroupHeader
+import com.pantryhub.feature.products.ui.components.productDotColor
+import com.pantryhub.feature.products.ui.components.rememberProductGroups
 
-@OptIn(ExperimentalMaterial3Api::class)
-// SwipeToDismiss confirmValueChange is deprecated without a drop-in replacement;
-// migration to dynamic anchors is tracked for the polish sprint.
-@Suppress("DEPRECATION")
+/**
+ * Products tab (docs/04_UX_Guidelines.md "Category Browsing", docs/05 §6.1, §6.7):
+ * large header with live counts and a filter icon button, permanent search pill,
+ * products grouped by category (Favorites first, "No category" last), extended FAB to
+ * create a product. Rows show only the favorite star; delete = swipe left; tap = edit.
+ */
 @Composable
 fun ProductsScreen(
     state: ProductsUiState,
@@ -71,395 +71,321 @@ fun ProductsScreen(
     modifier: Modifier = Modifier
 ) {
     val spacing = PantryHubTheme.spacing
-    val searchFocusRequester = remember { FocusRequester() }
     val favoriteColor = PantryHubTheme.extendedColors.favorite
-    val onFavoriteColor = PantryHubTheme.extendedColors.onFavorite
-    val deleteColor = MaterialTheme.colorScheme.error
 
-    val extended = PantryHubTheme.extendedColors
-    val categoryPalette = listOf(
-        extended.categoryVegetables,
-        extended.categoryFruit,
-        extended.categoryDairy,
-        extended.categoryMeat,
-        extended.categoryBakery,
-        extended.categoryDrinks,
-        extended.categoryFrozen,
-        extended.categoryHousehold,
-        extended.categoryOther
+    var showFilterSheet by remember { mutableStateOf(false) }
+    var showNewProductSheet by remember { mutableStateOf(false) }
+    var editingProduct by remember { mutableStateOf<Product?>(null) }
+
+    val groups = rememberProductGroups(
+        products = state.products,
+        categories = state.categories,
+        filter = state.filter,
+        sort = state.sort
     )
-    // Deterministic color per category, based on its position in the list.
-    val colorForCategory: (String) -> Color = { id ->
-        val index = state.categories.indexOfFirst { it.id == id }
-        if (index >= 0) categoryPalette[index % categoryPalette.size] else extended.categoryOther
+    val visibleCount = groups.sumOf { it.products.size }
+
+    if (showFilterSheet) {
+        ProductFilterSheet(
+            products = state.products,
+            categories = state.categories,
+            currentFilter = state.filter,
+            currentSort = state.sort,
+            onApply = { filter, sort ->
+                onIntent(ProductsIntent.ApplyFilter(filter, sort))
+                showFilterSheet = false
+            },
+            onManageCategories = {
+                showFilterSheet = false
+                onIntent(ProductsIntent.OpenCategoryManager)
+            },
+            onDismiss = { showFilterSheet = false }
+        )
     }
 
-    var categorizingProduct by remember { mutableStateOf<Product?>(null) }
+    if (showNewProductSheet) {
+        NewProductSheet(
+            categories = state.categories,
+            onCreate = { name, categoryId ->
+                onIntent(ProductsIntent.CreateProduct(name, categoryId))
+                showNewProductSheet = false
+            },
+            onDismiss = { showNewProductSheet = false }
+        )
+    }
 
-    LaunchedEffect(state.isSearchMode) {
-        if (state.isSearchMode) {
-            searchFocusRequester.requestFocus()
-        }
+    val editing = editingProduct
+    if (editing != null) {
+        EditProductSheet(
+            product = editing,
+            categories = state.categories,
+            onSave = { categoryId, aliases ->
+                onIntent(ProductsIntent.UpdateProductDetails(editing.id, categoryId, aliases))
+                editingProduct = null
+            },
+            onDismiss = { editingProduct = null }
+        )
+    }
+
+    if (state.isManagingCategories) {
+        CategoryManagerSheet(
+            categories = state.categories,
+            onCreate = { onIntent(ProductsIntent.CreateCategory(it)) },
+            onRename = { id, name -> onIntent(ProductsIntent.RenameCategory(id, name)) },
+            onDelete = { onIntent(ProductsIntent.DeleteCategory(it)) },
+            onDismiss = { onIntent(ProductsIntent.CloseCategoryManager) }
+        )
     }
 
     Scaffold(
-        topBar = {
-            PantryTopBar(title = stringResource(R.string.nav_products))
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        floatingActionButton = {
+            PantryExtendedFab(
+                text = stringResource(R.string.fab_new_product),
+                icon = PantryIcons.Add,
+                onClick = { showNewProductSheet = true }
+            )
         }
     ) { innerPadding ->
-        if (state.isManagingCategories) {
-            CategoryManagerDialog(
-                categories = state.categories,
-                categoryColor = colorForCategory,
-                onCreate = { onIntent(ProductsIntent.CreateCategory(it)) },
-                onRename = { id, name -> onIntent(ProductsIntent.RenameCategory(id, name)) },
-                onDelete = { onIntent(ProductsIntent.DeleteCategory(it)) },
-                onDismiss = { onIntent(ProductsIntent.CloseCategoryManager) }
-            )
-        }
-
-        val categorizing = categorizingProduct
-        if (categorizing != null) {
-            EditProductDialog(
-                productName = categorizing.name,
-                categories = state.categories,
-                initialCategoryId = categorizing.categoryId,
-                initialAliases = categorizing.aliases,
-                categoryColor = colorForCategory,
-                onSave = { categoryId, aliases ->
-                    onIntent(ProductsIntent.UpdateProductDetails(categorizing.id, categoryId, aliases))
-                    categorizingProduct = null
-                },
-                onDismiss = { categorizingProduct = null }
-            )
-        }
-
-        Column(
-            modifier = modifier
+        LazyColumn(
+            modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = spacing.lg)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(top = spacing.lg, bottom = 96.dp)
         ) {
-            // Add / search bar: a single placeholder field whose role follows the mode,
-            // plus solid square buttons — the same language as the list detail screen.
-            val isSearching = state.isSearchMode
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = spacing.md),
-                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
-            ) {
-                PantryTextField(
-                    value = if (isSearching) state.searchQuery else state.createInput,
-                    onValueChange = {
-                        if (isSearching) {
-                            onIntent(ProductsIntent.Search(it))
-                        } else {
-                            onIntent(ProductsIntent.UpdateCreateInput(it))
-                        }
-                    },
-                    placeholder = stringResource(
-                        if (isSearching) R.string.search_products_placeholder
-                        else R.string.add_product_placeholder
+            item(key = "header") {
+                PantryScreenHeader(
+                    title = stringResource(R.string.nav_products),
+                    subtitle = pluralStringResource(
+                        R.plurals.products_count, state.products.size, state.products.size
+                    ) + " · " + pluralStringResource(
+                        R.plurals.categories_count, state.categories.size, state.categories.size
                     ),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (isSearching) PantryIcons.Search else PantryIcons.Add,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    action = {
+                        FilterButton(
+                            active = state.isFilterActive,
+                            onClick = { showFilterSheet = true }
                         )
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .focusRequester(searchFocusRequester)
+                    }
                 )
+            }
 
-                if (!isSearching) {
-                    FilledIconButton(
-                        onClick = { onIntent(ProductsIntent.CreateProduct(state.createInput)) },
-                        modifier = Modifier.size(56.dp),
-                        shape = PantryHubTheme.shapes.medium,
-                        colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ) {
-                        Icon(
-                            imageVector = PantryIcons.Add,
-                            contentDescription = stringResource(R.string.add_item_label)
-                        )
+            item(key = "search") {
+                PantrySearchField(
+                    value = state.searchQuery,
+                    onValueChange = { onIntent(ProductsIntent.Search(it)) },
+                    placeholder = stringResource(R.string.search_products_placeholder),
+                    clearContentDescription = stringResource(R.string.clear_search_action),
+                    modifier = Modifier.padding(
+                        start = spacing.screen,
+                        end = spacing.screen,
+                        top = spacing.lg
+                    )
+                )
+            }
+
+            when {
+                state.isLoading && state.products.isEmpty() -> item(key = "loading") {
+                    Box(modifier = Modifier.padding(top = spacing.xxl)) { PantryLoading() }
+                }
+
+                visibleCount == 0 -> item(key = "empty") {
+                    val hasQuery = state.searchQuery.isNotBlank()
+                    Box(modifier = Modifier.padding(top = spacing.xl)) {
+                        when {
+                            hasQuery -> PantryEmptyState(
+                                title = stringResource(R.string.search_no_results_title),
+                                description = stringResource(
+                                    R.string.search_no_results_desc, state.searchQuery
+                                ),
+                                icon = PantryIcons.Search
+                            )
+                            state.filter != ProductFilter.All -> PantryEmptyState(
+                                title = stringResource(R.string.filter_no_results_title),
+                                description = stringResource(R.string.filter_no_results_desc),
+                                icon = PantryIcons.Filter
+                            )
+                            else -> PantryEmptyState(
+                                title = stringResource(R.string.empty_products_title),
+                                description = stringResource(R.string.empty_products_desc),
+                                icon = PantryIcons.Products
+                            )
+                        }
                     }
                 }
 
-                FilledTonalIconButton(
-                    onClick = { onIntent(ProductsIntent.ToggleSearchMode) },
-                    modifier = Modifier.size(56.dp),
-                    shape = PantryHubTheme.shapes.medium
-                ) {
-                    Icon(
-                        imageVector = if (isSearching) PantryIcons.Close else PantryIcons.Search,
-                        contentDescription = stringResource(R.string.search_products_placeholder)
-                    )
-                }
-            }
+                else -> groups.forEach { group ->
+                    val header = group.header
+                    val groupKey = when (header) {
+                        ProductGroupHeader.Favorites -> "favorites"
+                        is ProductGroupHeader.ByCategory -> header.category.id
+                        ProductGroupHeader.Uncategorized -> "uncategorized"
+                        ProductGroupHeader.None -> "all"
+                    }
+                    if (header != ProductGroupHeader.None) {
+                        item(key = "header-$groupKey") {
+                            GroupLabel(
+                                header = header,
+                                count = group.products.size,
+                                modifier = Modifier
+                                    .padding(horizontal = spacing.screen)
+                                    .padding(top = spacing.lg, bottom = spacing.sm)
+                            )
+                        }
+                    } else {
+                        item(key = "spacer-flat") { Spacer(modifier = Modifier.height(spacing.md)) }
+                    }
+                    items(group.products, key = { "$groupKey-${it.id}" }) { product ->
+                        val categoryName = product.categoryId?.let { id ->
+                            state.categories.firstOrNull { it.id == id }?.name
+                        }
+                        // Under a category header the category is implied; elsewhere show it.
+                        val showCategory = header !is ProductGroupHeader.ByCategory &&
+                            header != ProductGroupHeader.Uncategorized
+                        val aliasesText = if (product.aliases.isNotEmpty()) {
+                            pluralStringResource(
+                                R.plurals.aliases_count, product.aliases.size, product.aliases.size
+                            )
+                        } else {
+                            null
+                        }
+                        val subtitle = listOfNotNull(
+                            if (showCategory) categoryName ?: stringResource(R.string.product_no_category) else null,
+                            aliasesText
+                        ).joinToString(" · ").ifEmpty { null }
 
-            // Category selector for the next created product (create mode only).
-            if (!isSearching) {
-                var categoryMenuExpanded by remember { mutableStateOf(false) }
-                val selectedNewCategory = state.categories.find { it.id == state.newProductCategoryId }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = spacing.sm),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm)
-                ) {
-                    Text(
-                        text = stringResource(R.string.new_product_category_label),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Box {
-                        AssistChip(
-                            onClick = { categoryMenuExpanded = true },
-                            label = {
-                                Text(selectedNewCategory?.name ?: stringResource(R.string.category_none))
+                        PantrySwipeRow(
+                            onDelete = { onIntent(ProductsIntent.DeleteProduct(product.id)) },
+                            onFavorite = {
+                                onIntent(ProductsIntent.ToggleFavorite(product.id, !product.isFavorite))
                             },
-                            leadingIcon = if (selectedNewCategory != null) {
-                                {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(10.dp)
-                                            .background(colorForCategory(selectedNewCategory.id), CircleShape)
-                                    )
-                                }
-                            } else {
-                                null
-                            }
-                        )
-                        DropdownMenu(
-                            expanded = categoryMenuExpanded,
-                            onDismissRequest = { categoryMenuExpanded = false }
+                            modifier = Modifier
+                                .animateItem()
+                                .padding(horizontal = spacing.screen, vertical = spacing.xs)
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.category_none)) },
-                                onClick = {
-                                    onIntent(ProductsIntent.SetNewProductCategory(null))
-                                    categoryMenuExpanded = false
+                            ProductRow(
+                                product = product,
+                                subtitle = subtitle,
+                                dotColor = productDotColor(product.categoryId, state.categories),
+                                favoriteColor = favoriteColor,
+                                onClick = { editingProduct = product },
+                                onToggleFavorite = {
+                                    onIntent(ProductsIntent.ToggleFavorite(product.id, !product.isFavorite))
                                 }
                             )
-                            state.categories.forEach { category ->
-                                DropdownMenuItem(
-                                    text = { Text(category.name) },
-                                    onClick = {
-                                        onIntent(ProductsIntent.SetNewProductCategory(category.id))
-                                        categoryMenuExpanded = false
-                                    },
-                                    leadingIcon = {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(10.dp)
-                                                .background(colorForCategory(category.id), CircleShape)
-                                        )
-                                    }
-                                )
-                            }
                         }
                     }
                 }
             }
+        }
+    }
+}
 
-            // Category filter chips
-            CategoryFilterRow(
-                categories = state.categories,
-                selectedCategoryId = state.selectedCategoryId,
-                categoryColor = colorForCategory,
-                onSelect = { onIntent(ProductsIntent.SelectCategoryFilter(it)) },
-                onManage = { onIntent(ProductsIntent.OpenCategoryManager) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = spacing.sm)
+/** Header filter icon button; tinted with the accent while a filter or sort is active. */
+@Composable
+private fun FilterButton(active: Boolean, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(PantryHubTheme.radius.iconButton),
+        color = if (active) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainer
+        },
+        modifier = Modifier.size(40.dp)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = PantryIcons.Filter,
+                contentDescription = stringResource(R.string.filter_title),
+                tint = if (active) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(20.dp)
             )
+        }
+    }
+}
 
-            if (state.isLoading) {
-                PantryLoading()
-            } else if (state.products.isEmpty()) {
-                val hasQuery = state.searchQuery.isNotEmpty()
-                PantryEmptyState(
-                    title = if (hasQuery) stringResource(R.string.search_no_results_title) else stringResource(
-                        R.string.empty_products_title
-                    ),
-                    description = if (hasQuery) stringResource(
-                        R.string.search_no_results_desc,
-                        state.searchQuery
-                    ) else stringResource(R.string.empty_products_desc),
-                    icon = if (hasQuery) PantryIcons.Search else PantryIcons.Products
+@Composable
+private fun GroupLabel(
+    header: ProductGroupHeader,
+    count: Int,
+    modifier: Modifier = Modifier
+) {
+    when (header) {
+        ProductGroupHeader.Favorites -> PantrySectionLabel(
+            text = stringResource(R.string.favorites_section),
+            color = PantryHubTheme.extendedColors.favorite,
+            icon = PantryIcons.Favorite,
+            count = count,
+            modifier = modifier
+        )
+        is ProductGroupHeader.ByCategory -> PantrySectionLabel(
+            text = header.category.name,
+            dotColor = header.color,
+            count = count,
+            modifier = modifier
+        )
+        ProductGroupHeader.Uncategorized -> PantrySectionLabel(
+            text = stringResource(R.string.product_no_category),
+            dotColor = uncategorizedDotColor(),
+            count = count,
+            modifier = modifier
+        )
+        ProductGroupHeader.None -> Unit
+    }
+}
+
+@Composable
+private fun ProductRow(
+    product: Product,
+    subtitle: String?,
+    dotColor: Color,
+    favoriteColor: Color,
+    onClick: () -> Unit,
+    onToggleFavorite: () -> Unit
+) {
+    val spacing = PantryHubTheme.spacing
+    PantryItemCard(onClick = onClick) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(dotColor, CircleShape)
+        )
+        Spacer(modifier = Modifier.width(spacing.md))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = product.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = spacing.xxl)
-                ) {
-                    items(state.products, key = { it.id }) { product ->
-                        val dismissState = rememberSwipeToDismissBoxState(
-                            confirmValueChange = {
-                                when (it) {
-                                    SwipeToDismissBoxValue.EndToStart -> {
-                                        onIntent(ProductsIntent.DeleteProduct(product.id))
-                                        true
-                                    }
-
-                                    SwipeToDismissBoxValue.StartToEnd -> {
-                                        onIntent(
-                                            ProductsIntent.ToggleFavorite(
-                                                product.id,
-                                                !product.isFavorite
-                                            )
-                                        )
-                                        false
-                                    }
-
-                                    else -> false
-                                }
-                            }
-                        )
-
-                        SwipeToDismissBox(
-                            state = dismissState,
-                            enableDismissFromStartToEnd = true,
-                            enableDismissFromEndToStart = true,
-                            backgroundContent = {
-                                val progress = dismissState.progress
-                                val colorAlpha = (progress * 2f).coerceAtMost(1f)
-                                val iconProgress = ((progress - 0.20f) / 0.80f).coerceAtLeast(0f)
-                                val scale = 0.5f + (iconProgress * 0.5f).coerceAtMost(0.5f)
-
-                                when (dismissState.dismissDirection) {
-                                    SwipeToDismissBoxValue.EndToStart -> {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .padding(vertical = spacing.xs)
-                                                .background(
-                                                    deleteColor.copy(alpha = colorAlpha),
-                                                    PantryHubTheme.shapes.medium
-                                                )
-                                                .padding(horizontal = spacing.xl),
-                                            contentAlignment = Alignment.CenterEnd
-                                        ) {
-                                            Icon(
-                                                imageVector = PantryIcons.Delete,
-                                                contentDescription = stringResource(R.string.delete_action),
-                                                modifier = Modifier.scale(scale)
-                                            )
-                                        }
-                                    }
-
-                                    SwipeToDismissBoxValue.StartToEnd -> {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .padding(vertical = spacing.xs)
-                                                .background(
-                                                    favoriteColor.copy(alpha = colorAlpha),
-                                                    PantryHubTheme.shapes.medium
-                                                )
-                                                .padding(horizontal = spacing.xl),
-                                            contentAlignment = Alignment.CenterStart
-                                        ) {
-                                            Icon(
-                                                imageVector = PantryIcons.Favorite,
-                                                contentDescription = null,
-                                                tint = onFavoriteColor,
-                                                modifier = Modifier.scale(scale)
-                                            )
-                                        }
-                                    }
-
-                                    SwipeToDismissBoxValue.Settled -> {
-                                    }
-                                }
-                            }
-                        ) {
-                            val productCategoryId = product.categoryId
-                            // Uncategorized products get a neutral grey dot + "No category"
-                            // so every row keeps the same shape.
-                            val productCategoryName = productCategoryId?.let { id ->
-                                state.categories.find { it.id == id }?.name
-                            } ?: stringResource(R.string.product_no_category)
-                            val productDotColor = productCategoryId?.let { colorForCategory(it) }
-                                ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-
-                            PantryItemCard(
-                                modifier = Modifier.padding(vertical = spacing.xs),
-                                onClick = { categorizingProduct = product }
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(12.dp)
-                                        .background(productDotColor, CircleShape)
-                                )
-                                Spacer(modifier = Modifier.width(spacing.md))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = product.name,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Text(
-                                        text = productCategoryName,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        onIntent(
-                                            ProductsIntent.ToggleFavorite(
-                                                product.id,
-                                                !product.isFavorite
-                                            )
-                                        )
-                                    },
-                                    modifier = Modifier.size(40.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = if (product.isFavorite) {
-                                            PantryIcons.Favorite
-                                        } else {
-                                            PantryIcons.FavoriteBorder
-                                        },
-                                        contentDescription = null,
-                                        tint = if (product.isFavorite) {
-                                            favoriteColor
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                        },
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(spacing.sm))
-                                IconButton(
-                                    onClick = { onIntent(ProductsIntent.DeleteProduct(product.id)) },
-                                    modifier = Modifier.size(40.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = PantryIcons.Delete,
-                                        contentDescription = stringResource(R.string.delete_action),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
             }
+        }
+        IconButton(onClick = onToggleFavorite, modifier = Modifier.size(40.dp)) {
+            Icon(
+                imageVector = if (product.isFavorite) PantryIcons.Favorite else PantryIcons.FavoriteBorder,
+                contentDescription = stringResource(
+                    if (product.isFavorite) R.string.unfavorite_action else R.string.favorite_action
+                ),
+                tint = if (product.isFavorite) favoriteColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

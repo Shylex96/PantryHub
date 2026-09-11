@@ -126,16 +126,23 @@ Compose UI → ViewModel → Use cases → Repository
 > components first, then Lists → List detail → Shopping mode → Products → Notes →
 > Settings/Help, with bottom sheets replacing dialogs — followed by the cross-cutting items
 > below (B4, B5). The sub-items B1–B3 remain as the per-screen checklist.
-- B1. **VP-3 Products + Categories**: product rows as `PantryItemCard` (color dot ·
-  name · category subtitle · favorite/delete), category filter chips restyled, edit /
-  category-picker / category-manager dialogs to mockup level.
-- B2. **VP-4 Notes**: note cards (title, 2-line preview, date), editor as a full-screen
-  or bottom-sheet editor instead of a cramped dialog.
-- B3. **VP-5 Settings + Help**: sectioned rows with leading icons, account/sync section
-  placeholder (hidden until Track D), help screen polish.
-- B4. **Cross-cutting**: dialog system (`PantryDialog`) so every dialog shares spacing,
-  title style and button placement; list item enter/exit animations; consistent
-  empty/error states; light-theme pass (Warm Pantry) on every screen.
+- B0. ✅ **Shopping flow** (Lists, List detail, Shopping mode) in the new design, with the
+  "shopping in progress" rule (`05` §6.2) and the finish sheet.
+- B1. ✅ **Products + Categories**: header with live counts + filter button, permanent search
+  pill, grouping (Favorites → categories → No category), filter sheet (category · sort ·
+  "Show N products" · Reset · Manage categories), New product / Edit product / Categories
+  sheets, swipe actions via `PantrySwipeRow`.
+- B2. ✅ **Notes**: 2-column grid of cards (title, excerpt, relative date), header search
+  toggle, editor sheet with delete-with-confirmation.
+- B3. ✅ **Settings + Help + Backup**: grouped cards with icon tiles, theme/language sheets,
+  **Manage data** sheet (multi-select wipe: lists, products, categories, notes, history,
+  favorites, everything — `ClearDataUseCase`), about row with version; Help and Backup
+  screens use the compact top bar + header.
+- B4. **Cross-cutting** (next): remove `PantryTopBar`, `PantrySearchBar`, `PantryCard`
+  where unused and the leftover strings (`pending_*`, `*_coming_soon_*`, `shopping_mode_title`…);
+  list item enter/exit animations everywhere (`animateItem` is in Products, Notes and
+  Shopping mode); undo snackbar for deletions; consistent empty/error states; light-theme
+  (Warm Pantry) pass on every screen.
 - B5. **Accessibility**: `contentDescription` audit, 48dp targets, contrast check on
   badges/dots, dynamic text.
 

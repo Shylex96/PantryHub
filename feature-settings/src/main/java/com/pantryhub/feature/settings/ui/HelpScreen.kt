@@ -2,19 +2,22 @@ package com.pantryhub.feature.settings.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,9 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import com.pantryhub.core.designsystem.R
-import com.pantryhub.core.designsystem.ui.components.PantryCard
-import com.pantryhub.core.designsystem.ui.components.PantryTopBar
+import com.pantryhub.core.designsystem.ui.components.PantryHeaderIconButton
+import com.pantryhub.core.designsystem.ui.components.PantryScreenHeader
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
@@ -57,39 +61,40 @@ fun HelpScreen(
     val spacing = PantryHubTheme.spacing
 
     Scaffold(
-        topBar = {
-            PantryTopBar(
-                title = stringResource(R.string.help_screen_title),
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = PantryIcons.Back,
-                            contentDescription = stringResource(R.string.back_description)
-                        )
-                    }
-                }
-            )
-        }
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(innerPadding)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = spacing.lg, vertical = spacing.md)
+                .padding(bottom = spacing.xxl)
         ) {
-            Text(
-                text = stringResource(R.string.help_intro),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(
-                    horizontal = spacing.sm,
-                    vertical = spacing.sm
+            // Compact top bar (docs/05 §6.6): back only; the title lives in the header.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = spacing.lg, vertical = spacing.sm)
+            ) {
+                PantryHeaderIconButton(
+                    icon = PantryIcons.Back,
+                    contentDescription = stringResource(R.string.back_description),
+                    onClick = onBack
                 )
+            }
+            PantryScreenHeader(
+                title = stringResource(R.string.help_screen_title),
+                subtitle = stringResource(R.string.help_intro)
             )
+            Spacer(modifier = Modifier.height(spacing.xl))
 
-            helpTopics.forEach { topic ->
-                HelpTopicCard(topic)
-                Spacer(modifier = Modifier.size(spacing.sm))
+            Column(
+                modifier = Modifier.padding(horizontal = spacing.screen),
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)
+            ) {
+                helpTopics.forEach { topic -> HelpTopicCard(topic) }
             }
         }
     }
@@ -100,11 +105,15 @@ private fun HelpTopicCard(topic: HelpTopic) {
     val spacing = PantryHubTheme.spacing
     var expanded by remember { mutableStateOf(false) }
 
-    PantryCard(modifier = Modifier.fillMaxWidth()) {
+    Surface(
+        onClick = { expanded = !expanded },
+        shape = RoundedCornerShape(PantryHubTheme.radius.card),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = !expanded }
                 .animateContentSize()
                 .padding(spacing.lg)
         ) {
@@ -112,6 +121,7 @@ private fun HelpTopicCard(topic: HelpTopic) {
                 Text(
                     text = stringResource(topic.title),
                     style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
@@ -122,7 +132,7 @@ private fun HelpTopicCard(topic: HelpTopic) {
                 )
             }
             if (expanded) {
-                Spacer(modifier = Modifier.size(spacing.sm))
+                Spacer(modifier = Modifier.height(spacing.sm))
                 Text(
                     text = stringResource(topic.body),
                     style = MaterialTheme.typography.bodyMedium,

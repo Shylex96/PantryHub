@@ -19,6 +19,7 @@
     <string name="pending_section">Pendiente</string>
     <string name="completed_section">Completado</string>
     <string name="start_shopping_action">Empezar a Comprar</string>
+    <string name="continue_shopping_action">Continuar compra</string>
     <string name="add_item_label">Añadir nuevo ítem</string>
     <string name="add_product_placeholder">Añadir producto…</string>
     <string name="item_count_subtitle">%d ítems</string>
@@ -129,6 +130,46 @@
     <string name="product_category_title">Categoría de %s</string>
     <string name="edit_product_title">Editar %s</string>
     <string name="aliases_label">Alias (separados por comas)</string>
+    <!-- Products tab: header, filter sheet, product sheets, categories (docs/04 "Category Browsing") -->
+    <plurals name="categories_count">
+        <item quantity="one">%d categoría</item>
+        <item quantity="other">%d categorías</item>
+    </plurals>
+    <plurals name="show_products_action">
+        <item quantity="one">Ver %d producto</item>
+        <item quantity="other">Ver %d productos</item>
+    </plurals>
+    <plurals name="aliases_count">
+        <item quantity="one">%d alias</item>
+        <item quantity="other">%d alias</item>
+    </plurals>
+    <string name="filter_title">Filtrar</string>
+    <string name="reset_action">Restablecer</string>
+    <string name="filter_all_categories">Todas las categorías</string>
+    <string name="sort_by_label">Ordenar por</string>
+    <string name="sort_category">Categoría</string>
+    <string name="sort_name">A–Z</string>
+    <string name="sort_most_used">Más usados</string>
+    <string name="manage_categories_action">Gestionar categorías</string>
+    <string name="filter_no_results_title">Nada por aquí</string>
+    <string name="filter_no_results_desc">Ningún producto coincide con este filtro. Prueba otra categoría o restablece el filtro.</string>
+    <string name="clear_search_action">Borrar búsqueda</string>
+    <string name="favorites_section">Favoritos</string>
+    <string name="favorite_action">Marcar como favorito</string>
+    <string name="unfavorite_action">Quitar de favoritos</string>
+    <string name="fab_new_product">Nuevo producto</string>
+    <string name="sheet_new_product_subtitle">Añádelo a tu catálogo para que aparezca en las sugerencias.</string>
+    <string name="product_name_placeholder">p. ej. Aceite de oliva</string>
+    <string name="create_product_action">Crear producto</string>
+    <string name="sheet_edit_product_subtitle">Cambia su categoría o añade otros nombres con los que lo conoces.</string>
+    <string name="field_aliases_label">Otros nombres</string>
+    <string name="field_aliases_placeholder">Separados por comas, p. ej. patata, papa</string>
+    <string name="sheet_categories_subtitle">Las categorías agrupan tus productos en toda la app.</string>
+    <string name="rename_category_placeholder">Nuevo nombre</string>
+    <string name="add_category_action">Añadir categoría</string>
+    <string name="delete_category_confirm_title">¿Eliminar categoría?</string>
+    <string name="delete_category_confirm_message">Se eliminará \"%s\". Sus productos se conservan y pasan a estar sin categoría.</string>
+    <string name="swipe_to_delete_hint">Desliza una categoría a la izquierda para eliminarla.</string>
 
     <!-- Importar / Exportar -->
     <string name="backup_section_title">Copia de seguridad</string>
@@ -154,6 +195,17 @@
     <string name="note_untitled">Sin título</string>
     <string name="empty_notes_title">Aún no hay notas</string>
     <string name="empty_notes_desc">Apunta recordatorios o info útil — toca + para crear tu primera nota.</string>
+    <plurals name="notes_count">
+        <item quantity="one">%d nota</item>
+        <item quantity="other">%d notas</item>
+    </plurals>
+    <string name="fab_new_note">Nueva nota</string>
+    <string name="search_notes_placeholder">Buscar notas…</string>
+    <string name="note_title_placeholder">Título</string>
+    <string name="note_content_placeholder">Escribe algo…</string>
+    <string name="delete_note_action">Eliminar nota</string>
+    <string name="delete_note_confirm_title">¿Eliminar nota?</string>
+    <string name="delete_note_confirm_message">Esta nota se eliminará de forma permanente.</string>
 
     <!-- Ajustes -->
     <string name="settings_appearance">Apariencia</string>
@@ -166,13 +218,37 @@
     <string name="settings_backup_row_desc">Exporta o importa tus datos</string>
     <string name="settings_language">Idioma</string>
     <string name="language_system">Predeterminado del sistema</string>
-    <string name="language_es">Español</string>
-    <string name="language_en">English</string>
 
     <!-- Ayuda / Guía -->
     <string name="settings_help">Ayuda</string>
     <string name="help_row_title">Ayuda y guía</string>
     <string name="help_row_desc">Qué puede hacer PantryHub y cómo usarlo</string>
+    <!-- Settings redesign + Manage data (docs/04_UX_Guidelines.md "Settings") -->
+    <string name="settings_subtitle">Apariencia, idioma y tus datos</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_app_language">Idioma de la app</string>
+    <string name="settings_language_hint">Independiente del idioma del teléfono. La app se reinicia para aplicarlo.</string>
+    <string name="about_title">Acerca de PantryHub</string>
+    <string name="about_version">Versión %s</string>
+    <string name="about_body">PantryHub es tu compañero de compra: guarda tu catálogo de productos, crea listas reutilizables o puntuales, marca lo que vas cogiendo en modo compra y apunta notas por el camino.</string>
+    <string name="about_privacy">Todo se guarda solo en este dispositivo. Sin cuentas, sin rastreo y sin anuncios; usa la copia de seguridad para pasar tus datos a otro móvil.</string>
+    <string name="about_credits">Diseñada y desarrollada por Esteban Albarrán.</string>
+    <string name="about_source_action">Ver el código en GitHub</string>
+    <string name="manage_data_title">Gestionar datos</string>
+    <string name="manage_data_row_desc">Elimina productos, listas o notas, o empieza de cero</string>
+    <string name="manage_data_subtitle">Elige qué quieres eliminar. No se puede deshacer: si tienes dudas, exporta antes una copia.</string>
+    <string name="manage_data_everything">Todo (empezar de cero)</string>
+    <string name="manage_data_lists">Todas las listas</string>
+    <string name="manage_data_products">Todos los productos (también vacía tus listas)</string>
+    <string name="manage_data_categories">Todas las categorías (los productos se conservan)</string>
+    <string name="manage_data_notes">Todas las notas</string>
+    <string name="manage_data_history">Historial de compras</string>
+    <string name="manage_data_favorites">Desmarcar todos los favoritos</string>
+    <string name="manage_data_hint">Tus ajustes de tema e idioma nunca se ven afectados.</string>
+    <string name="manage_data_delete_action">Eliminar lo seleccionado</string>
+    <string name="manage_data_confirm_title">¿Eliminar estos datos?</string>
+    <string name="manage_data_confirm_message">Vas a eliminar: %s. No se puede deshacer.</string>
+    <string name="manage_data_done">Listo: los datos seleccionados se han eliminado.</string>
     <string name="help_screen_title">Ayuda y guía</string>
     <string name="help_intro">Un recorrido rápido por todo lo que puede hacer PantryHub. Toca cualquier tema para saber más.</string>
 

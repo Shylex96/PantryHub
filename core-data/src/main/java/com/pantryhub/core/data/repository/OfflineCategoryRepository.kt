@@ -28,4 +28,8 @@ class OfflineCategoryRepository @Inject constructor(
     override suspend fun deleteCategory(category: Category) {
         categoryDao.deleteCategoryById(category.id)
     }
+
+    override suspend fun deleteAllCategories() {
+        categoryDao.deleteAllCategories()
+    }
 }

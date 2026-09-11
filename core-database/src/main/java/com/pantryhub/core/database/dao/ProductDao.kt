@@ -43,4 +43,14 @@ interface ProductDao {
 
     @Query("UPDATE products SET is_favorite = :isFavorite WHERE id = :productId")
     suspend fun updateFavoriteStatus(productId: String, isFavorite: Boolean)
+
+    // Bulk operations for Settings > Manage data.
+    @Query("DELETE FROM products")
+    suspend fun deleteAllProducts()
+
+    @Query("UPDATE products SET is_favorite = 0")
+    suspend fun clearAllFavorites()
+
+    @Query("UPDATE products SET category_id = NULL")
+    suspend fun clearAllCategories()
 }

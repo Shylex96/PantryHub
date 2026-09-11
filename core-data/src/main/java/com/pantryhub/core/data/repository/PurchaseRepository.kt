@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface PurchaseRepository {
     fun getPurchases(): Flow<List<Purchase>>
     suspend fun savePurchase(purchase: Purchase)
+    suspend fun deleteAllPurchases()
 }

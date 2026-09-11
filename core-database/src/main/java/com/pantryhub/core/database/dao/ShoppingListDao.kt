@@ -50,4 +50,8 @@ interface ShoppingListDao {
 
     @Query("UPDATE shopping_items SET is_completed = 0, completed_at = NULL WHERE shopping_list_id = :listId")
     suspend fun resetListCompletion(listId: String)
+
+    // Items are removed by the ON DELETE CASCADE foreign key.
+    @Query("DELETE FROM shopping_lists")
+    suspend fun deleteAllLists()
 }

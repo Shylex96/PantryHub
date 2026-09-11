@@ -31,4 +31,8 @@ class OfflinePurchaseRepository @Inject constructor(
         val itemEntities = purchase.items.map { it.asPurchaseItem(purchase.id) }
         purchaseDao.insertPurchaseWithItems(purchaseEntity, itemEntities)
     }
+
+    override suspend fun deleteAllPurchases() {
+        purchaseDao.deleteAllPurchases()
+    }
 }

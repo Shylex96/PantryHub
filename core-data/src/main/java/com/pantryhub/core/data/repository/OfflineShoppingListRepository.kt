@@ -52,6 +52,10 @@ class OfflineShoppingListRepository @Inject constructor(
         shoppingListDao.deleteList(list.asEntity())
     }
 
+    override suspend fun deleteAllLists() {
+        shoppingListDao.deleteAllLists()
+    }
+
     override fun getItemsForList(listId: String): Flow<List<ShoppingListItem>> {
         // This one-off fetch was outside Room's invalidation mechanism:
         // the Flow was only re-emitted when "shopping_items" changed, never when

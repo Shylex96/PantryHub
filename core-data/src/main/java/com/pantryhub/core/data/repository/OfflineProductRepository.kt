@@ -52,4 +52,16 @@ class OfflineProductRepository @Inject constructor(
     override suspend fun clearCategoryFromProducts(categoryId: String) {
         productDao.clearCategory(categoryId)
     }
+
+    override suspend fun deleteAllProducts() {
+        productDao.deleteAllProducts()
+    }
+
+    override suspend fun clearAllFavorites() {
+        productDao.clearAllFavorites()
+    }
+
+    override suspend fun clearAllCategoryAssignments() {
+        productDao.clearAllCategories()
+    }
 }

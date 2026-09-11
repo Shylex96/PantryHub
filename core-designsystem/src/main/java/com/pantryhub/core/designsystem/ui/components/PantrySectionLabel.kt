@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,7 +25,8 @@ import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
 /**
  * Small uppercase section label with an optional leading color dot (category group
- * headers) and an optional right-aligned count (docs/05_Design_System.md §6.1, §6.7).
+ * headers) or small icon (e.g. the Favorites star), and an optional right-aligned count
+ * (docs/05_Design_System.md §6.1, §6.7).
  */
 @Composable
 fun PantrySectionLabel(
@@ -31,6 +34,7 @@ fun PantrySectionLabel(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     dotColor: Color? = null,
+    icon: ImageVector? = null,
     count: Int? = null
 ) {
     val spacing = PantryHubTheme.spacing
@@ -47,6 +51,14 @@ fun PantrySectionLabel(
                     modifier = Modifier
                         .size(8.dp)
                         .background(dotColor, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(spacing.sm))
+            } else if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(12.dp)
                 )
                 Spacer(modifier = Modifier.width(spacing.sm))
             }

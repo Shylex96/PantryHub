@@ -5,5 +5,6 @@ import javax.inject.Inject
 class SettingsUseCases @Inject constructor(
     val getSettings: GetSettingsUseCase,
     val setThemeMode: SetThemeModeUseCase,
-    val setDynamicColor: SetDynamicColorUseCase
+    val setDynamicColor: SetDynamicColorUseCase,
+    val clearData: ClearDataUseCase
 )

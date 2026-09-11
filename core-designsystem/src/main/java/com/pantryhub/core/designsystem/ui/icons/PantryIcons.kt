@@ -1,15 +1,22 @@
 package com.pantryhub.core.designsystem.ui.icons
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -44,6 +51,16 @@ object PantryIcons {
     val Schedule = Icons.Default.Schedule
     // "Start shopping" call-to-action.
     val Cart = Icons.Default.ShoppingCart
+    // Header filter button (Products).
+    val Filter = Icons.Default.FilterList
+
+    // Settings row tiles.
+    val Theme = Icons.Default.DarkMode
+    val Palette = Icons.Default.Palette
+    val Language = Icons.Default.Language
+    val Backup = Icons.Default.Archive
+    val DeleteSweep = Icons.Default.DeleteSweep
+    val Help = Icons.AutoMirrored.Filled.Help
 
     // Navigation / feature icons (used in the bottom bar, empty states, cards).
     val Lists = Icons.Default.Checklist

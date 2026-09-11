@@ -19,6 +19,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    androidResources {
+        // Shipped languages; keep in sync with res/xml/locales_config.xml and
+        // feature-settings AppLanguages.kt. Strips unused library locales from the APK.
+        localeFilters += listOf("en", "es")
+    }
+
     buildTypes {
         release {
             optimization {

@@ -20,6 +20,10 @@ interface PurchaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPurchaseItems(items: List<PurchaseItemEntity>)
 
+    // Purchase items are removed by the ON DELETE CASCADE foreign key.
+    @Query("DELETE FROM purchases")
+    suspend fun deleteAllPurchases()
+
     @Transaction
     suspend fun insertPurchaseWithItems(purchase: PurchaseEntity, items: List<PurchaseItemEntity>) {
         insertPurchase(purchase)

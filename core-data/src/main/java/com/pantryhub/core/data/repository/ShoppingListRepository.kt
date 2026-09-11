@@ -9,6 +9,7 @@ interface ShoppingListRepository {
     suspend fun getList(id: String): ShoppingList?
     suspend fun saveList(list: ShoppingList)
     suspend fun deleteList(list: ShoppingList)
+    suspend fun deleteAllLists()
     fun getItemsForList(listId: String): Flow<List<ShoppingListItem>>
     suspend fun saveItem(item: ShoppingListItem)
     suspend fun deleteItem(item: ShoppingListItem)

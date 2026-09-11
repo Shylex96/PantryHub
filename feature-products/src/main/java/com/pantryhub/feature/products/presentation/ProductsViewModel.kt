@@ -47,18 +47,14 @@ class ProductsViewModel @Inject constructor(
             is ProductsIntent.Search -> updateSearchQuery(intent.query)
             is ProductsIntent.ToggleFavorite -> toggleFavorite(intent.productId, intent.isFavorite)
             is ProductsIntent.DeleteProduct -> deleteProduct(intent.productId)
-            is ProductsIntent.UpdateCreateInput -> _uiState.update { it.copy(createInput = intent.input) }
-            is ProductsIntent.CreateProduct -> createProduct(intent.name)
-            ProductsIntent.ToggleSearchMode -> _uiState.update {
-                it.copy(isSearchMode = !it.isSearchMode, searchQuery = "")
-            }
+            is ProductsIntent.CreateProduct -> createProduct(intent.name, intent.categoryId)
             is ProductsIntent.UpdateProductDetails ->
                 updateProductDetails(intent.productId, intent.categoryId, intent.aliases)
-            is ProductsIntent.SelectCategoryFilter -> _uiState.update {
-                it.copy(selectedCategoryId = intent.categoryId)
+            is ProductsIntent.ApplyFilter -> _uiState.update {
+                it.copy(filter = intent.filter, sort = intent.sort)
             }
-            is ProductsIntent.SetNewProductCategory -> _uiState.update {
-                it.copy(newProductCategoryId = intent.categoryId)
+            ProductsIntent.ResetFilter -> _uiState.update {
+                it.copy(filter = ProductFilter.All, sort = ProductSort.CATEGORY)
             }
             ProductsIntent.OpenCategoryManager -> _uiState.update { it.copy(isManagingCategories = true) }
             ProductsIntent.CloseCategoryManager -> _uiState.update { it.copy(isManagingCategories = false) }
@@ -76,31 +72,18 @@ class ProductsViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun observeProducts() {
+        // The category filter and the sort are applied on the UI side (grouping needs the
+        // full set anyway, e.g. for per-category counts in the filter sheet); only the
+        // text search goes to the database.
         _uiState
-            .map { it.searchQuery to it.selectedCategoryId }
+            .map { it.searchQuery }
             .distinctUntilChanged()
             .debounce(300.milliseconds)
             .onEach { _uiState.update { it.copy(isLoading = true) } }
-            .flatMapLatest { (query, categoryId) ->
-                val source = when {
-                    categoryId != null -> categoryUseCases.getProductsByCategory(categoryId)
-                    query.isBlank() -> productUseCases.getProducts()
-                    else -> productUseCases.searchProducts(query)
-                }
-                source.map { products ->
-                    // When both a category filter and a text query are active,
-                    // filter the category results by the query on the client side.
-                    val filtered = if (categoryId != null && query.isNotBlank()) {
-                        products.filter { it.name.contains(query.trim(), ignoreCase = true) }
-                    } else {
-                        products
-                    }
-                    filtered.sortedWith(
-                        compareByDescending<Product> { it.isFavorite }
-                            .thenBy { it.name.lowercase() }
-                    )
-                }
+            .flatMapLatest { query ->
+                if (query.isBlank()) productUseCases.getProducts() else productUseCases.searchProducts(query)
             }
+            .map { products -> products.sortedBy { it.name.lowercase() } }
             .onEach { products ->
                 _uiState.update { it.copy(products = products, isLoading = false) }
             }
@@ -111,7 +94,7 @@ class ProductsViewModel @Inject constructor(
         _uiState.update { it.copy(searchQuery = query) }
     }
 
-    private fun createProduct(name: String) {
+    private fun createProduct(name: String, categoryId: String?) {
         val storageName = name.toStorageName()
         if (storageName.isEmpty()) return
 
@@ -122,12 +105,11 @@ class ProductsViewModel @Inject constructor(
                     id = UUID.randomUUID().toString(),
                     name = storageName,
                     normalizedName = name.toComparisonKey(),
-                    categoryId = _uiState.value.newProductCategoryId,
+                    categoryId = categoryId,
                     createdAt = Clock.System.now()
                 )
                 productUseCases.saveProduct(newProduct)
             }
-            _uiState.update { it.copy(createInput = "") }
         }
     }
 
@@ -185,11 +167,14 @@ class ProductsViewModel @Inject constructor(
     private fun removeCategory(category: Category) {
         viewModelScope.launch {
             categoryUseCases.deleteCategory(category)
+            // A filter pointing at the removed category falls back to "All".
             _uiState.update {
-                it.copy(
-                    selectedCategoryId = it.selectedCategoryId.takeIf { id -> id != category.id },
-                    newProductCategoryId = it.newProductCategoryId.takeIf { id -> id != category.id }
-                )
+                val filter = it.filter
+                if (filter is ProductFilter.ByCategory && filter.categoryId == category.id) {
+                    it.copy(filter = ProductFilter.All)
+                } else {
+                    it
+                }
             }
         }
     }

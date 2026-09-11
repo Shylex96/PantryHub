@@ -13,4 +13,9 @@ interface ProductRepository {
     suspend fun incrementUsage(productId: String)
     suspend fun toggleFavorite(productId: String, isFavorite: Boolean)
     suspend fun clearCategoryFromProducts(categoryId: String)
+
+    // Bulk operations (Settings > Manage data).
+    suspend fun deleteAllProducts()
+    suspend fun clearAllFavorites()
+    suspend fun clearAllCategoryAssignments()
 }

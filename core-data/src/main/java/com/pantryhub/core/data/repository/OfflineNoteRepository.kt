@@ -28,4 +28,8 @@ class OfflineNoteRepository @Inject constructor(
     override suspend fun deleteNote(note: Note) {
         noteDao.deleteNoteById(note.id)
     }
+
+    override suspend fun deleteAllNotes() {
+        noteDao.deleteAllNotes()
+    }
 }

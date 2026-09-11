@@ -415,6 +415,50 @@ The user is currently buying.
 
 ---
 
+# Notes UX
+
+## Objective
+
+Notes hold whatever does not fit a list: a recipe, a price to remember, a reminder.
+
+- The Notes tab is a **two-column grid of cards**: title (or "Untitled"), an excerpt of up
+  to five lines and a relative "last edited" date. Tapping a card opens the editor.
+- The header carries a **search toggle**; search filters by title and content and shows the
+  standard "no matches" empty state.
+- The **editor is a bottom sheet** (title + multi-line content). Save is enabled as soon as
+  either field has text. An existing note can be deleted from the editor, after a
+  confirmation dialog — deletion is the only destructive action on the screen, so no swipe
+  gesture is used on the grid.
+
+---
+
+# Settings UX
+
+## Objective
+
+Settings are rare visits; they must be scannable and safe.
+
+- Sections (`Appearance`, `Language`, `Data`, `Help`) are uppercase labels above **one card
+  each**, with 60dp rows: tinted icon tile · title (+ one-line description) · current value ·
+  chevron. A row with a toggle shows the switch instead of a chevron.
+- **Choices open bottom sheets** (theme, language) listing the options as selectable rows;
+  picking one applies immediately and closes the sheet.
+- **Data › Backup** opens the import/export screen; **Data › Manage data** opens the
+  bulk-delete sheet.
+
+## Manage data (start over)
+
+The Manage data sheet lets the user wipe any combination of: all shopping lists · all
+products (this also empties every list) · all categories (products are kept and become
+uncategorised) · all notes · purchase history · unmark all favorites — or **Everything
+(start over)**, which selects them all. The button "Delete selected" is red, disabled until
+something is selected, and always followed by a **confirmation dialog that names exactly
+what will be removed**. Theme and language settings are never touched. When the wipe
+completes the sheet closes and a snackbar confirms it. The sheet subtitle points the user to
+the backup screen first.
+
+---
+
 # Empty States
 
 Empty states should guide users. Use `PantryEmptyState` from the Design System to maintain visual consistency and provide helpful next steps.
@@ -529,6 +573,25 @@ Requirements:
 - Avoid text assumptions.
 - Support longer translations.
 
+Rules (2026-09):
+
+- **The default language is the system language.** A fresh install never forces a
+  language: the per-app locale list is empty until the user picks one in Settings ›
+  Language (or in Android 13+ system settings, which the app advertises through
+  `locales_config.xml`). "System default" is always the first option.
+- English (`values/`) is the source of truth; every other language is a full translation in
+  `values-<tag>/strings.xml` inside `:core-designsystem`. Strings that must not be
+  translated (URLs, identifiers) carry `translatable="false"`.
+- The language picker is generated from one list — `AppLanguages.supported` in
+  `:feature-settings` — and labels each language by its own name ("Español", "English"),
+  so adding a language never needs new picker strings.
+- **Adding a language** = four edits, kept in sync: `values-<tag>/strings.xml` (all keys,
+  plurals with the right quantity forms), the tag in `AppLanguages.supported`, in
+  `app/src/main/res/xml/locales_config.xml`, and in `androidResources.localeFilters`
+  (`app/build.gradle.kts`). Then check every screen with the longest translation.
+- Counts always use `<plurals>`, dates use system formatting (`DateUtils`), and no string
+  is assembled from fragments — grammar differs between languages.
+
 ---
 
 # Accessibility
@@ -620,4 +683,4 @@ PantryHub should make users think:
 "I don't need to remember my shopping anymore. The app remembers it for me."
 
 ---
-Last updated: July 26, 2026
+Last updated: September 11, 2026

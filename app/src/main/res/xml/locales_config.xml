@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Languages the app ships. Keep in sync with:
+  - core-designsystem/src/main/res/values-<tag>/strings.xml (the translation itself)
+  - feature-settings/.../ui/AppLanguages.kt (the in-app language picker)
+  - app/build.gradle.kts -> androidResources.localeFilters
+  See docs/04_UX_Guidelines.md, "Localization".
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="es" />
+</locale-config>
