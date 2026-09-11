@@ -113,14 +113,12 @@ Undo available
 
 The application should prioritize the most common areas.
 
-Expected main sections:
+Main sections — a **bottom navigation bar with four tabs**, each with an icon and a text
+label (the Lists tab is the home screen; there is no separate Home tab and no hamburger /
+drawer menu):
 
 ```
-Home
-Lists
-Products
-Notes
-Settings
+Lists · Products · Notes · Settings
 ```
 
 Future sections:
@@ -148,6 +146,23 @@ Opening a list should remember:
 - Scroll position.
 - Filters.
 - Shopping mode state.
+
+Structural rules (redesign 2026-09, see `05_Design_System.md` §6):
+
+- Every tab opens with a **large title, a context subtitle with live counts and one
+  optional header action** (search or filter). The primary creation action is an
+  **extended FAB with a text label** ("New list", "New product", "New note").
+- **Secondary screens hide the bottom navigation**: list detail, shopping mode,
+  import/export and help use a top bar with a back chevron ("<") and, when the screen has
+  one primary action, a full-width **bottom call-to-action** ("Start shopping · 8", "Finish
+  shopping").
+- The selected tab is shown by tinting icon and label in the accent color — no indicator
+  pill behind the icon.
+- **Creation and editing happen in bottom sheets, not dialogs** (new/edit list, new/edit
+  product, categories, product filter, finish shopping). Dialogs remain only for
+  destructive confirmations ("Delete list?").
+- **Delete is a swipe-left gesture**; rows do not show a trash icon. A snackbar with Undo
+  follows every delete.
 
 ---
 
@@ -306,23 +321,32 @@ The application should support discovery through:
 
 ## Category Browsing
 
-Categories should feel like exploration.
+Categories should feel like exploration — and they must never hide behind a horizontal
+scroller.
 
-Example:
+Rules (redesign 2026-09, see `05_Design_System.md` §6.7):
 
-User opens:
+- The Products tab **groups products by category**. Each group has a header with the
+  category's color dot, its name in small uppercase and its product count. The
+  **Favorites** group comes first; **No category** comes last with a grey dot.
+- **No horizontal chip rows.** They hide categories off-screen and do not scale. Filtering
+  is a single filter icon button in the header that opens a **bottom sheet** listing "All
+  categories" (default) and every category with dot + count, plus "No category", a
+  three-way sort (Category · A–Z · Most used) and a primary "Show N products" button with a
+  "Reset" link.
+- Search stays a permanent pill field under the header; it filters within the current
+  category selection.
+- The same grouping is used inside a list's detail and in shopping mode, so a category
+  reads the same everywhere.
+
+Example — the Vegetables group in Products:
 
 ```
-Vegetables
-```
-
-and discovers:
-
-```
-Tomatoes
-Carrots
-Lettuce
-Peppers
+● VEGETABLES                                   4
+  Tomatoes
+  Carrots
+  Lettuce
+  Peppers
 ```
 
 ---

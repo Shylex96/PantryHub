@@ -1,7 +1,9 @@
 package com.pantryhub.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -51,9 +53,23 @@ fun PantryHubApp() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    // The bottom navigation is shown only on the four top-level tabs; secondary screens
+    // (list detail, shopping mode, import/export, help) hide it and use their own bottom
+    // call-to-action instead (docs/05_Design_System.md §6.6).
+    val topLevelDestinations = listOf(
+        Destination.ShoppingLists,
+        Destination.Products,
+        Destination.Notes,
+        Destination.Settings
+    )
+    val showBottomBar = currentDestination?.hierarchy?.any { entry ->
+        topLevelDestinations.any { entry.hasRoute(it::class) }
+    } == true
+
     PantryHubTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColor) {
         Scaffold(
             bottomBar = {
+                if (!showBottomBar) return@Scaffold
                 val items = listOf(
                     NavigationItem(
                         label = stringResource(R.string.nav_lists), 
@@ -77,10 +93,12 @@ fun PantryHubApp() {
                     ),
                 )
 
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = PantryHubTheme.elevations.low
-                ) {
+                Column {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        tonalElevation = PantryHubTheme.elevations.none
+                    ) {
                     items.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any {
                             it.hasRoute(item.destination::class)
@@ -102,6 +120,7 @@ fun PantryHubApp() {
                                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
+                    }
                     }
                 }
             }

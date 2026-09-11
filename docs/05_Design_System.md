@@ -155,11 +155,14 @@ Scale (Material 3 slots):
 
 ## 4. Shape, spacing, elevation
 
-Shapes (`PantryShapes`): small `8dp`, medium `16dp`, large `24dp`. Cards use medium; FAB and
-primary buttons use medium→large; text fields use small→medium.
+Shapes (`PantryShapes`): small `8dp`, medium `16dp`, large `24dp`, plus two composition
+shapes added by the redesign: **card `20dp`** and **sheet `28dp`** (top corners of bottom
+sheets). Rows, fields and buttons use medium (16); list cards and settings groups use card
+(20); pills use full (999).
 
-Spacing (`PantrySpacing`): `xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32`. Screen edges use
-`lg`; grouping uses `md`; section separation uses `xl`.
+Spacing (`PantrySpacing`): `xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32` plus **`screen
+20dp`** (horizontal screen margin, added by the redesign). Rows are separated by `sm`, cards
+by `md`, category groups by `18dp`, sections from the header by `28dp`.
 
 Elevation (`PantryElevation`): `low 2 · medium 4 · high 8`. In dark mode, prefer **tonal
 elevation** (lighter surfaceContainer steps) over shadows; in light mode, soft shadows are
@@ -172,10 +175,17 @@ targets stay ≥ `48dp` even when the glyph is 18–24dp.
 
 ## 5. Components (`:core-designsystem`)
 
-`PantryButton` (primary/secondary/destructive + `isLoading`), `PantryCard`, `PantryListItem`
-(leading + trailing slots), `PantryTextField`, `PantrySearchBar`, `PantryTopBar`,
-`PantryLoading`, `PantryEmptyState`, `PantryErrorState`. All consume tokens only — never
-hardcoded colors.
+`PantryButton` (primary/secondary/destructive + `isLoading`), `PantryCard`, `PantryItemCard`
+(filled row), `PantryListItem` (leading + trailing slots), `PantryBadge` (pill),
+`PantryCheckbox` (rounded), `PantryDialog`, `PantryTextField` (label or placeholder mode),
+`PantrySearchBar`, `PantryTopBar` (raised, bold title, optional subtitle), `PantryLoading`,
+`PantryEmptyState`, `PantryErrorState`. All consume tokens only — never hardcoded colors.
+
+The redesign (§6) adds the composition components to build next: `PantryScreenHeader`
+(title + action + subtitle), `PantrySectionLabel`, `PantryListCard` (icon tile + meta +
+progress), `PantryGroupHeader` (dot + label + count), `PantryExtendedFab`,
+`PantryBottomCta`, `PantrySheet` (bottom sheet container) and `PantryChoiceCard`.
+`PantryDialog` is kept only for destructive confirmations.
 
 Every screen must handle the three global states with the shared components: loading
 (`PantryLoading`), empty (`PantryEmptyState`, with icon + call to action), error
@@ -183,7 +193,111 @@ Every screen must handle the three global states with the shared components: loa
 
 ---
 
-## 6. Motion
+## 6. Screen composition (approved redesign, 2026-09)
+
+The redesign approved on 2026-09-11 (canvas "PantryHub Redesign") defines how every screen
+is composed. The values below are the source of truth for implementation; components in
+`:core-designsystem` must expose them, never re-invent them per screen.
+
+### 6.1 Tab screen anatomy
+
+Every one of the four tabs (Lists, Products, Notes, Settings) opens the same way:
+
+| Element | Spec |
+|---|---|
+| Header title | Space Grotesk 700 · 32/38 · letter-spacing −0.4 · `onSurface` · top padding 60 (below the system status bar) |
+| Header action | 40×40 icon button · radius 12 · `surfaceContainer` · glyph 20 `onSurfaceVariant` (search, filter…) |
+| Subtitle | Inter 14/20 · `onSurfaceVariant` · live counts ("3 lists · 11 pending products") · 6 below the title |
+| Section label | Inter 600 · 11/16 · letter-spacing 1.2 · UPPERCASE · `onSurfaceVariant`; the first/emphasised section may use `primary`; the Favorites group uses `extendedColors.favorite` · right-aligned count in 12 `outline` · 28 below the header, 10 above its content |
+| Screen margin | 20 (`spacing.screen`) on both sides |
+| Bottom padding | content clears the FAB (104 + 56) or the bottom CTA (140) |
+
+### 6.2 List card (Lists tab)
+
+`surfaceContainer` · radius 20 · padding 16 · column gap 14.
+Row: icon tile 46×46 radius 14 in a tinted container (`primaryContainer`,
+`tertiaryContainer`, `secondaryContainer` or `surfaceContainerHighest`) with a 22 glyph ·
+gap 14 · title Inter 600 16/22 · meta Inter 13/18 `onSurfaceVariant` · trailing chevron 20
+in `outline`.
+Type pill (one-off): Inter 600 11/16 · padding 1×8 · radius 999 · `tertiaryContainer` /
+`onTertiaryContainer`, inline after the title.
+
+**Shopping-in-progress rule.** A list is *in progress* when at least one of its items is
+checked (`items.any { isCompleted }`), i.e. the user has started ticking things off in
+shopping mode. Nothing about the number of products makes a list "pending" — a list you
+have not started shopping is simply a list. The rule drives three things:
+
+- **Lists tab sections.** In-progress lists appear first under the accent label
+  "Shopping in progress"; every other list sits under "All lists" (that second label is
+  shown only when the first section exists). Finishing a shop resets (regular) or deletes
+  (one-off) the list, so it drops out of "Shopping in progress" by itself.
+- **Card meta.** Empty list → "No products yet" · in progress → "3 of 8 in the cart" ·
+  otherwise → "8 products". The 4dp progress bar (track `surfaceContainerHighest`, fill
+  `primary`) renders **only** while in progress; never on an untouched list.
+- **List detail.** Same meta line; the "3 / 8" counter and progress bar appear only while
+  in progress. The header subtitle of the Lists tab counts lists and products, never
+  "pending".
+
+### 6.3 Item row (detail, shopping mode, Products)
+
+`surfaceContainerHigh` · radius 16 · height 60 (64 in shopping mode) · padding 0 8 0 16 ·
+gap 12. Category dot 10 (8 in group headers; uncategorised = `onSurfaceVariant` at 30%) ·
+name Inter 500 15 `onSurface` · optional second line Inter 12 `onSurfaceVariant` ·
+trailing 40×40 icon buttons with 20 glyphs. **Rows show only the favorite star; delete is
+swipe-left.** Quantity/unit renders as trailing Inter 13 `onSurfaceVariant` text.
+Completed row (shopping mode): `surfaceContainerLow` · height 56 · text `onSurfaceVariant`
+with line-through · dot at 50% opacity.
+Checkbox (`PantryCheckbox`): 26×26 · radius 8 · unchecked 2dp `outline` border · checked
+`primary` fill with `onPrimary` check.
+
+### 6.4 Inputs and primary actions
+
+| Element | Spec |
+|---|---|
+| Search field | height 48 · radius 999 · `surfaceContainer` + 1dp `outlineVariant` border · leading 20 glyph · placeholder Inter 15 `onSurfaceVariant` |
+| Add bar | field height 52 · radius 16 · leading "+" glyph · placeholder, **plus** a 52×52 solid `primary` square (radius 16) — always the same height, vertically centred |
+| Extended FAB | height 56 · radius 16 · `primary`/`onPrimary` · 22 glyph + Inter 600 15 label ("New list") · shadow 0 10 24 primary@28% · anchored right 20, bottom 104 (above the nav) |
+| Bottom CTA (secondary screens) | full width inside the 20 margin · height 56 · radius 16 · `primary` · label Inter 600 16 · optional count pill (`onPrimary` bg, `onPrimaryContainer` text) · sits over a 140dp gradient fade to `background` · bottom 32 |
+| Top-bar icon button | 40×40 · radius 12 · `surfaceContainer` · glyph 20–22 |
+
+### 6.5 Bottom sheets replace dialogs
+
+All creation/editing flows are bottom sheets, never `AlertDialog`: new/edit list, new/edit
+product, category manager, product filter, finish shopping.
+Container `surfaceContainer` · top radius 28 · grabber 40×4 `outline` centred · padding
+12 20 36 · section gap 20–22 · scrim `surfaceContainerLowest` at 55%.
+Title Space Grotesk 700 24/30 + Inter 14 subtitle. Field labels Inter 600 12 UPPERCASE
+letter-spacing 0.6 `onSurfaceVariant`. Fields height 56 · radius 16 · `surfaceContainerHigh`
+· 1.5dp border `outlineVariant`, `primary` when focused. Choice cards (e.g. list type) in a
+2-column grid, radius 16, title + one-line explanation; selected = `primaryContainer` + 1.5dp
+`primary` border + check glyph. Primary button full width, height 56.
+
+### 6.6 Navigation
+
+- Bottom navigation only on the four tabs: height 84 · `surfaceContainer` · 1dp top
+  `outlineVariant` · 24 glyph + Inter 12 label · selected `primary` (600), unselected
+  `onSurfaceVariant` (500) · **no indicator pill behind the icon**.
+- Secondary screens (list detail, shopping mode, import/export, help) **hide the bottom
+  navigation** and use a top bar with a 40×40 back chevron ("<"), optional actions, and a
+  bottom CTA when the screen has one primary action.
+- No hamburger / drawer menu.
+
+### 6.7 Grouping and filtering (no horizontal scrollers)
+
+- List detail, shopping mode and the Products tab group rows **by category**. Group header =
+  dot 8 + UPPERCASE label + count. In Products, a **Favorites** group comes first (gold
+  label) and **No category** last (grey dot).
+- **Horizontal chip scrollers are not used anywhere.** Filtering in Products is the header
+  filter icon button → a bottom sheet listing "All categories" (selected by default) and
+  every category with its dot and product count, then "No category", plus a 3-option sort
+  (Category · A–Z · Most used) and a "Show N products" primary button with a "Reset" link.
+- Shopping mode header: centred UPPERCASE "Shopping mode" label in the top bar · list name
+  Space Grotesk 700 26/32 · big counter Space Grotesk 700 40 `primary` followed by "of 8 in
+  the cart" Inter 16 `onSurfaceVariant` and the percentage · 6dp progress bar.
+
+---
+
+## 7. Motion
 
 Purposeful, quick, never decorative. Reference interactions:
 
@@ -199,7 +313,7 @@ Durations: micro 100ms, standard 250ms, entrance 300ms. Avoid anything slower th
 
 ---
 
-## 7. Accessibility & internationalization
+## 8. Accessibility & internationalization
 
 Minimum touch target `48×48dp`. Contrast follows M3 on the semantic roles above; status and
 category colors always pair with an icon or label (never color alone). Provide
@@ -209,6 +323,6 @@ font scaling and clear focus states.
 
 ---
 
-## 8. Language rule
+## 9. Language rule
 
 All code, comments and documentation in this repository are written in **English**.

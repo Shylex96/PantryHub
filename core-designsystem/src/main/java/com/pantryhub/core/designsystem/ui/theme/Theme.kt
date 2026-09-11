@@ -169,6 +169,7 @@ fun PantryHubTheme(
 
     CompositionLocalProvider(
         LocalPantrySpacing provides PantrySpacing(),
+        LocalPantryRadius provides PantryRadius(),
         LocalPantryIconSize provides PantryIconSize(),
         LocalPantryElevation provides PantryElevation(),
         LocalPantryTouchTarget provides PantryTouchTarget(),
@@ -187,6 +188,10 @@ object PantryHubTheme {
     val spacing: PantrySpacing
         @Composable
         get() = LocalPantrySpacing.current
+
+    val radius: PantryRadius
+        @Composable
+        get() = LocalPantryRadius.current
 
     val icons: PantryIconSize
         @Composable

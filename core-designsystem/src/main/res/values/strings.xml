@@ -24,6 +24,41 @@
     <string name="item_count_subtitle">%d items</string>
     <string name="back_description">Back</string>
 
+    <!-- Lists tab (redesign) -->
+    <plurals name="lists_count">
+        <item quantity="one">%d list</item>
+        <item quantity="other">%d lists</item>
+    </plurals>
+    <plurals name="products_count">
+        <item quantity="one">%d product</item>
+        <item quantity="other">%d products</item>
+    </plurals>
+    <plurals name="pending_count">
+        <item quantity="one">%d pending</item>
+        <item quantity="other">%d pending</item>
+    </plurals>
+    <plurals name="pending_products_count">
+        <item quantity="one">%d pending product</item>
+        <item quantity="other">%d pending products</item>
+    </plurals>
+    <string name="lists_section_in_progress">Shopping in progress</string>
+    <string name="lists_section_all">All lists</string>
+    <string name="list_meta_in_progress">%1$d of %2$d in the cart</string>
+    <string name="list_meta_empty">No products yet</string>
+    <string name="detail_meta_in_progress">%1$d of %2$d in the cart</string>
+    <string name="shopping_counter_suffix">of %d in the cart</string>
+    <string name="shopping_mode_label">Shopping mode</string>
+    <string name="finish_shopping_action">Finish shopping</string>
+    <string name="quantity_times">×%s</string>
+    <string name="more_actions">More</string>
+    <string name="fab_new_list">New list</string>
+    <string name="sheet_new_list_subtitle">Name it and choose how it behaves.</string>
+    <string name="field_name_label">Name</string>
+    <string name="list_type_regular_desc">Kept and reset after shopping.</string>
+    <string name="list_type_temporary_desc">Deleted when you finish shopping.</string>
+    <string name="create_list_action">Create list</string>
+    <string name="search_action">Search</string>
+
     <!-- Shopping List Types -->
     <string name="list_type_label">Type</string>
     <string name="list_type_regular">Regular</string>
@@ -52,12 +87,17 @@
     <string name="delete_confirm_action">Yes, Delete</string>
 
     <!-- Finish Shopping -->
-    <string name="finish_shopping_dialog_title">Finish Shopping</string>
+    <string name="finish_shopping_dialog_title">Finish shopping</string>
     <string name="supermarket_label">Supermarket (Optional)</string>
     <string name="total_price_label">Total Price (Optional)</string>
-    <string name="finish_without_saving">Just Finish</string>
-    <string name="save_and_finish">Save and Finish</string>
+    <string name="finish_without_saving">Just finish</string>
+    <string name="save_and_finish">Save and finish</string>
     <string name="finish_validation_error">Please fill both Supermarket and Price to save history.</string>
+    <string name="sheet_finish_shopping_subtitle">Optionally record where you shopped and what you spent for your purchase history.</string>
+    <string name="field_supermarket_label">Supermarket</string>
+    <string name="field_supermarket_placeholder">e.g. Corner market</string>
+    <string name="field_total_label">Total spent</string>
+    <string name="field_total_placeholder">0.00</string>
 
     <!-- Coming Soon Placeholders -->
     <string name="products_coming_soon_title">Product Catalog</string>

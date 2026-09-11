@@ -11,18 +11,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 
 /**
  * A filled, rounded row container used for list items (shopping list detail and
  * shopping mode). Unlike [PantryCard] it has a solid, clearly visible fill
  * (`surfaceContainerHigh`) rather than a subtle bordered surface, matching the
- * product design. Content is laid out in a centered [Row].
+ * product design. Content is laid out in a centered [Row]. Pass [containerColor] to use a
+ * quieter fill (e.g. `surfaceContainerLow` for completed rows in shopping mode).
  */
 @Composable
 fun PantryItemCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     content: @Composable RowScope.() -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
@@ -32,7 +35,7 @@ fun PantryItemCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(PantryHubTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .background(containerColor)
             .then(clickable)
             .padding(horizontal = spacing.lg, vertical = spacing.md),
         verticalAlignment = Alignment.CenterVertically,

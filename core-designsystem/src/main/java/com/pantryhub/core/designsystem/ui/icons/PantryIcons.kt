@@ -2,7 +2,9 @@ package com.pantryhub.core.designsystem.ui.icons
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Close
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.StickyNote2
@@ -36,6 +39,11 @@ object PantryIcons {
     val FavoriteBorder = Icons.Default.StarBorder
     val ExpandMore = Icons.Default.KeyboardArrowDown
     val ExpandLess = Icons.Default.KeyboardArrowUp
+    val ChevronRight = Icons.AutoMirrored.Filled.KeyboardArrowRight
+    // One-off (provisional) lists: a clock — "used once, then gone".
+    val Schedule = Icons.Default.Schedule
+    // "Start shopping" call-to-action.
+    val Cart = Icons.Default.ShoppingCart
 
     // Navigation / feature icons (used in the bottom bar, empty states, cards).
     val Lists = Icons.Default.Checklist

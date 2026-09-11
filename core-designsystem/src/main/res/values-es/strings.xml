@@ -24,6 +24,41 @@
     <string name="item_count_subtitle">%d ítems</string>
     <string name="back_description">Volver</string>
 
+    <!-- Pestaña Listas (rediseño) -->
+    <plurals name="lists_count">
+        <item quantity="one">%d lista</item>
+        <item quantity="other">%d listas</item>
+    </plurals>
+    <plurals name="products_count">
+        <item quantity="one">%d producto</item>
+        <item quantity="other">%d productos</item>
+    </plurals>
+    <plurals name="pending_count">
+        <item quantity="one">%d pendiente</item>
+        <item quantity="other">%d pendientes</item>
+    </plurals>
+    <plurals name="pending_products_count">
+        <item quantity="one">%d producto pendiente</item>
+        <item quantity="other">%d productos pendientes</item>
+    </plurals>
+    <string name="lists_section_in_progress">Compra en curso</string>
+    <string name="lists_section_all">Todas las listas</string>
+    <string name="list_meta_in_progress">%1$d de %2$d en el carro</string>
+    <string name="list_meta_empty">Sin productos aún</string>
+    <string name="detail_meta_in_progress">%1$d de %2$d en el carro</string>
+    <string name="shopping_counter_suffix">de %d en el carro</string>
+    <string name="shopping_mode_label">Modo compra</string>
+    <string name="finish_shopping_action">Terminar compra</string>
+    <string name="quantity_times">×%s</string>
+    <string name="more_actions">Más</string>
+    <string name="fab_new_list">Nueva lista</string>
+    <string name="sheet_new_list_subtitle">Ponle nombre y elige cómo se comporta.</string>
+    <string name="field_name_label">Nombre</string>
+    <string name="list_type_regular_desc">Se conserva y se reinicia tras comprar.</string>
+    <string name="list_type_temporary_desc">Se elimina al terminar la compra.</string>
+    <string name="create_list_action">Crear lista</string>
+    <string name="search_action">Buscar</string>
+
     <!-- Tipos de Lista -->
     <string name="list_type_label">Tipo</string>
     <string name="list_type_regular">Normal</string>
@@ -52,12 +87,17 @@
     <string name="delete_confirm_action">Sí, eliminar</string>
 
     <!-- Finish Shopping -->
-    <string name="finish_shopping_dialog_title">Finalizar Compra</string>
+    <string name="finish_shopping_dialog_title">Terminar compra</string>
     <string name="supermarket_label">Supermercado (Opcional)</string>
     <string name="total_price_label">Precio Total (Opcional)</string>
-    <string name="finish_without_saving">Solo finalizar</string>
-    <string name="save_and_finish">Guardar y Finalizar</string>
+    <string name="finish_without_saving">Solo terminar</string>
+    <string name="save_and_finish">Guardar y terminar</string>
     <string name="finish_validation_error">Por favor, rellena tanto el Supermercado como el Precio para guardar el historial.</string>
+    <string name="sheet_finish_shopping_subtitle">Si quieres, apunta dónde compraste y cuánto gastaste para tu historial de compras.</string>
+    <string name="field_supermarket_label">Supermercado</string>
+    <string name="field_supermarket_placeholder">p. ej. Mercado del barrio</string>
+    <string name="field_total_label">Total gastado</string>
+    <string name="field_total_placeholder">0,00</string>
 
     <!-- Coming Soon Placeholders -->
     <string name="products_coming_soon_title">Catálogo de Productos</string>

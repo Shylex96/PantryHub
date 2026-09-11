@@ -115,7 +115,17 @@ Compose UI → ViewModel → Use cases → Repository
   (see C7).
 - A6. Add `20_Rework_Plan.md` (this file) and, once approved, fold tracks into `19`.
 
-### Track B — Visual rework, remaining sections · *no server needed*
+### Track B — Visual rework · *no server needed*
+
+> **Superseded on 2026-09-11 by a full redesign.** Incremental polish of the old
+> composition did not reach a professional feel, so the whole app was redesigned on a design
+> canvas ("PantryHub Redesign", 8 screens) and approved by the owner. The approved system is
+> specified in `05_Design_System.md` §6 (composition, cards, rows, inputs, sheets,
+> navigation, grouping/filtering) and `04_UX_Guidelines.md` (navigation rules, category
+> browsing). Track B is now: implement that system screen by screen — composition
+> components first, then Lists → List detail → Shopping mode → Products → Notes →
+> Settings/Help, with bottom sheets replacing dialogs — followed by the cross-cutting items
+> below (B4, B5). The sub-items B1–B3 remain as the per-screen checklist.
 - B1. **VP-3 Products + Categories**: product rows as `PantryItemCard` (color dot ·
   name · category subtitle · favorite/delete), category filter chips restyled, edit /
   category-picker / category-manager dialogs to mockup level.
