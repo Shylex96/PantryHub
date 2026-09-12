@@ -27,7 +27,6 @@ data class ProductsUiState(
     val searchQuery: String = "",
     val filter: ProductFilter = ProductFilter.All,
     val sort: ProductSort = ProductSort.CATEGORY,
-    val isManagingCategories: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null
 ) {

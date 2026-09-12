@@ -407,12 +407,22 @@ private fun LanguageSheet(
     }
 }
 
-/** About PantryHub: what it is, where the data lives, version and source code link. */
+/**
+ * An optional external link shown as a button at the bottom of the About sheet — e.g. a
+ * Play Store shortcut to the author's other apps. `null` hides the button entirely (the
+ * current state); the wiring stays so it can be switched on without UI work.
+ */
+private data class AboutLink(val label: String, val url: String)
+
+/** About PantryHub: what it is, where the data lives, version and (optionally) a link. */
 @Composable
-private fun AboutSheet(version: String, onDismiss: () -> Unit) {
+private fun AboutSheet(
+    version: String,
+    onDismiss: () -> Unit,
+    link: AboutLink? = null
+) {
     val spacing = PantryHubTheme.spacing
     val context = LocalContext.current
-    val repoUrl = stringResource(R.string.about_repo_url)
 
     PantrySheet(
         onDismissRequest = onDismiss,
@@ -436,17 +446,19 @@ private fun AboutSheet(version: String, onDismiss: () -> Unit) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(spacing.xl))
-        PantryButton(
-            onClick = {
-                runCatching {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(repoUrl)))
-                }
-            },
-            type = PantryButtonType.Secondary,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.about_source_action))
+        if (link != null) {
+            Spacer(modifier = Modifier.height(spacing.xl))
+            PantryButton(
+                onClick = {
+                    runCatching {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.url)))
+                    }
+                },
+                type = PantryButtonType.Secondary,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(link.label)
+            }
         }
     }
 }

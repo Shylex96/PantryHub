@@ -1,7 +1,5 @@
 package com.pantryhub.feature.products.presentation
 
-import com.pantryhub.core.model.category.Category
-
 sealed interface ProductsIntent {
     data object LoadProducts : ProductsIntent
     data class Search(val query: String) : ProductsIntent
@@ -16,14 +14,11 @@ sealed interface ProductsIntent {
         val aliases: List<String>
     ) : ProductsIntent
 
-    // Filter sheet (docs/04_UX_Guidelines.md, "Category Browsing").
+    // Multi-select actions (docs/04_UX_Guidelines.md "Category Browsing").
+    data class AssignCategory(val productIds: Set<String>, val categoryId: String?) : ProductsIntent
+    data class DeleteProducts(val productIds: Set<String>) : ProductsIntent
+
+    // Filter sheet.
     data class ApplyFilter(val filter: ProductFilter, val sort: ProductSort) : ProductsIntent
     data object ResetFilter : ProductsIntent
-
-    // Categories
-    data object OpenCategoryManager : ProductsIntent
-    data object CloseCategoryManager : ProductsIntent
-    data class CreateCategory(val name: String) : ProductsIntent
-    data class RenameCategory(val id: String, val name: String) : ProductsIntent
-    data class DeleteCategory(val category: Category) : ProductsIntent
 }

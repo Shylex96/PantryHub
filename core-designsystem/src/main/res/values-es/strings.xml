@@ -165,11 +165,43 @@
     <string name="field_aliases_label">Otros nombres</string>
     <string name="field_aliases_placeholder">Separados por comas, p. ej. patata, papa</string>
     <string name="sheet_categories_subtitle">Las categorías agrupan tus productos en toda la app.</string>
-    <string name="rename_category_placeholder">Nuevo nombre</string>
     <string name="add_category_action">Añadir categoría</string>
     <string name="delete_category_confirm_title">¿Eliminar categoría?</string>
     <string name="delete_category_confirm_message">Se eliminará \"%s\". Sus productos se conservan y pasan a estar sin categoría.</string>
-    <string name="swipe_to_delete_hint">Desliza una categoría a la izquierda para eliminarla.</string>
+    <!-- Categories screen, product actions and multi-select -->
+    <string name="categories_empty_desc">Crea tu primera categoría para agrupar productos en toda la app.</string>
+    <string name="categories_section_all">Tus categorías</string>
+    <plurals name="uncategorized_products_hint">
+        <item quantity="one">%d producto aún no tiene categoría: organízalo desde la pestaña Productos.</item>
+        <item quantity="other">%d productos aún no tienen categoría: organízalos desde la pestaña Productos.</item>
+    </plurals>
+    <string name="categories_hint">Toca una categoría para renombrarla o eliminarla, o deslízala a la izquierda para eliminarla.</string>
+    <string name="sheet_edit_category_subtitle">Renómbrala o elimínala: sus productos se conservan y pasan a estar sin categoría.</string>
+    <string name="delete_category_action">Eliminar categoría</string>
+    <string name="product_actions_subtitle">¿Qué quieres hacer con este producto?</string>
+    <string name="product_action_edit">Editar categoría y otros nombres</string>
+    <string name="product_action_select">Seleccionar varios productos</string>
+    <string name="product_action_delete">Eliminar producto</string>
+    <string name="organise_action">Organizar</string>
+    <plurals name="selected_count">
+        <item quantity="one">%d seleccionado</item>
+        <item quantity="other">%d seleccionados</item>
+    </plurals>
+    <string name="select_all_action">Seleccionar todo</string>
+    <string name="assign_category_title">Asignar categoría</string>
+    <plurals name="assign_category_subtitle">
+        <item quantity="one">El producto seleccionado pasará a la categoría que elijas.</item>
+        <item quantity="other">Los %d productos seleccionados pasarán a la categoría que elijas.</item>
+    </plurals>
+    <plurals name="assign_category_action">
+        <item quantity="one">Mover %d producto</item>
+        <item quantity="other">Mover %d productos</item>
+    </plurals>
+    <string name="delete_products_confirm_title">¿Eliminar productos?</string>
+    <plurals name="delete_products_confirm_message">
+        <item quantity="one">Se eliminará %d producto de forma permanente, también de tus listas.</item>
+        <item quantity="other">Se eliminarán %d productos de forma permanente, también de tus listas.</item>
+    </plurals>
 
     <!-- Importar / Exportar -->
     <string name="backup_section_title">Copia de seguridad</string>
@@ -233,7 +265,6 @@
     <string name="about_body">PantryHub es tu compañero de compra: guarda tu catálogo de productos, crea listas reutilizables o puntuales, marca lo que vas cogiendo en modo compra y apunta notas por el camino.</string>
     <string name="about_privacy">Todo se guarda solo en este dispositivo. Sin cuentas, sin rastreo y sin anuncios; usa la copia de seguridad para pasar tus datos a otro móvil.</string>
     <string name="about_credits">Diseñada y desarrollada por Esteban Albarrán.</string>
-    <string name="about_source_action">Ver el código en GitHub</string>
     <string name="manage_data_title">Gestionar datos</string>
     <string name="manage_data_row_desc">Elimina productos, listas o notas, o empieza de cero</string>
     <string name="manage_data_subtitle">Elige qué quieres eliminar. No se puede deshacer: si tienes dudas, exporta antes una copia.</string>

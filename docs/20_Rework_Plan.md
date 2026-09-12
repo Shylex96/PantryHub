@@ -128,10 +128,12 @@ Compose UI → ViewModel → Use cases → Repository
 > below (B4, B5). The sub-items B1–B3 remain as the per-screen checklist.
 - B0. ✅ **Shopping flow** (Lists, List detail, Shopping mode) in the new design, with the
   "shopping in progress" rule (`05` §6.2) and the finish sheet.
-- B1. ✅ **Products + Categories**: header with live counts + filter button, permanent search
-  pill, grouping (Favorites → categories → No category), filter sheet (category · sort ·
-  "Show N products" · Reset · Manage categories), New product / Edit product / Categories
-  sheets, swipe actions via `PantrySwipeRow`.
+- B1. ✅ **Products + Categories**: header with live counts, Categories button + filter
+  button, permanent search pill, grouping (Favorites → categories → No category), filter
+  sheet (category · sort · "Show N products" · Reset · Manage categories), New product /
+  Edit product sheets, long-press actions sheet, multi-select with "Assign category" and
+  bulk delete, dedicated **Categories screen** (`Destination.Categories`), swipe actions via
+  `PantrySwipeRow`.
 - B2. ✅ **Notes**: 2-column grid of cards (title, excerpt, relative date), header search
   toggle, editor sheet with delete-with-confirmation.
 - B3. ✅ **Settings + Help + Backup**: grouped cards with icon tiles, theme/language sheets,

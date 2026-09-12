@@ -35,7 +35,8 @@ fun PantrySectionLabel(
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     dotColor: Color? = null,
     icon: ImageVector? = null,
-    count: Int? = null
+    count: Int? = null,
+    action: (@Composable () -> Unit)? = null
 ) {
     val spacing = PantryHubTheme.spacing
     Row(
@@ -70,12 +71,18 @@ fun PantrySectionLabel(
                 color = color
             )
         }
-        if (count != null) {
-            Text(
-                text = count.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline
-            )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (count != null) {
+                Text(
+                    text = count.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
+            if (action != null) {
+                Spacer(modifier = Modifier.width(spacing.sm))
+                action()
+            }
         }
     }
 }

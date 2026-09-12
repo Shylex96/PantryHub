@@ -131,7 +131,7 @@ fun PantryHubApp() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 shoppingGraph(navController)
-                productsGraph()
+                productsGraph(navController)
                 
                 notesGraph()
                 settingsGraph(

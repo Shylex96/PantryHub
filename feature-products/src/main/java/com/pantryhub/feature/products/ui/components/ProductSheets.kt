@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
@@ -115,9 +116,48 @@ fun EditProductSheet(
     }
 }
 
+/**
+ * Move several products to one category at once (multi-select in Products,
+ * docs/04_UX_Guidelines.md "Category Browsing").
+ */
+@Composable
+fun AssignCategorySheet(
+    productCount: Int,
+    categories: List<Category>,
+    onAssign: (categoryId: String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val spacing = PantryHubTheme.spacing
+    var categoryId by remember { mutableStateOf<String?>(null) }
+    var touched by remember { mutableStateOf(false) }
+
+    PantrySheet(
+        onDismissRequest = onDismiss,
+        title = stringResource(R.string.assign_category_title),
+        subtitle = pluralStringResource(R.plurals.assign_category_subtitle, productCount, productCount)
+    ) {
+        CategoryPicker(
+            categories = categories,
+            selectedId = categoryId,
+            onSelect = {
+                categoryId = it
+                touched = true
+            }
+        )
+        Spacer(modifier = Modifier.height(spacing.xl))
+        PantryButton(
+            onClick = { onAssign(categoryId) },
+            enabled = touched,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(pluralStringResource(R.plurals.assign_category_action, productCount, productCount))
+        }
+    }
+}
+
 /** "No category" + every category as selectable option rows. */
 @Composable
-private fun CategoryPicker(
+internal fun CategoryPicker(
     categories: List<Category>,
     selectedId: String?,
     onSelect: (String?) -> Unit

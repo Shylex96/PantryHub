@@ -339,6 +339,23 @@ Rules (redesign 2026-09, see `05_Design_System.md` §6.7):
 - The same grouping is used inside a list's detail and in shopping mode, so a category
   reads the same everywhere.
 
+Managing categories and products (2026-09-12):
+
+- **Categories have their own screen**, reached from a dedicated icon button in the Products
+  header (next to the filter button) and from the "Manage categories" link in the filter
+  sheet. It shows an add bar, one row per category with its color dot and product count,
+  and a note when products are still uncategorised. Tap a row to rename or delete it (sheet),
+  or swipe it left to delete. Deleting a category keeps its products, which become
+  uncategorised. Categories are never managed from inside a dialog on the Products tab.
+- **Tap a product = edit** (category + other names). **Long-press a product = actions
+  sheet**: edit · mark/unmark favorite · select several · delete.
+- **Selection mode** (from the long-press sheet, or from the **"Organise"** link on the
+  "No category" group header, which pre-selects every uncategorised product): the header
+  turns into a selection bar (close · "N selected" · select all · delete), rows show a
+  checkbox instead of the star, swipes and the FAB are disabled, and a bottom
+  **"Assign category"** call-to-action opens the category picker to move all selected
+  products at once. Bulk delete always asks for confirmation. Back exits the mode.
+
 Example — the Vegetables group in Products:
 
 ```
@@ -445,6 +462,9 @@ Settings are rare visits; they must be scannable and safe.
   picking one applies immediately and closes the sheet.
 - **Data › Backup** opens the import/export screen; **Data › Manage data** opens the
   bulk-delete sheet.
+- **Help › About PantryHub** opens a sheet with the description, version, privacy note and
+  credits. It can optionally end with one external link button (e.g. a store shortcut to
+  the author's other apps); the button is hidden until there is a link worth showing.
 
 ## Manage data (start over)
 

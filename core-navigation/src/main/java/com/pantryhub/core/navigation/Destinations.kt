@@ -16,6 +16,10 @@ sealed interface Destination {
     @Serializable
     data object Products : Destination
 
+    /** Category management, reached from the Products tab header. */
+    @Serializable
+    data object Categories : Destination
+
     @Serializable
     data object Notes : Destination
 

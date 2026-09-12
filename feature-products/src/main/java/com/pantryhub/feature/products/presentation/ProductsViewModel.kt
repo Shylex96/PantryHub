@@ -6,7 +6,6 @@ import com.pantryhub.core.common.util.toComparisonKey
 import com.pantryhub.core.common.util.toStorageName
 import com.pantryhub.core.domain.category.CategoryUseCases
 import com.pantryhub.core.domain.product.ProductUseCases
-import com.pantryhub.core.model.category.Category
 import com.pantryhub.core.model.product.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,27 +45,36 @@ class ProductsViewModel @Inject constructor(
             ProductsIntent.LoadProducts -> { /* Handled by initial observation */ }
             is ProductsIntent.Search -> updateSearchQuery(intent.query)
             is ProductsIntent.ToggleFavorite -> toggleFavorite(intent.productId, intent.isFavorite)
-            is ProductsIntent.DeleteProduct -> deleteProduct(intent.productId)
+            is ProductsIntent.DeleteProduct -> deleteProducts(setOf(intent.productId))
             is ProductsIntent.CreateProduct -> createProduct(intent.name, intent.categoryId)
             is ProductsIntent.UpdateProductDetails ->
                 updateProductDetails(intent.productId, intent.categoryId, intent.aliases)
+            is ProductsIntent.AssignCategory -> assignCategory(intent.productIds, intent.categoryId)
+            is ProductsIntent.DeleteProducts -> deleteProducts(intent.productIds)
             is ProductsIntent.ApplyFilter -> _uiState.update {
                 it.copy(filter = intent.filter, sort = intent.sort)
             }
             ProductsIntent.ResetFilter -> _uiState.update {
                 it.copy(filter = ProductFilter.All, sort = ProductSort.CATEGORY)
             }
-            ProductsIntent.OpenCategoryManager -> _uiState.update { it.copy(isManagingCategories = true) }
-            ProductsIntent.CloseCategoryManager -> _uiState.update { it.copy(isManagingCategories = false) }
-            is ProductsIntent.CreateCategory -> createCategory(intent.name)
-            is ProductsIntent.RenameCategory -> renameCategory(intent.id, intent.name)
-            is ProductsIntent.DeleteCategory -> removeCategory(intent.category)
         }
     }
 
     private fun observeCategories() {
         categoryUseCases.getCategories()
-            .onEach { categories -> _uiState.update { it.copy(categories = categories) } }
+            .onEach { categories ->
+                _uiState.update { state ->
+                    // A filter pointing at a category that no longer exists falls back to "All"
+                    // (categories are managed on their own screen).
+                    val filter = state.filter
+                    val stillValid = filter !is ProductFilter.ByCategory ||
+                        categories.any { it.id == filter.categoryId }
+                    state.copy(
+                        categories = categories,
+                        filter = if (stillValid) filter else ProductFilter.All
+                    )
+                }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -124,58 +132,26 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
+    /** Moves every selected product to [categoryId] (null = no category) in one go. */
+    private fun assignCategory(productIds: Set<String>, categoryId: String?) {
+        viewModelScope.launch {
+            _uiState.value.products
+                .filter { it.id in productIds && it.categoryId != categoryId }
+                .forEach { productUseCases.saveProduct(it.copy(categoryId = categoryId)) }
+        }
+    }
+
     private fun toggleFavorite(productId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             productUseCases.toggleFavoriteProduct(productId, isFavorite)
         }
     }
 
-    private fun deleteProduct(productId: String) {
+    private fun deleteProducts(productIds: Set<String>) {
         viewModelScope.launch {
-            val product = _uiState.value.products.find { it.id == productId } ?: return@launch
-            productUseCases.deleteProduct(product)
-        }
-    }
-
-    private fun createCategory(name: String) {
-        val storageName = name.toStorageName()
-        if (storageName.isEmpty()) return
-
-        viewModelScope.launch {
-            val existing = categoryUseCases.detectDuplicateCategory.execute(name)
-            if (existing == null) {
-                categoryUseCases.saveCategory(
-                    Category(id = UUID.randomUUID().toString(), name = storageName)
-                )
-            }
-        }
-    }
-
-    private fun renameCategory(id: String, name: String) {
-        val storageName = name.toStorageName()
-        if (storageName.isEmpty()) return
-
-        viewModelScope.launch {
-            // Allow the rename unless it collides with a *different* category.
-            val existing = categoryUseCases.detectDuplicateCategory.execute(name)
-            if (existing == null || existing.id == id) {
-                categoryUseCases.saveCategory(Category(id = id, name = storageName))
-            }
-        }
-    }
-
-    private fun removeCategory(category: Category) {
-        viewModelScope.launch {
-            categoryUseCases.deleteCategory(category)
-            // A filter pointing at the removed category falls back to "All".
-            _uiState.update {
-                val filter = it.filter
-                if (filter is ProductFilter.ByCategory && filter.categoryId == category.id) {
-                    it.copy(filter = ProductFilter.All)
-                } else {
-                    it
-                }
-            }
+            _uiState.value.products
+                .filter { it.id in productIds }
+                .forEach { productUseCases.deleteProduct(it) }
         }
     }
 }

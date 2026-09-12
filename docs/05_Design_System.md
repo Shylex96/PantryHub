@@ -188,8 +188,9 @@ tile + meta + optional progress) and `PantryProgressBar`, `PantryExtendedFab`,
 `PantryBottomCta` (gradient fade + count pill), `PantrySheet` (bottom sheet container with
 title action slot, subtitle and scrollable content) with `PantryFieldLabel`,
 `PantryChoiceCard` (2-column choice), `PantryOptionRow` (single/multi select row with dot
-and count) and `PantrySegmentedRow` (equal pills, one selected), `PantrySearchField`
-(48dp pill), `PantrySwipeRow` (the app-wide swipe-left-delete / swipe-right-favorite
+and count, grows to two lines) and `PantrySegmentedRow` (equal pills, one selected),
+`PantrySearchField` (48dp pill), `PantryItemCard` with `onLongClick` for contextual
+actions, `PantrySectionLabel` with an optional trailing `action`, `PantrySwipeRow` (the app-wide swipe-left-delete / swipe-right-favorite
 treatment, with `dismissOnDelete = false` when a confirmation follows). `PantryTopBar` is
 no longer used by any screen and is scheduled for removal. `PantryDialog` is kept only for
 destructive confirmations.

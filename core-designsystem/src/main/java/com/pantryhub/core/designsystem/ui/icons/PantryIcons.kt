@@ -6,6 +6,8 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Language
@@ -53,6 +55,10 @@ object PantryIcons {
     val Cart = Icons.Default.ShoppingCart
     // Header filter button (Products).
     val Filter = Icons.Default.FilterList
+    // Categories screen and "assign category" actions.
+    val Category = Icons.Default.Category
+    // Multi-select mode.
+    val SelectAll = Icons.Default.SelectAll
 
     // Settings row tiles.
     val Theme = Icons.Default.DarkMode

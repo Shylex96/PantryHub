@@ -32,6 +32,8 @@ dependencies {
     implementation(project(":core-domain"))
 
     implementation(libs.kotlinx.datetime)
+    // BackHandler for the multi-select mode in Products.
+    implementation(libs.androidx.activity.compose)
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))

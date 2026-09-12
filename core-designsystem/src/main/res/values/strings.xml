@@ -165,11 +165,43 @@
     <string name="field_aliases_label">Other names</string>
     <string name="field_aliases_placeholder">Comma separated, e.g. potato, spud</string>
     <string name="sheet_categories_subtitle">Categories group your products everywhere in the app.</string>
-    <string name="rename_category_placeholder">New name</string>
     <string name="add_category_action">Add category</string>
     <string name="delete_category_confirm_title">Delete category?</string>
     <string name="delete_category_confirm_message">\"%s\" will be removed. Its products are kept and become uncategorised.</string>
-    <string name="swipe_to_delete_hint">Swipe a category left to delete it.</string>
+    <!-- Categories screen, product actions and multi-select -->
+    <string name="categories_empty_desc">Create your first category to group products everywhere in the app.</string>
+    <string name="categories_section_all">Your categories</string>
+    <plurals name="uncategorized_products_hint">
+        <item quantity="one">%d product has no category yet — organise it from the Products tab.</item>
+        <item quantity="other">%d products have no category yet — organise them from the Products tab.</item>
+    </plurals>
+    <string name="categories_hint">Tap a category to rename or delete it, or swipe it left to delete.</string>
+    <string name="sheet_edit_category_subtitle">Rename it, or delete it — its products are kept and become uncategorised.</string>
+    <string name="delete_category_action">Delete category</string>
+    <string name="product_actions_subtitle">What do you want to do with this product?</string>
+    <string name="product_action_edit">Edit category and other names</string>
+    <string name="product_action_select">Select several products</string>
+    <string name="product_action_delete">Delete product</string>
+    <string name="organise_action">Organise</string>
+    <plurals name="selected_count">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+    <string name="select_all_action">Select all</string>
+    <string name="assign_category_title">Assign category</string>
+    <plurals name="assign_category_subtitle">
+        <item quantity="one">The selected product will move to the category you pick.</item>
+        <item quantity="other">The %d selected products will move to the category you pick.</item>
+    </plurals>
+    <plurals name="assign_category_action">
+        <item quantity="one">Move %d product</item>
+        <item quantity="other">Move %d products</item>
+    </plurals>
+    <string name="delete_products_confirm_title">Delete products?</string>
+    <plurals name="delete_products_confirm_message">
+        <item quantity="one">%d product will be permanently removed, also from your lists.</item>
+        <item quantity="other">%d products will be permanently removed, also from your lists.</item>
+    </plurals>
 
     <!-- Import / Export -->
     <string name="backup_section_title">Backup &amp; restore</string>
@@ -233,8 +265,6 @@
     <string name="about_body">PantryHub is a shopping companion: keep your product catalog, build reusable or one-off lists, tick things off in shopping mode and jot down notes along the way.</string>
     <string name="about_privacy">Everything is stored on this device only. There are no accounts, no tracking and no ads; use Backup to move your data to another phone.</string>
     <string name="about_credits">Designed and built by Esteban Albarrán.</string>
-    <string name="about_source_action">View source on GitHub</string>
-    <string name="about_repo_url" translatable="false">https://github.com/Shylex96/PantryHub</string>
     <string name="manage_data_title">Manage data</string>
     <string name="manage_data_row_desc">Delete products, lists or notes, or start over</string>
     <string name="manage_data_subtitle">Pick what to remove. This cannot be undone — export a backup first if in doubt.</string>
