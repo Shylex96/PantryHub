@@ -161,7 +161,8 @@
     <string name="sheet_new_product_subtitle">Add it to your catalog so it shows up in suggestions.</string>
     <string name="product_name_placeholder">e.g. Olive oil</string>
     <string name="create_product_action">Create product</string>
-    <string name="sheet_edit_product_subtitle">Change its category or add other names it goes by.</string>
+    <string name="sheet_edit_product_subtitle">Rename it, change its category or add other names it goes by.</string>
+    <string name="edit_product_sheet_title">Edit product</string>
     <string name="field_aliases_label">Other names</string>
     <string name="field_aliases_placeholder">Comma separated, e.g. potato, spud</string>
     <string name="sheet_categories_subtitle">Categories group your products everywhere in the app.</string>
@@ -179,7 +180,7 @@
     <string name="sheet_edit_category_subtitle">Rename it, or delete it — its products are kept and become uncategorised.</string>
     <string name="delete_category_action">Delete category</string>
     <string name="product_actions_subtitle">What do you want to do with this product?</string>
-    <string name="product_action_edit">Edit category and other names</string>
+    <string name="product_action_edit">Edit name, category and other names</string>
     <string name="product_action_select">Select several products</string>
     <string name="product_action_delete">Delete product</string>
     <string name="organise_action">Organise</string>

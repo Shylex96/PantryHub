@@ -161,7 +161,8 @@
     <string name="sheet_new_product_subtitle">Añádelo a tu catálogo para que aparezca en las sugerencias.</string>
     <string name="product_name_placeholder">p. ej. Aceite de oliva</string>
     <string name="create_product_action">Crear producto</string>
-    <string name="sheet_edit_product_subtitle">Cambia su categoría o añade otros nombres con los que lo conoces.</string>
+    <string name="sheet_edit_product_subtitle">Cámbiale el nombre o la categoría, o añade otros nombres con los que lo conoces.</string>
+    <string name="edit_product_sheet_title">Editar producto</string>
     <string name="field_aliases_label">Otros nombres</string>
     <string name="field_aliases_placeholder">Separados por comas, p. ej. patata, papa</string>
     <string name="sheet_categories_subtitle">Las categorías agrupan tus productos en toda la app.</string>
@@ -179,7 +180,7 @@
     <string name="sheet_edit_category_subtitle">Renómbrala o elimínala: sus productos se conservan y pasan a estar sin categoría.</string>
     <string name="delete_category_action">Eliminar categoría</string>
     <string name="product_actions_subtitle">¿Qué quieres hacer con este producto?</string>
-    <string name="product_action_edit">Editar categoría y otros nombres</string>
+    <string name="product_action_edit">Editar nombre, categoría y otros nombres</string>
     <string name="product_action_select">Seleccionar varios productos</string>
     <string name="product_action_delete">Eliminar producto</string>
     <string name="organise_action">Organizar</string>

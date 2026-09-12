@@ -68,23 +68,34 @@ fun NewProductSheet(
     }
 }
 
-/** Edit an existing product: its category and its aliases (comma-separated). */
+/** Edit an existing product: its name, its category and its aliases (comma-separated). */
 @Composable
 fun EditProductSheet(
     product: Product,
     categories: List<Category>,
-    onSave: (categoryId: String?, aliases: List<String>) -> Unit,
+    onSave: (name: String, categoryId: String?, aliases: List<String>) -> Unit,
     onDismiss: () -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
+    var name by remember { mutableStateOf(product.name) }
     var categoryId by remember { mutableStateOf(product.categoryId) }
     var aliasesInput by remember { mutableStateOf(product.aliases.joinToString(", ")) }
 
     PantrySheet(
         onDismissRequest = onDismiss,
-        title = product.name,
+        title = stringResource(R.string.edit_product_sheet_title),
         subtitle = stringResource(R.string.sheet_edit_product_subtitle)
     ) {
+        PantryFieldLabel(stringResource(R.string.field_name_label))
+        Spacer(modifier = Modifier.height(spacing.sm))
+        PantryTextField(
+            value = name,
+            onValueChange = { name = it },
+            placeholder = stringResource(R.string.product_name_placeholder),
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(spacing.lg))
         CategoryPicker(
             categories = categories,
             selectedId = categoryId,
@@ -107,8 +118,9 @@ fun EditProductSheet(
                     .split(",")
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
-                onSave(categoryId, aliases)
+                onSave(name.trim(), categoryId, aliases)
             },
+            enabled = name.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.save_action))

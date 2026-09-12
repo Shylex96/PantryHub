@@ -153,8 +153,8 @@ fun ProductsScreen(
         EditProductSheet(
             product = editing,
             categories = state.categories,
-            onSave = { categoryId, aliases ->
-                onIntent(ProductsIntent.UpdateProductDetails(editing.id, categoryId, aliases))
+            onSave = { name, categoryId, aliases ->
+                onIntent(ProductsIntent.UpdateProductDetails(editing.id, name, categoryId, aliases))
                 editingProduct = null
             },
             onDismiss = { editingProduct = null }

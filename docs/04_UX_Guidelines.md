@@ -347,7 +347,8 @@ Managing categories and products (2026-09-12):
   and a note when products are still uncategorised. Tap a row to rename or delete it (sheet),
   or swipe it left to delete. Deleting a category keeps its products, which become
   uncategorised. Categories are never managed from inside a dialog on the Products tab.
-- **Tap a product = edit** (category + other names). **Long-press a product = actions
+- **Tap a product = edit** (name, category and other names; a rename that collides with
+  another product is ignored, the rest of the changes are kept). **Long-press a product = actions
   sheet**: edit · mark/unmark favorite · select several · delete.
 - **Selection mode** (from the long-press sheet, or from the **"Organise"** link on the
   "No category" group header, which pre-selects every uncategorised product): the header

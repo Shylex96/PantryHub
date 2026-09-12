@@ -48,7 +48,7 @@ class ProductsViewModel @Inject constructor(
             is ProductsIntent.DeleteProduct -> deleteProducts(setOf(intent.productId))
             is ProductsIntent.CreateProduct -> createProduct(intent.name, intent.categoryId)
             is ProductsIntent.UpdateProductDetails ->
-                updateProductDetails(intent.productId, intent.categoryId, intent.aliases)
+                updateProductDetails(intent.productId, intent.name, intent.categoryId, intent.aliases)
             is ProductsIntent.AssignCategory -> assignCategory(intent.productIds, intent.categoryId)
             is ProductsIntent.DeleteProducts -> deleteProducts(intent.productIds)
             is ProductsIntent.ApplyFilter -> _uiState.update {
@@ -123,12 +123,27 @@ class ProductsViewModel @Inject constructor(
 
     private fun updateProductDetails(
         productId: String,
+        name: String,
         categoryId: String?,
         aliases: List<String>
     ) {
         viewModelScope.launch {
             val product = _uiState.value.products.find { it.id == productId } ?: return@launch
-            productUseCases.saveProduct(product.copy(categoryId = categoryId, aliases = aliases))
+            val storageName = name.toStorageName()
+            // Keep the old name when the new one is blank or collides with another product.
+            val renamed = storageName.isNotEmpty() && storageName != product.name
+            val collides = renamed &&
+                productUseCases.detectDuplicateProduct.execute(name)?.let { it.id != productId } == true
+            val finalName = if (renamed && !collides) storageName else product.name
+            val finalKey = if (renamed && !collides) name.toComparisonKey() else product.normalizedName
+            productUseCases.saveProduct(
+                product.copy(
+                    name = finalName,
+                    normalizedName = finalKey,
+                    categoryId = categoryId,
+                    aliases = aliases
+                )
+            )
         }
     }
 

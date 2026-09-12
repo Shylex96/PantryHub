@@ -7,9 +7,10 @@ sealed interface ProductsIntent {
     data class DeleteProduct(val productId: String) : ProductsIntent
     // Create a product from the "New product" sheet with an optional category.
     data class CreateProduct(val name: String, val categoryId: String?) : ProductsIntent
-    // Update an existing product's category (null = remove) and its aliases.
+    // Update an existing product: name, category (null = remove) and aliases.
     data class UpdateProductDetails(
         val productId: String,
+        val name: String,
         val categoryId: String?,
         val aliases: List<String>
     ) : ProductsIntent
