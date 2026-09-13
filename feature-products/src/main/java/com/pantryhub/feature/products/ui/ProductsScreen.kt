@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,7 @@ import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryBottomCta
 import com.pantryhub.core.designsystem.ui.components.PantryCheckbox
 import com.pantryhub.core.designsystem.ui.components.PantryDialog
+import com.pantryhub.core.designsystem.ui.components.LocalPantryToast
 import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
 import com.pantryhub.core.designsystem.ui.components.PantryExtendedFab
 import com.pantryhub.core.designsystem.ui.components.PantryHeaderIconButton
@@ -92,6 +94,8 @@ fun ProductsScreen(
     var showNewProductSheet by remember { mutableStateOf(false) }
     var editingProduct by remember { mutableStateOf<Product?>(null) }
     var actionProduct by remember { mutableStateOf<Product?>(null) }
+    val toastState = LocalPantryToast.current
+    val context = LocalContext.current
 
     // Selection mode is pure UI state: which ids are ticked, and whether the mode is on
     // (it can be on with nothing ticked yet).
@@ -143,6 +147,7 @@ fun ProductsScreen(
             onCreate = { name, categoryId ->
                 onIntent(ProductsIntent.CreateProduct(name, categoryId))
                 showNewProductSheet = false
+                toastState.show(context.getString(R.string.product_added_toast, name))
             },
             onDismiss = { showNewProductSheet = false }
         )
@@ -156,6 +161,7 @@ fun ProductsScreen(
             onSave = { name, categoryId, aliases ->
                 onIntent(ProductsIntent.UpdateProductDetails(editing.id, name, categoryId, aliases))
                 editingProduct = null
+                toastState.show(context.getString(R.string.product_updated_toast))
             },
             onDismiss = { editingProduct = null }
         )

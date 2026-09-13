@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,24 +30,34 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.LocalPantryToast
 import com.pantryhub.core.designsystem.ui.components.PantryBottomCta
 import com.pantryhub.core.designsystem.ui.components.PantryButton
 import com.pantryhub.core.designsystem.ui.components.PantryDialog
 import com.pantryhub.core.designsystem.ui.components.PantryFieldLabel
 import com.pantryhub.core.designsystem.ui.components.PantryHeaderIconButton
 import com.pantryhub.core.designsystem.ui.components.PantryItemCard
+import com.pantryhub.core.designsystem.ui.components.PantryKeyboard
 import com.pantryhub.core.designsystem.ui.components.PantryListItem
 import com.pantryhub.core.designsystem.ui.components.PantryLoading
 import com.pantryhub.core.designsystem.ui.components.PantryProgressBar
@@ -54,6 +65,8 @@ import com.pantryhub.core.designsystem.ui.components.PantrySectionLabel
 import com.pantryhub.core.designsystem.ui.components.PantrySheet
 import com.pantryhub.core.designsystem.ui.components.PantrySwipeRow
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
+import com.pantryhub.core.designsystem.ui.components.rememberSheetFocusRequester
+import com.pantryhub.core.designsystem.ui.components.shake
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.model.shopping.ShoppingListItem
@@ -84,6 +97,23 @@ fun ShoppingListDetailScreen(
     val spacing = PantryHubTheme.spacing
     val radius = PantryHubTheme.radius
     val favoriteColor = PantryHubTheme.extendedColors.favorite
+    val haptic = LocalHapticFeedback.current
+    val toastState = LocalPantryToast.current
+    val context = LocalContext.current
+
+    var quickAddShake by remember { mutableIntStateOf(0) }
+
+    fun submitQuickAdd() {
+        val name = state.productQuery.trim()
+        if (name.isEmpty()) {
+            quickAddShake++
+            return
+        }
+        onAddItem(name, 1.0)
+        onIntent(ShoppingIntent.UpdateProductQuery(""))
+        toastState.show(context.getString(R.string.product_added_toast, name))
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     val total = currentList.items.size
     val completed = currentList.items.count { it.isCompleted }
@@ -97,7 +127,10 @@ fun ShoppingListDetailScreen(
         RenameListSheet(
             currentName = currentList.name,
             onDismiss = { showRenameSheet = false },
-            onRename = onRenameList
+            onRename = { newName ->
+                onRenameList(newName)
+                toastState.show(context.getString(R.string.list_renamed_toast))
+            }
         )
     }
 
@@ -237,6 +270,7 @@ fun ShoppingListDetailScreen(
                         onValueChange = { onIntent(ShoppingIntent.UpdateProductQuery(it)) },
                         placeholder = stringResource(R.string.add_product_placeholder),
                         singleLine = true,
+                        capitalizeFirstLetter = true,
                         leadingIcon = {
                             Icon(
                                 imageVector = PantryIcons.Add,
@@ -244,15 +278,14 @@ fun ShoppingListDetailScreen(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .shake(quickAddShake),
+                        keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { submitQuickAdd() })
                     )
                     FilledIconButton(
-                        onClick = {
-                            if (state.productQuery.isNotBlank()) {
-                                onAddItem(state.productQuery, 1.0)
-                                onIntent(ShoppingIntent.UpdateProductQuery(""))
-                            }
-                        },
+                        onClick = { submitQuickAdd() },
                         modifier = Modifier.size(56.dp),
                         shape = RoundedCornerShape(radius.row),
                         colors = IconButtonDefaults.filledIconButtonColors(
@@ -375,7 +408,25 @@ private fun RenameListSheet(
     onRename: (String) -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
-    var name by remember { mutableStateOf(currentName) }
+    val haptic = LocalHapticFeedback.current
+    // TextFieldValue (remembered once, never rebuilt) so the caret opens at the end of the
+    // existing name instead of before it.
+    var name by remember {
+        mutableStateOf(TextFieldValue(currentName, TextRange(currentName.length)))
+    }
+    val focusRequester = rememberSheetFocusRequester()
+    var shakeTrigger by remember { mutableIntStateOf(0) }
+
+    fun submit() {
+        val trimmed = name.text.trim()
+        if (trimmed.isEmpty()) {
+            shakeTrigger++
+            return
+        }
+        onRename(trimmed)
+        onDismiss()
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     PantrySheet(
         onDismissRequest = onDismiss,
@@ -388,18 +439,18 @@ private fun RenameListSheet(
             onValueChange = { name = it },
             placeholder = stringResource(R.string.list_name_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            capitalizeFirstLetter = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .shake(shakeTrigger),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { submit() })
         )
         Spacer(modifier = Modifier.height(spacing.xl))
         PantryButton(
-            onClick = {
-                val trimmed = name.trim()
-                if (trimmed.isNotEmpty()) {
-                    onRename(trimmed)
-                    onDismiss()
-                }
-            },
-            enabled = name.isNotBlank(),
+            onClick = { submit() },
+            enabled = name.text.isNotBlank(),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)

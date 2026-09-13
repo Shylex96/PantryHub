@@ -30,9 +30,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,10 +49,14 @@ import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
 import com.pantryhub.core.designsystem.ui.components.PantryExtendedFab
 import com.pantryhub.core.designsystem.ui.components.PantryFieldLabel
 import com.pantryhub.core.designsystem.ui.components.PantryHeaderIconButton
+import com.pantryhub.core.designsystem.ui.components.LocalPantryToast
+import com.pantryhub.core.designsystem.ui.components.PantryKeyboard
 import com.pantryhub.core.designsystem.ui.components.PantryScreenHeader
 import com.pantryhub.core.designsystem.ui.components.PantrySearchField
 import com.pantryhub.core.designsystem.ui.components.PantrySheet
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
+import com.pantryhub.core.designsystem.ui.components.rememberSheetFocusRequester
+import com.pantryhub.core.designsystem.ui.components.shake
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.model.note.Note
@@ -67,6 +77,8 @@ fun NotesScreen(modifier: Modifier = Modifier) {
     var query by remember { mutableStateOf("") }
     var editorOpen by remember { mutableStateOf(false) }
     var editingNote by remember { mutableStateOf<Note?>(null) }
+    val toastState = LocalPantryToast.current
+    val noteSavedMessage = stringResource(R.string.note_saved_toast)
 
     val visibleNotes = remember(notes, query) {
         val q = query.trim()
@@ -83,6 +95,7 @@ fun NotesScreen(modifier: Modifier = Modifier) {
             onSave = { title, content ->
                 viewModel.save(editingNote?.id, title, content)
                 editorOpen = false
+                toastState.show(noteSavedMessage)
             },
             onDelete = { note ->
                 viewModel.delete(note)
@@ -261,9 +274,19 @@ private fun NoteEditorSheet(
     onDismiss: () -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
-    var title by remember { mutableStateOf(note?.title ?: "") }
+    val haptic = LocalHapticFeedback.current
+    var titleValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = note?.title ?: "",
+                selection = TextRange(note?.title?.length ?: 0)
+            )
+        )
+    }
     var content by remember { mutableStateOf(note?.content ?: "") }
     var confirmDelete by remember { mutableStateOf(false) }
+    val focusRequester = rememberSheetFocusRequester()
+    var shakeTrigger by remember { mutableStateOf(0) }
 
     if (confirmDelete && note != null) {
         PantryDialog(
@@ -294,11 +317,16 @@ private fun NoteEditorSheet(
         PantryFieldLabel(stringResource(R.string.note_title_label))
         Spacer(modifier = Modifier.height(spacing.sm))
         PantryTextField(
-            value = title,
-            onValueChange = { title = it },
+            value = titleValue,
+            onValueChange = { titleValue = it },
             placeholder = stringResource(R.string.note_title_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            capitalizeFirstLetter = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .shake(shakeTrigger),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Next)
         )
         Spacer(modifier = Modifier.height(spacing.lg))
         PantryFieldLabel(stringResource(R.string.note_content_label))
@@ -309,12 +337,20 @@ private fun NoteEditorSheet(
             placeholder = stringResource(R.string.note_content_placeholder),
             minLines = 6,
             maxLines = 12,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = PantryKeyboard.text
         )
         Spacer(modifier = Modifier.height(spacing.xl))
         PantryButton(
-            onClick = { onSave(title, content) },
-            enabled = title.isNotBlank() || content.isNotBlank(),
+            onClick = {
+                if (titleValue.text.isNotBlank() || content.isNotBlank()) {
+                    onSave(titleValue.text, content)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                } else {
+                    shakeTrigger++
+                }
+            },
+            enabled = titleValue.text.isNotBlank() || content.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.save_action))

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,15 +13,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
 import com.pantryhub.core.designsystem.ui.components.PantryButton
 import com.pantryhub.core.designsystem.ui.components.PantryFieldLabel
 import com.pantryhub.core.designsystem.ui.components.PantryOptionRow
+import com.pantryhub.core.designsystem.ui.components.PantryKeyboard
 import com.pantryhub.core.designsystem.ui.components.PantrySheet
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
+import com.pantryhub.core.designsystem.ui.components.rememberSheetFocusRequester
+import com.pantryhub.core.designsystem.ui.components.shake
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.designsystem.ui.theme.uncategorizedDotColor
 import com.pantryhub.core.model.category.Category
@@ -34,8 +44,12 @@ fun NewProductSheet(
     onDismiss: () -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
+    val haptic = LocalHapticFeedback.current
     var name by remember { mutableStateOf("") }
     var categoryId by remember { mutableStateOf<String?>(null) }
+    val focusRequester = rememberSheetFocusRequester()
+    var shakeTrigger by remember { mutableStateOf(0) }
+
 
     PantrySheet(
         onDismissRequest = onDismiss,
@@ -49,7 +63,22 @@ fun NewProductSheet(
             onValueChange = { name = it },
             placeholder = stringResource(R.string.product_name_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            capitalizeFirstLetter = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .shake(shakeTrigger),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (name.isNotBlank()) {
+                        onCreate(name.trim(), categoryId)
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    } else {
+                        shakeTrigger++
+                    }
+                }
+            )
         )
         Spacer(modifier = Modifier.height(spacing.lg))
         CategoryPicker(
@@ -59,7 +88,14 @@ fun NewProductSheet(
         )
         Spacer(modifier = Modifier.height(spacing.xl))
         PantryButton(
-            onClick = { onCreate(name.trim(), categoryId) },
+            onClick = {
+                if (name.isNotBlank()) {
+                    onCreate(name.trim(), categoryId)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                } else {
+                    shakeTrigger++
+                }
+            },
             enabled = name.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -77,9 +113,20 @@ fun EditProductSheet(
     onDismiss: () -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
-    var name by remember { mutableStateOf(product.name) }
+    val haptic = LocalHapticFeedback.current
+    var nameValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = product.name,
+                selection = TextRange(product.name.length)
+            )
+        )
+    }
     var categoryId by remember { mutableStateOf(product.categoryId) }
     var aliasesInput by remember { mutableStateOf(product.aliases.joinToString(", ")) }
+    val focusRequester = rememberSheetFocusRequester()
+    var shakeTrigger by remember { mutableStateOf(0) }
+
 
     PantrySheet(
         onDismissRequest = onDismiss,
@@ -89,11 +136,16 @@ fun EditProductSheet(
         PantryFieldLabel(stringResource(R.string.field_name_label))
         Spacer(modifier = Modifier.height(spacing.sm))
         PantryTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = nameValue,
+            onValueChange = { nameValue = it },
             placeholder = stringResource(R.string.product_name_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            capitalizeFirstLetter = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .shake(shakeTrigger),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Next)
         )
         Spacer(modifier = Modifier.height(spacing.lg))
         CategoryPicker(
@@ -109,18 +161,38 @@ fun EditProductSheet(
             onValueChange = { aliasesInput = it },
             placeholder = stringResource(R.string.field_aliases_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (nameValue.text.isNotBlank()) {
+                        val aliases = aliasesInput
+                            .split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                        onSave(nameValue.text.trim(), categoryId, aliases)
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    } else {
+                        shakeTrigger++
+                    }
+                }
+            )
         )
         Spacer(modifier = Modifier.height(spacing.xl))
         PantryButton(
             onClick = {
-                val aliases = aliasesInput
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                onSave(name.trim(), categoryId, aliases)
+                if (nameValue.text.isNotBlank()) {
+                    val aliases = aliasesInput
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+                    onSave(nameValue.text.trim(), categoryId, aliases)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                } else {
+                    shakeTrigger++
+                }
             },
-            enabled = name.isNotBlank(),
+            enabled = nameValue.text.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.save_action))

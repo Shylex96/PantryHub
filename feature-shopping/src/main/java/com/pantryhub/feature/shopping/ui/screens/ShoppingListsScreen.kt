@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,21 +37,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.LocalPantryToast
 import com.pantryhub.core.designsystem.ui.components.PantryButton
 import com.pantryhub.core.designsystem.ui.components.PantryChoiceCard
 import com.pantryhub.core.designsystem.ui.components.PantryDialog
 import com.pantryhub.core.designsystem.ui.components.PantryEmptyState
 import com.pantryhub.core.designsystem.ui.components.PantryExtendedFab
 import com.pantryhub.core.designsystem.ui.components.PantryFieldLabel
+import com.pantryhub.core.designsystem.ui.components.PantryKeyboard
 import com.pantryhub.core.designsystem.ui.components.PantryScreenHeader
 import com.pantryhub.core.designsystem.ui.components.PantrySectionLabel
 import com.pantryhub.core.designsystem.ui.components.PantrySheet
 import com.pantryhub.core.designsystem.ui.components.PantryTextField
+import com.pantryhub.core.designsystem.ui.components.rememberSheetFocusRequester
+import com.pantryhub.core.designsystem.ui.components.shake
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.model.shopping.ShoppingList
@@ -80,6 +90,8 @@ fun ShoppingListsScreen(
     val deleteColor = MaterialTheme.colorScheme.error
 
     var showCreateSheet by remember { mutableStateOf(false) }
+    val toastState = LocalPantryToast.current
+    val context = LocalContext.current
     var listToDelete by remember { mutableStateOf<String?>(null) }
 
     val lists = state.lists
@@ -93,8 +105,14 @@ fun ShoppingListsScreen(
         CreateListSheet(
             lists = lists,
             onDismiss = { showCreateSheet = false },
-            onCreate = onCreateList,
-            onClone = onCloneList
+            onCreate = { name, type ->
+                onCreateList(name, type)
+                toastState.show(context.getString(R.string.list_added_toast, name))
+            },
+            onClone = { sourceId, name, type ->
+                onCloneList(sourceId, name, type)
+                toastState.show(context.getString(R.string.list_added_toast, name))
+            }
         )
     }
 
@@ -273,10 +291,15 @@ private fun CreateListSheet(
     onClone: (String, String, ShoppingListType) -> Unit
 ) {
     val spacing = PantryHubTheme.spacing
+    val haptic = LocalHapticFeedback.current
     var name by remember { mutableStateOf("") }
     var type by remember { mutableStateOf(ShoppingListType.REGULAR) }
     var cloneSourceId by remember { mutableStateOf<String?>(null) }
     var cloneMenuExpanded by remember { mutableStateOf(false) }
+    val focusRequester = rememberSheetFocusRequester()
+    var shakeTrigger by remember { mutableStateOf(0) }
+
+
     val cloneSourceName = lists.find { it.id == cloneSourceId }?.name
         ?: stringResource(R.string.clone_none)
 
@@ -292,7 +315,25 @@ private fun CreateListSheet(
             onValueChange = { name = it },
             placeholder = stringResource(R.string.list_name_placeholder),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            capitalizeFirstLetter = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .shake(shakeTrigger),
+            keyboardOptions = PantryKeyboard.text.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    val trimmed = name.trim()
+                    if (trimmed.isNotEmpty()) {
+                        val source = cloneSourceId
+                        if (source != null) onClone(source, trimmed, type) else onCreate(trimmed, type)
+                        onDismiss()
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    } else {
+                        shakeTrigger++
+                    }
+                }
+            )
         )
 
         Spacer(modifier = Modifier.height(22.dp))
@@ -377,6 +418,9 @@ private fun CreateListSheet(
                     val source = cloneSourceId
                     if (source != null) onClone(source, trimmed, type) else onCreate(trimmed, type)
                     onDismiss()
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                } else {
+                    shakeTrigger++
                 }
             },
             enabled = name.isNotBlank(),

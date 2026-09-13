@@ -313,4 +313,14 @@
 
     <string name="help_settings_title">Appearance &amp; language</string>
     <string name="help_settings_body">In Settings you can switch the theme between System, Light and Dark, and on Android 12+ enable dynamic color to match your wallpaper. You can also set the app language independently from your phone — System, Español or English.</string>
+
+    <!-- Toasts -->
+    <string name="category_added_toast">Category \"%s\" added</string>
+    <string name="category_renamed_toast">Category renamed</string>
+    <string name="category_deleted_toast">Category removed</string>
+    <string name="product_added_toast">Product \"%s\" added</string>
+    <string name="product_updated_toast">Product updated</string>
+    <string name="list_added_toast">List \"%s\" created</string>
+    <string name="list_renamed_toast">List renamed</string>
+    <string name="note_saved_toast">Note saved</string>
 </resources>

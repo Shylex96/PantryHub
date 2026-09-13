@@ -27,6 +27,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pantryhub.core.designsystem.R
+import com.pantryhub.core.designsystem.ui.components.PantryToastHost
 import com.pantryhub.core.designsystem.ui.icons.PantryIcons
 import com.pantryhub.core.designsystem.ui.theme.PantryHubTheme
 import com.pantryhub.core.navigation.Destination
@@ -66,80 +67,85 @@ fun PantryHubApp() {
         topLevelDestinations.any { entry.hasRoute(it::class) }
     } == true
 
+    // One toast layer for the whole app, above the navigation graph: confirmations survive
+    // the screen that triggered them and are never clipped by a sheet or a bottom bar
+    // (docs/05_Design_System.md §7).
     PantryHubTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColor) {
-        Scaffold(
-            bottomBar = {
-                if (!showBottomBar) return@Scaffold
-                val items = listOf(
-                    NavigationItem(
-                        label = stringResource(R.string.nav_lists), 
-                        icon = PantryIcons.Lists, 
-                        destination = Destination.ShoppingLists
-                    ),
-                    NavigationItem(
-                        label = stringResource(R.string.nav_products), 
-                        icon = PantryIcons.Products, 
-                        destination = Destination.Products
-                    ),
-                    NavigationItem(
-                        label = stringResource(R.string.nav_notes), 
-                        icon = PantryIcons.Notes, 
-                        destination = Destination.Notes
-                    ),
-                    NavigationItem(
-                        label = stringResource(R.string.nav_settings), 
-                        icon = PantryIcons.Settings, 
-                        destination = Destination.Settings
-                    ),
-                )
+        PantryToastHost {
+            Scaffold(
+                bottomBar = {
+                    if (!showBottomBar) return@Scaffold
+                    val items = listOf(
+                        NavigationItem(
+                            label = stringResource(R.string.nav_lists), 
+                            icon = PantryIcons.Lists, 
+                            destination = Destination.ShoppingLists
+                        ),
+                        NavigationItem(
+                            label = stringResource(R.string.nav_products), 
+                            icon = PantryIcons.Products, 
+                            destination = Destination.Products
+                        ),
+                        NavigationItem(
+                            label = stringResource(R.string.nav_notes), 
+                            icon = PantryIcons.Notes, 
+                            destination = Destination.Notes
+                        ),
+                        NavigationItem(
+                            label = stringResource(R.string.nav_settings), 
+                            icon = PantryIcons.Settings, 
+                            destination = Destination.Settings
+                        ),
+                    )
 
-                Column {
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        tonalElevation = PantryHubTheme.elevations.none
-                    ) {
-                    items.forEach { item ->
-                        val selected = currentDestination?.hierarchy?.any {
-                            it.hasRoute(item.destination::class)
-                        } == true
+                    Column {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            tonalElevation = PantryHubTheme.elevations.none
+                        ) {
+                        items.forEach { item ->
+                            val selected = currentDestination?.hierarchy?.any {
+                                it.hasRoute(item.destination::class)
+                            } == true
 
-                        NavigationBarItem(
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) },
-                            alwaysShowLabel = true,
-                            selected = selected,
-                            onClick = { navActions.navigateTo(item.destination) },
-                            // Selection is shown by tinting the icon + label in the accent
-                            // color rather than the default pill indicator behind the icon.
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                indicatorColor = Color.Transparent,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            NavigationBarItem(
+                                icon = { Icon(item.icon, contentDescription = item.label) },
+                                label = { Text(item.label) },
+                                alwaysShowLabel = true,
+                                selected = selected,
+                                onClick = { navActions.navigateTo(item.destination) },
+                                // Selection is shown by tinting the icon + label in the accent
+                                // color rather than the default pill indicator behind the icon.
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                    indicatorColor = Color.Transparent,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             )
-                        )
-                    }
+                        }
+                        }
                     }
                 }
-            }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = Destination.ShoppingLists,
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                shoppingGraph(navController)
-                productsGraph(navController)
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = Destination.ShoppingLists,
+                    modifier = Modifier.padding(innerPadding)
+                ) {
+                    shoppingGraph(navController)
+                    productsGraph(navController)
                 
-                notesGraph()
-                settingsGraph(
-                    onOpenImportExport = { navController.navigate(Destination.ImportExport) },
-                    onOpenHelp = { navController.navigate(Destination.Help) },
-                    onBack = { navController.popBackStack() }
-                )
-                importExportGraph(onBack = { navController.popBackStack() })
+                    notesGraph()
+                    settingsGraph(
+                        onOpenImportExport = { navController.navigate(Destination.ImportExport) },
+                        onOpenHelp = { navController.navigate(Destination.Help) },
+                        onBack = { navController.popBackStack() }
+                    )
+                    importExportGraph(onBack = { navController.popBackStack() })
+                }
             }
         }
     }

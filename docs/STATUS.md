@@ -4,7 +4,7 @@
 > `17_Backlog.md` and `18_Changelog.md`. If another doc contradicts this one, this one wins.
 > It is updated when each sprint closes (see `19_Execution_Plan.md`).
 >
-> Last updated: 2026-08-12 (visual pass in progress)
+> Last updated: 2026-09-13 (R2 cross-cutting pass; iOS/KMP plan drafted)
 
 ---
 
@@ -71,8 +71,9 @@ until the owner builds shared infrastructure for all their projects.
 | Phase | Scope | State |
 |---|---|---|
 | **R1 · Organize + secure** | reconcile docs (README, Roadmap, 06/07 modules, 08/09/12 soft-delete convention, 16 ref, 19 checkboxes); remove `fallbackToDestructiveMigration()` from release builds | ⚠️ In progress |
-| **R2 · Redesign implementation** | Redesign **approved 2026-09-11** (canvas "PantryHub Redesign", spec in `05_Design_System.md` §6 and `04_UX_Guidelines.md`). ✅ Composition components · ✅ Lists · ✅ List detail · ✅ Shopping mode · ✅ Products (grouped + filter sheet) · ✅ Notes · ✅ Settings (incl. Manage data) / Help / Backup · ✅ every dialog except destructive confirms is now a sheet. **Remaining:** cross-cutting pass (B4: dead components/strings cleanup, undo snackbar, empty/error states, light-theme pass) and accessibility (B5). | ⚠️ In progress |
+| **R2 · Redesign implementation** | Redesign **approved 2026-09-11** (canvas "PantryHub Redesign", spec in `05_Design_System.md` §6 and `04_UX_Guidelines.md`). ✅ Composition components · ✅ Lists · ✅ List detail · ✅ Shopping mode · ✅ Products (grouped + filter sheet) · ✅ Notes · ✅ Settings (incl. Manage data) / Help / Backup · ✅ every dialog except destructive confirms is now a sheet. **Remaining:** cross-cutting pass (B4) and accessibility (B5). ✅ UX agility pass done (sheet + keyboard behaviour, app-wide top-right toasts, guaranteed capitalization — see `21_UX_Agility_Plan.md`). Still open in B4: dead components/strings cleanup, undo snackbar, empty/error states, light-theme pass. | ⚠️ In progress |
 | **R3 · Ship 1.0** | unit tests (use cases, similarity, import/export round-trip, mappers, ViewModels) · Room migration tests · Compose smoke tests · icon/splash · versioning · signing · Play listing → Internal/Beta | 🔜 Pending |
+| **R6 · iOS / KMP** | Audit + plan complete (`22_KMP_iOS_Migration_Plan.md`, ADR-012…018): `core-model` is already KMP-clean, `core-domain` has no Hilt, there is no networking layer to port. Blocked on a Kotlin 2.0.21 → 2.3.x toolchain upgrade and on moving the repository interfaces out of `core-data`. Starts after R3. | 📋 Planned |
 | R4 · Sync foundation + Connected 1.1 | Room v5 (`updated_at`/`deleted_at`, soft delete, outbox, data-source seams) + accounts + personal multi-device sync | ⏸ Deferred |
 | R5 · Household 1.2 | sharing, roles, QR invitations | ⏸ Deferred |
 

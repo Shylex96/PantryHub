@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,8 +28,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,6 +60,8 @@ fun PantrySheet(
 ) {
     val spacing = PantryHubTheme.spacing
     val radius = PantryHubTheme.radius
+    // Sheets open straight to their full height: the half-expanded stop adds a settle step
+    // the user never asked for and is what made creation flows feel heavy.
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
@@ -60,8 +69,14 @@ fun PantrySheet(
         modifier = modifier,
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = radius.sheet, topEnd = radius.sheet),
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-        scrimColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.55f),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        // Flat: the container color is already the raised step, so the elevation tint would
+        // only add a second, slightly different surface to blend on every frame.
+        tonalElevation = 0.dp,
+        scrimColor = Color.Black.copy(alpha = 0.32f),
+        // The sheet takes no insets of its own; the content below applies ime + navigation
+        // bars itself. Without this the keyboard opening pushes the sheet in two steps.
+        contentWindowInsets = { WindowInsets(0) },
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -77,6 +92,8 @@ fun PantrySheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .imePadding()
+                .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(start = spacing.screen, end = spacing.screen, bottom = 36.dp)
         ) {
@@ -111,6 +128,28 @@ fun PantrySheet(
             content()
         }
     }
+}
+
+/**
+ * A [FocusRequester] that takes focus once the sheet content is actually attached.
+ *
+ * Requesting focus from `LaunchedEffect(Unit)` runs before the sheet's content exists, so it
+ * either throws "FocusRequester is not initialized" or opens the keyboard a beat *after* the
+ * sheet has finished sliding in — the double movement that makes creation flows feel slow.
+ * Waiting for the first frame makes the sheet and the keyboard arrive together.
+ *
+ * Pass `enabled = false` for sheets that should open without the keyboard (pickers, filters).
+ */
+@Composable
+fun rememberSheetFocusRequester(enabled: Boolean = true): FocusRequester {
+    val requester = remember { FocusRequester() }
+    LaunchedEffect(enabled) {
+        if (enabled) {
+            withFrameNanos { }
+            runCatching { requester.requestFocus() }
+        }
+    }
+    return requester
 }
 
 /** Small uppercase label above a sheet field or group (docs/05_Design_System.md §6.5). */

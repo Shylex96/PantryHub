@@ -313,4 +313,14 @@
 
     <string name="help_settings_title">Apariencia e idioma</string>
     <string name="help_settings_body">En Ajustes puedes cambiar el tema entre Sistema, Claro y Oscuro, y en Android 12+ activar el color dinámico para que combine con tu fondo de pantalla. También puedes fijar el idioma de la app independientemente del móvil — Sistema, Español o English.</string>
+
+    <!-- Toasts -->
+    <string name="category_added_toast">Categoría \"%s\" añadida</string>
+    <string name="category_renamed_toast">Categoría renombrada</string>
+    <string name="category_deleted_toast">Categoría eliminada</string>
+    <string name="product_added_toast">Producto \"%s\" añadido</string>
+    <string name="product_updated_toast">Producto actualizado</string>
+    <string name="list_added_toast">Lista \"%s\" creada</string>
+    <string name="list_renamed_toast">Lista renombrada</string>
+    <string name="note_saved_toast">Nota guardada</string>
 </resources>
